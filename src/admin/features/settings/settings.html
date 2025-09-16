@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="m-0 p-0 bg-gray-100">
+    <!-- Mobile Overlay -->
+    <div
+      id="overlay"
+      class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"
+    ></div>
+
+    <!-- General Settings Modal -->
+    <div id="generalSettingsModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+      <div class="bg-white rounded-lg shadow-xl max-w-lg w-full">
+        <div class="p-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-6">General Settings</h2>
+          
+          <form id="generalSettingsForm" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Site Title</label>
+              <input type="text" id="siteTitle" value="Zyra" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1D1354] focus:border-transparent" />
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">About us</label>
+              <textarea id="aboutUs" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1D1354] focus:border-transparent resize-none">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</textarea>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
+              <button type="button" id="cancelGeneralSettings" class="px-6 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-50 transition-colors">
+                Cancel
+              </button>
+              <button type="submit" class="px-6 py-2 bg-gray-400 text-white rounded-full hover:bg-gray-500 transition-colors">
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Settings Modal -->
+    <div id="contactSettingsModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+      <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-6">Contact Settings</h2>
+          
+          <form id="contactSettingsForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Left Column -->
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                <input type="text" id="contactAddress" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1D1354] focus:border-transparent" />
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Google Map Link</label>
+                <input type="url" id="googleMapLink" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1D1354] focus:border-transparent" />
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Phone Numbers (with country code)</label>
+                <div class="space-y-2">
+                  <input type="tel" id="phone1" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1D1354] focus:border-transparent" />
+                  <input type="tel" id="phone2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1D1354] focus:border-transparent" />
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <input type="email" id="contactEmail" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1D1354] focus:border-transparent" />
+              </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Social Links</label>
+                <div class="space-y-2">
+                  <input type="url" id="facebookLink" placeholder="Facebook URL" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1D1354] focus:border-transparent" />
+                  <input type="url" id="twitterLink" placeholder="Twitter URL" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1D1354] focus:border-transparent" />
+                  <input type="url" id="linkedinLink" placeholder="LinkedIn URL" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1D1354] focus:border-transparent" />
+                  <input type="url" id="instagramLink" placeholder="Instagram URL" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1D1354] focus:border-transparent" />
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Frame Src</label>
+                <input type="url" id="frameSrc" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1D1354] focus:border-transparent" />
+              </div>
+            </div>
+
+            <div class="md:col-span-2 flex justify-end gap-3 pt-6 border-t border-gray-200">
+              <button type="button" id="cancelContactSettings" class="px-6 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-50 transition-colors">
+                Cancel
+              </button>
+              <button type="submit" class="px-6 py-2 bg-gray-400 text-white rounded-full hover:bg-gray-500 transition-colors">
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Team Member Modal -->
+    <div id="addTeamMemberModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+      <div class="bg-white rounded-lg shadow-xl max-w-sm w-full">
+        <div class="p-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-6">Add Team Member</h2>
+          
+          <form id="addTeamMemberForm" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
+              <input type="text" id="teamMemberName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1D1354] focus:border-transparent" />
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Picture</label>
+              <div class="relative">
+                <input type="file" id="teamMemberPicture" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" />
+                <div class="flex items-center justify-between w-full px-3 py-2 border border-gray-300 rounded-md bg-white">
+                  <span id="teamMemberFileName" class="text-sm text-gray-500">No file chosen</span>
+                  <button type="button" class="px-3 py-1 bg-gray-100 text-gray-700 rounded border text-sm hover:bg-gray-200 transition-colors">
+                    Choose File
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
+              <button type="button" id="cancelAddTeamMember" class="px-6 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-50 transition-colors">
+                Cancel
+              </button>
+              <button type="submit" class="px-6 py-2 bg-gray-400 text-white rounded-full hover:bg-gray-500 transition-colors">
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- External Toggle Button (visible when sidebar is hidden) -->
+    <button 
+      id="externalToggle"
+      class="fixed top-4 left-4 z-50 p-2 bg-white text-gray-700 rounded-lg shadow-lg hover:shadow-xl hover:bg-gray-50 transition-all duration-300 hidden border border-gray-200"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-5 h-5"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+        />
+      </svg>
+    </button>
+
+    <!-- Full Height Sidebar -->
+    <aside
+      id="sidebar" 
+      class="fixed top-0 left-0 w-80 h-full bg-[#1D1354] text-white flex flex-col transform transition-transform duration-300 z-50 overflow-visible"
+    >
+      <!-- Sidebar Header with Logo and Toggle Button -->
+      <div
+        class="flex items-center justify-between p-4 h-16 border-b border-[#2E1B8C] relative"
+      >
+        <h2
+          class="text-2xl lg:text-3xl font-extrabold bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent"
+        >
+          Zyra
+        </h2>
+        <!-- Internal Hamburger button (inside sidebar) -->
+        <button
+          id="sidebarToggle"
+          class="hover:bg-[#2E1B8C] p-2 rounded transition-all duration-300 relative z-10"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="flex-1 px-4 py-6 space-y-2 text-sm overflow-y-auto">
+        <a
+          href="#"
+          class="block px-3 py-3 rounded-md hover:bg-[#2E1B8C] font-semibold text-lg transition-colors"
+          >Dashboard</a
+        >
+
+        <!-- Booking Dropdown -->
+        <div>
+          <button
+            id="bookingToggle"
+            class="flex items-center justify-between w-full px-3 py-3 rounded-md hover:bg-[#2E1B8C] transition-colors"
+          >
+            <span class="font-semibold text-lg">Booking</span>
+            <svg
+              id="bookingArrow"
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-4 h-4 transition-transform"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+          <div
+            id="bookingSubmenu"
+            class="ml-4 mt-2 space-y-1 overflow-hidden transition-all duration-300"
+            style="max-height: 0px"
+          >
+            <a
+              href="#"
+              class="block px-3 py-2 hover:bg-[#2E1B8C] rounded-md transition-colors font-semibold"
+              >Refund Bookings</a
+            >
+            <a
+              href="#"
+              class="block px-3 py-2 hover:bg-[#2E1B8C] rounded-md transition-colors font-semibold"
+              >Booking Records</a
+            >
+          </div>
+        </div>
+
+        <a
+          href="#"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Rooms</a
+        >
+        <a
+          href="#"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Ratings and Reviews</a
+        >
+        <a
+          href="#"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >User Queries</a
+        >
+        <a
+          href="#"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Features & Facilities</a
+        >
+        <a
+          href="#"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Carousel</a
+        >
+        <a
+          href="#"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Backup & Restore</a
+        >
+        <a
+          href="#"
+          class="block px-3 py-3 bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Settings</a
+        >
+      </nav>
+
+      <!-- Sidebar Footer -->
+      <div class="p-4 border-t border-[#2E1B8C]">
+        <div class="flex items-center space-x-3">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="#C2C6CC"
+            class="w-8 h-8"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
+            />
+          </svg>
+          <div>
+            <p class="font-medium text-sm">Admin User</p>
+            <p class="text-xs text-gray-300">Online</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="min-h-screen transition-all duration-300 lg:ml-80">
+      <main id="mainContentArea" class="p-4 sm:p-4 lg:p-8 mt-4 sm:mt-6 lg:mt-0">
+        
+        <!-- Header -->
+        <div class="transition-all duration-300 mb-8" id="headerContent">
+          <h1 class="text-3xl sm:text-3xl lg:text-4xl font-bold text-gray-800 transition-all duration-300 leading-tight" id="dashboardTitle">
+            SETTINGS
+          </h1>
+        </div>
+
+        <!-- General Settings Section -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <div class="flex justify-between items-start mb-4">
+            <h2 class="text-lg font-medium text-gray-700">General Settings</h2>
+            <button
+              id="editGeneralSettings"
+              class="flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors"
+            >
+              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Edit
+            </button>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <h3 class="text-sm font-medium text-gray-500 mb-1">Site Title</h3>
+              <p class="text-gray-900">Zyra</p>
+            </div>
+            <div>
+              <h3 class="text-sm font-medium text-gray-500 mb-1">About us</h3>
+              <p class="text-gray-700 text-sm leading-relaxed">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shutdown Website Section -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <div class="flex justify-between items-center">
+            <div>
+              <h2 class="text-lg font-medium text-gray-700 mb-1">Shutdown Website</h2>
+              <p class="text-sm text-gray-500">No customers will be allowed to book room when shutdown mode is turned on</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="shutdownToggle" class="sr-only peer">
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Contact Settings Section -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <div class="flex justify-between items-start mb-4">
+            <h2 class="text-lg font-medium text-gray-700">Contact Settings</h2>
+            <button
+              id="editContactSettings"
+              class="flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors"
+            >
+              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Edit
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Left Side - Contact Info -->
+            <div class="space-y-4">
+              <div>
+                <h3 class="text-sm font-medium text-gray-500 mb-1">Address</h3>
+                <p class="text-gray-900">xyz nagar 3rd street Chennai Tamil Nadu</p>
+              </div>
+              
+              <div>
+                <h3 class="text-sm font-medium text-gray-500 mb-1">Google Map</h3>
+                <p class="text-blue-600 text-sm">https://maps.googleapis.com/GQfQ8jvQfylcytdGPqhQi</p>
+              </div>
+              
+              <div>
+                <h3 class="text-sm font-medium text-gray-500 mb-1">Phone Numbers</h3>
+                <div class="space-y-1">
+                  <p class="text-gray-900">+9234615489</p>
+                  <p class="text-gray-900">+9234615489</p>
+                </div>
+              </div>
+              
+              <div>
+                <h3 class="text-sm font-medium text-gray-500 mb-1">E-mail</h3>
+                <p class="text-gray-900">prabha@gmail.com</p>
+              </div>
+            </div>
+
+            <!-- Right Side - Social Links & Map -->
+            <div class="space-y-4">
+              <div>
+                <h3 class="text-sm font-medium text-gray-500 mb-2">Social Links</h3>
+                <div class="space-y-2">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                    </svg>
+                    <span class="text-blue-600 text-sm">https://www.facebook.com/</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                    </svg>
+                    <span class="text-blue-600 text-sm">https://www.twitter.com/</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-blue-700" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                    </svg>
+                    <span class="text-blue-600 text-sm">https://www.linkedin.com/</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-pink-500" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                    </svg>
+                    <span class="text-blue-600 text-sm">https://www.instagram.com/</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h3 class="text-sm font-medium text-gray-500 mb-2">Frame</h3>
+                <div class="w-full h-48 bg-gray-200 rounded border flex items-center justify-center">
+                  <span class="text-gray-500 text-sm">Map Preview</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Management Team Section -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-lg font-medium text-gray-700">Management Team</h2>
+            <button
+              id="editManagementTeam"
+              class="flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors"
+            >
+              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              Add
+            </button>
+          </div>
+
+          <!-- Team Members Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Team Member 1 -->
+            <div class="relative group">
+              <div class="w-full h-48 bg-gray-300 rounded-lg flex items-center justify-center">
+                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <button class="absolute top-2 right-2 p-2 bg-white bg-opacity-80 rounded-lg hover:bg-opacity-100 transition-colors delete-team-member" title="Delete">
+                <svg class="h-4 w-4 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Team Member 2 -->
+            <div class="relative group">
+              <div class="w-full h-48 bg-gray-300 rounded-lg flex items-center justify-center">
+                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <button class="absolute top-2 right-2 p-2 bg-white bg-opacity-80 rounded-lg hover:bg-opacity-100 transition-colors delete-team-member" title="Delete">
+                <svg class="h-4 w-4 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Team Member 3 -->
+            <div class="relative group">
+              <div class="w-full h-48 bg-gray-300 rounded-lg flex items-center justify-center">
+                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <button class="absolute top-2 right-2 p-2 bg-white bg-opacity-80 rounded-lg hover:bg-opacity-100 transition-colors delete-team-member" title="Delete">
+                <svg class="h-4 w-4 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+    <script>
+// Get elements
+const sidebar = document.getElementById("sidebar");
+const sidebarToggle = document.getElementById("sidebarToggle");
+const externalToggle = document.getElementById("externalToggle");
+const overlay = document.getElementById("overlay");
+const mainContent = document.getElementById("mainContent");
+const bookingToggle = document.getElementById("bookingToggle");
+const bookingSubmenu = document.getElementById("bookingSubmenu");
+const bookingArrow = document.getElementById("bookingArrow");
+
+// Modal elements
+const generalSettingsModal = document.getElementById("generalSettingsModal");
+const contactSettingsModal = document.getElementById("contactSettingsModal");
+const addTeamMemberModal = document.getElementById("addTeamMemberModal");
+
+const editGeneralSettings = document.getElementById("editGeneralSettings");
+const editContactSettings = document.getElementById("editContactSettings");
+const editManagementTeam = document.getElementById("editManagementTeam");
+
+const cancelGeneralSettings = document.getElementById("cancelGeneralSettings");
+const cancelContactSettings = document.getElementById("cancelContactSettings");
+const cancelAddTeamMember = document.getElementById("cancelAddTeamMember");
+
+const generalSettingsForm = document.getElementById("generalSettingsForm");
+const contactSettingsForm = document.getElementById("contactSettingsForm");
+const addTeamMemberForm = document.getElementById("addTeamMemberForm");
+
+const teamMemberPicture = document.getElementById("teamMemberPicture");
+const teamMemberFileName = document.getElementById("teamMemberFileName");
+const shutdownToggle = document.getElementById("shutdownToggle");
+
+let sidebarVisible = true;
+let isMobile = window.innerWidth < 1024;
+
+// Initialize sidebar state
+function initializeSidebar() {
+  if (isMobile) {
+    sidebar.style.transform = "translateX(-100%)";
+    mainContent.style.marginLeft = "0";
+    sidebarVisible = false;
+  } else {
+    sidebar.style.transform = "translateX(0)";
+    mainContent.style.marginLeft = "320px";
+    sidebarVisible = true;
+  }
+  updateToggleButtons();
+  updateContentSpacing();
+}
+
+// Update toggle buttons visibility and state
+function updateToggleButtons() {
+  if (sidebarVisible) {
+    externalToggle.classList.add("hidden");
+    sidebarToggle.style.display = "block";
+  } else {
+    externalToggle.classList.remove("hidden");
+    externalToggle.style.display = "block";
+    sidebarToggle.style.display = "none";
+  }
+}
+
+// Update content spacing to avoid overlap
+function updateContentSpacing() {
+  const mainContentArea = document.getElementById("mainContentArea");
+  const dashboardTitle = document.getElementById("dashboardTitle");
+  const headerContent = document.getElementById("headerContent");
+  
+  if (!sidebarVisible) {
+    if (mainContentArea) mainContentArea.style.paddingTop = "4rem";
+    if (dashboardTitle) dashboardTitle.style.paddingLeft = "3rem";
+    if (headerContent) headerContent.style.paddingLeft = "3rem";
+  } else {
+    if (mainContentArea) mainContentArea.style.paddingTop = "1rem";
+    if (dashboardTitle) dashboardTitle.style.paddingLeft = "0";
+    if (headerContent) headerContent.style.paddingLeft = "0";
+  }
+}
+
+// Toggle sidebar function
+function toggleSidebar() {
+  sidebarVisible = !sidebarVisible;
+
+  if (sidebarVisible) {
+    sidebar.style.transform = "translateX(0)";
+    if (isMobile) {
+      overlay.classList.remove("hidden");
+      mainContent.style.marginLeft = "0";
+    } else {
+      mainContent.style.marginLeft = "320px";
+    }
+  } else {
+    sidebar.style.transform = "translateX(-100%)";
+    overlay.classList.add("hidden");
+    mainContent.style.marginLeft = "0";
+  }
+
+  updateToggleButtons();
+  updateContentSpacing();
+}
+
+// Modal functions
+function openGeneralSettingsModal() {
+  generalSettingsModal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+function closeGeneralSettingsModal() {
+  generalSettingsModal.classList.add("hidden");
+  document.body.style.overflow = "";
+}
+
+function openContactSettingsModal() {
+  contactSettingsModal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+function closeContactSettingsModal() {
+  contactSettingsModal.classList.add("hidden");
+  document.body.style.overflow = "";
+}
+
+function openAddTeamMemberModal() {
+  addTeamMemberModal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+function closeAddTeamMemberModal() {
+  addTeamMemberModal.classList.add("hidden");
+  document.body.style.overflow = "";
+  addTeamMemberForm.reset();
+  teamMemberFileName.textContent = "No file chosen";
+}
+
+// Handle window resize
+window.addEventListener("resize", () => {
+  const wasMobile = isMobile;
+  isMobile = window.innerWidth < 1024;
+
+  if (wasMobile !== isMobile) {
+    overlay.classList.add("hidden");
+    initializeSidebar();
+  }
+});
+
+// Event listeners for sidebar
+sidebarToggle.addEventListener("click", toggleSidebar);
+externalToggle.addEventListener("click", toggleSidebar);
+
+overlay.addEventListener("click", () => {
+  if (isMobile && sidebarVisible) {
+    toggleSidebar();
+  }
+});
+
+// Booking submenu toggle
+bookingToggle.addEventListener("click", () => {
+  const currentMaxHeight = bookingSubmenu.style.maxHeight;
+  const isOpen = currentMaxHeight && currentMaxHeight !== "0px";
+
+  if (isOpen) {
+    bookingSubmenu.style.maxHeight = "0px";
+    bookingArrow.style.transform = "rotate(0deg)";
+  } else {
+    const height = bookingSubmenu.scrollHeight;
+    bookingSubmenu.style.maxHeight = height + "px";
+    bookingArrow.style.transform = "rotate(180deg)";
+  }
+});
+
+// Modal event listeners
+editGeneralSettings.addEventListener("click", openGeneralSettingsModal);
+editContactSettings.addEventListener("click", openContactSettingsModal);
+editManagementTeam.addEventListener("click", openAddTeamMemberModal);
+
+cancelGeneralSettings.addEventListener("click", closeGeneralSettingsModal);
+cancelContactSettings.addEventListener("click", closeContactSettingsModal);
+cancelAddTeamMember.addEventListener("click", closeAddTeamMemberModal);
+
+// Close modals when clicking outside
+generalSettingsModal.addEventListener("click", (e) => {
+  if (e.target === generalSettingsModal) {
+    closeGeneralSettingsModal();
+  }
+});
+
+contactSettingsModal.addEventListener("click", (e) => {
+  if (e.target === contactSettingsModal) {
+    closeContactSettingsModal();
+  }
+});
+
+addTeamMemberModal.addEventListener("click", (e) => {
+  if (e.target === addTeamMemberModal) {
+    closeAddTeamMemberModal();
+  }
+});
+
+// Handle file input change
+teamMemberPicture.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    teamMemberFileName.textContent = file.name;
+  } else {
+    teamMemberFileName.textContent = "No file chosen";
+  }
+});
+
+// Handle form submissions
+generalSettingsForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  alert("General settings updated successfully!");
+  closeGeneralSettingsModal();
+});
+
+contactSettingsForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  alert("Contact settings updated successfully!");
+  closeContactSettingsModal();
+});
+
+addTeamMemberForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = document.getElementById("teamMemberName").value;
+  if (name.trim()) {
+    alert(`Team member "${name}" added successfully!`);
+    closeAddTeamMemberModal();
+  } else {
+    alert("Please enter a team member name.");
+  }
+});
+
+// Shutdown toggle functionality
+shutdownToggle.addEventListener("change", (e) => {
+  if (e.target.checked) {
+    if (confirm("Are you sure you want to shutdown the website? No customers will be able to book rooms.")) {
+      alert("Website has been shut down for bookings.");
+    } else {
+      e.target.checked = false;
+    }
+  } else {
+    alert("Website is now open for bookings.");
+  }
+});
+
+// Delete team member functionality
+document.addEventListener("click", (e) => {
+  if (e.target.closest(".delete-team-member")) {
+    const memberContainer = e.target.closest(".relative");
+    
+    if (confirm("Are you sure you want to delete this team member?")) {
+      memberContainer.remove();
+      alert("Team member deleted successfully!");
+    }
+  }
+});
+
+// Close modals on Escape key
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    if (!generalSettingsModal.classList.contains("hidden")) {
+      closeGeneralSettingsModal();
+    }
+    if (!contactSettingsModal.classList.contains("hidden")) {
+      closeContactSettingsModal();
+    }
+    if (!addTeamMemberModal.classList.contains("hidden")) {
+      closeAddTeamMemberModal();
+    }
+  }
+});
+
+// Initialize everything when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  initializeSidebar();
+});
+
+initializeSidebar();
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Queries</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="m-0 p-0 bg-gray-100">
+    <!-- Mobile Overlay -->
+    <div
+      id="overlay"
+      class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"
+    ></div>
+
+    <!-- External Toggle Button (visible when sidebar is hidden) -->
+    <button 
+      id="externalToggle"
+      class="fixed top-4 left-4 z-50 p-2 bg-white text-gray-700 rounded-lg shadow-lg hover:shadow-xl hover:bg-gray-50 transition-all duration-300 hidden border border-gray-200"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-5 h-5"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+        />
+      </svg>
+    </button>
+
+    <!-- Full Height Sidebar -->
+    <aside
+      id="sidebar" 
+      class="fixed top-0 left-0 w-80 h-full bg-[#1D1354] text-white flex flex-col transform transition-transform duration-300 z-50 overflow-visible"
+    >
+      <!-- Sidebar Header with Logo and Toggle Button -->
+      <div
+        class="flex items-center justify-between p-4 h-16 border-b border-[#2E1B8C] relative"
+      >
+        <h2
+          class="text-2xl lg:text-3xl font-extrabold bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent"
+        >
+          Zyra
+        </h2>
+        <!-- Internal Hamburger button (inside sidebar) -->
+        <button
+          id="sidebarToggle"
+          class="hover:bg-[#2E1B8C] p-2 rounded transition-all duration-300 relative z-10"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="flex-1 px-4 py-6 space-y-2 text-sm overflow-y-auto">
+        <a
+          href="#"
+          class="block px-3 py-3 rounded-md hover:bg-[#2E1B8C] font-semibold text-lg transition-colors"
+          >Dashboard</a
+        >
+
+        <!-- Booking Dropdown -->
+        <div>
+          <button
+            id="bookingToggle"
+            class="flex items-center justify-between w-full px-3 py-3 rounded-md hover:bg-[#2E1B8C] transition-colors"
+          >
+            <span class="font-semibold text-lg">Booking</span>
+            <svg
+              id="bookingArrow"
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-4 h-4 transition-transform"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+          <div
+            id="bookingSubmenu"
+            class="ml-4 mt-2 space-y-1 overflow-hidden transition-all duration-300"
+            style="max-height: 0px"
+          >
+            <a
+              href="#"
+              class="block px-3 py-2 hover:bg-[#2E1B8C] rounded-md transition-colors font-semibold"
+              >Refund Bookings</a
+            >
+            <a
+              href="#"
+              class="block px-3 py-2 hover:bg-[#2E1B8C] rounded-md transition-colors font-semibold"
+              >Booking Records</a
+            >
+          </div>
+        </div>
+
+        <a
+          href="#"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Rooms</a
+        >
+        <a
+          href="#"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Ratings and Reviews</a
+        >
+        <a
+          href="#"
+          class="block px-3 py-3 bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >User Queries</a
+        >
+        <a
+          href="#"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Features & Facilities</a
+        >
+        <a
+          href="#"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Carousel</a
+        >
+        <a
+          href="#"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Backup & Restore</a
+        >
+        <a
+          href="#"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Settings</a
+        >
+      </nav>
+
+      <!-- Sidebar Footer -->
+      <div class="p-4 border-t border-[#2E1B8C]">
+        <div class="flex items-center space-x-3">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="#C2C6CC"
+            class="w-8 h-8"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
+            />
+          </svg>
+          <div>
+            <p class="font-medium text-sm">Admin User</p>
+            <p class="text-xs text-gray-300">Online</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="min-h-screen transition-all duration-300 lg:ml-80">
+      <main id="mainContentArea" class="p-4 sm:p-4 lg:p-8 mt-4 sm:mt-6 lg:mt-0">
+        
+        <!-- Header with Action Buttons -->
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 transition-all duration-300" id="headerContent">
+          <h1 class="text-3xl sm:text-3xl lg:text-4xl font-bold text-gray-800 transition-all duration-300 leading-tight" id="dashboardTitle">
+            USER QUERIES
+          </h1>
+          <div class="flex items-center gap-3">
+            <button
+              id="markAllReadBtn"
+              class="flex items-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
+            >
+              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span class="text-gray-700">Mark all as read</span>
+            </button>
+            <button
+              id="deleteAllBtn"
+              class="flex items-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium text-sm"
+            >
+              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              <span>Delete all</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- User Queries Table -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User Name</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Naveen</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Naveen@gmail.com</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">12/08/2025</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">This is one subject</td>
+                  <td class="px-6 py-4 text-sm text-gray-600 max-w-xs">
+                    <p class="line-clamp-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button class="text-red-600 hover:text-red-900 p-1 rounded transition-colors" title="Delete">
+                      <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">2</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Larwin</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Larwin@gmail.com</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">28/08/2025</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Payment issue inquiry</td>
+                  <td class="px-6 py-4 text-sm text-gray-600 max-w-xs">
+                    <p class="line-clamp-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button class="text-red-600 hover:text-red-900 p-1 rounded transition-colors" title="Delete">
+                      <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">3</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Prabha</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Prabha@gmail.com</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">15/08/2025</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Room service request</td>
+                  <td class="px-6 py-4 text-sm text-gray-600 max-w-xs">
+                    <p class="line-clamp-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button class="text-red-600 hover:text-red-900 p-1 rounded transition-colors" title="Delete">
+                      <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">4</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Pranitha</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Pranitha@gmail.com</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">10/08/2025</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Booking modification</td>
+                  <td class="px-6 py-4 text-sm text-gray-600 max-w-xs">
+                    <p class="line-clamp-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button class="text-red-600 hover:text-red-900 p-1 rounded transition-colors" title="Delete">
+                      <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+    <script>
+// Get elements
+const sidebar = document.getElementById("sidebar");
+const sidebarToggle = document.getElementById("sidebarToggle");
+const externalToggle = document.getElementById("externalToggle");
+const overlay = document.getElementById("overlay");
+const mainContent = document.getElementById("mainContent");
+const bookingToggle = document.getElementById("bookingToggle");
+const bookingSubmenu = document.getElementById("bookingSubmenu");
+const bookingArrow = document.getElementById("bookingArrow");
+
+// Action buttons
+const markAllReadBtn = document.getElementById("markAllReadBtn");
+const deleteAllBtn = document.getElementById("deleteAllBtn");
+
+let sidebarVisible = true;
+let isMobile = window.innerWidth < 1024;
+
+// Initialize sidebar state
+function initializeSidebar() {
+  if (isMobile) {
+    sidebar.style.transform = "translateX(-100%)";
+    mainContent.style.marginLeft = "0";
+    sidebarVisible = false;
+  } else {
+    sidebar.style.transform = "translateX(0)";
+    mainContent.style.marginLeft = "320px";
+    sidebarVisible = true;
+  }
+  updateToggleButtons();
+  updateContentSpacing();
+}
+
+// Update toggle buttons visibility and state
+function updateToggleButtons() {
+  if (sidebarVisible) {
+    externalToggle.classList.add("hidden");
+    sidebarToggle.style.display = "block";
+  } else {
+    externalToggle.classList.remove("hidden");
+    externalToggle.style.display = "block";
+    sidebarToggle.style.display = "none";
+  }
+}
+
+// Update content spacing to avoid overlap
+function updateContentSpacing() {
+  const mainContentArea = document.getElementById("mainContentArea");
+  const dashboardTitle = document.getElementById("dashboardTitle");
+  const headerContent = document.getElementById("headerContent");
+  
+  if (!sidebarVisible) {
+    if (mainContentArea) mainContentArea.style.paddingTop = "4rem";
+    if (dashboardTitle) dashboardTitle.style.paddingLeft = "3rem";
+    if (headerContent) headerContent.style.paddingLeft = "3rem";
+  } else {
+    if (mainContentArea) mainContentArea.style.paddingTop = "1rem";
+    if (dashboardTitle) dashboardTitle.style.paddingLeft = "0";
+    if (headerContent) headerContent.style.paddingLeft = "0";
+  }
+}
+
+// Toggle sidebar function
+function toggleSidebar() {
+  sidebarVisible = !sidebarVisible;
+
+  if (sidebarVisible) {
+    sidebar.style.transform = "translateX(0)";
+    if (isMobile) {
+      overlay.classList.remove("hidden");
+      mainContent.style.marginLeft = "0";
+    } else {
+      mainContent.style.marginLeft = "320px";
+    }
+  } else {
+    sidebar.style.transform = "translateX(-100%)";
+    overlay.classList.add("hidden");
+    mainContent.style.marginLeft = "0";
+  }
+
+  updateToggleButtons();
+  updateContentSpacing();
+}
+
+// Handle window resize
+window.addEventListener("resize", () => {
+  const wasMobile = isMobile;
+  isMobile = window.innerWidth < 1024;
+
+  if (wasMobile !== isMobile) {
+    overlay.classList.add("hidden");
+    initializeSidebar();
+  }
+});
+
+// Event listeners for sidebar
+sidebarToggle.addEventListener("click", toggleSidebar);
+externalToggle.addEventListener("click", toggleSidebar);
+
+overlay.addEventListener("click", () => {
+  if (isMobile && sidebarVisible) {
+    toggleSidebar();
+  }
+});
+
+// Booking submenu toggle
+bookingToggle.addEventListener("click", () => {
+  const currentMaxHeight = bookingSubmenu.style.maxHeight;
+  const isOpen = currentMaxHeight && currentMaxHeight !== "0px";
+
+  if (isOpen) {
+    bookingSubmenu.style.maxHeight = "0px";
+    bookingArrow.style.transform = "rotate(0deg)";
+  } else {
+    const height = bookingSubmenu.scrollHeight;
+    bookingSubmenu.style.maxHeight = height + "px";
+    bookingArrow.style.transform = "rotate(180deg)";
+  }
+});
+
+// Mark all as read functionality
+markAllReadBtn.addEventListener("click", () => {
+  if (confirm("Are you sure you want to mark all queries as read?")) {
+    alert("All queries marked as read!");
+    // Here you would implement the actual mark as read functionality
+  }
+});
+
+// Delete all functionality
+deleteAllBtn.addEventListener("click", () => {
+  if (confirm("Are you sure you want to delete all queries? This action cannot be undone.")) {
+    alert("All queries deleted!");
+    // Here you would implement the actual delete all functionality
+  }
+});
+
+// Individual delete functionality
+document.addEventListener("click", (e) => {
+  if (e.target.closest("button")?.title === "Delete") {
+    const row = e.target.closest("tr");
+    const userName = row.querySelector("td:nth-child(2)").textContent;
+    const subject = row.querySelector("td:nth-child(5)").textContent;
+    
+    if (confirm(`Are you sure you want to delete ${userName}'s query about "${subject}"?`)) {
+      row.remove();
+      alert("Query deleted successfully!");
+    }
+  }
+});
+
+// Initialize everything when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  initializeSidebar();
+});
+
+initializeSidebar();
+
+    </script>
+  </body>
+</html>

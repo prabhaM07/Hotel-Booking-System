@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Features & Facilities</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="m-0 p-0 bg-gray-100">
+    <!-- Mobile Overlay -->
+    <div
+      id="overlay"
+      class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"
+    ></div>
+
+    <!-- Add Feature Modal -->
+    <div id="addFeatureModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+      <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+        <!-- Modal Body -->
+        <div class="p-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-6">Add Feature</h2>
+          
+          <form id="addFeatureForm" class="space-y-4">
+            <!-- Name Field -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
+              <input type="text" id="featureName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1D1354] focus:border-transparent" />
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="flex justify-end gap-3 pt-6">
+              <button type="button" id="cancelAddFeature" class="px-6 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-50 transition-colors">
+                Cancel
+              </button>
+              <button type="submit" class="px-6 py-2 bg-gray-400 text-white rounded-full hover:bg-gray-500 transition-colors">
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Facility Modal -->
+    <div id="addFacilityModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+      <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+        <!-- Modal Body -->
+        <div class="p-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-6">Add Facility</h2>
+          
+          <form id="addFacilityForm" class="space-y-4">
+            <!-- Name Field -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
+              <input type="text" id="facilityName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1D1354] focus:border-transparent" />
+            </div>
+
+            <!-- Add Icon Field -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Add icon</label>
+              <div class="relative">
+                <input type="file" id="facilityIconInput" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" />
+                <div class="flex items-center justify-between w-full px-3 py-2 border border-gray-300 rounded-md bg-white">
+                  <span id="facilityFileName" class="text-sm text-gray-500">No file chosen</span>
+                  <button type="button" class="px-3 py-1 bg-gray-100 text-gray-700 rounded border text-sm hover:bg-gray-200 transition-colors">
+                    Choose File
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Description Field -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+              <textarea id="facilityDescription" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#1D1354] focus:border-transparent resize-none"></textarea>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="flex justify-end gap-3 pt-6">
+              <button type="button" id="cancelAddFacility" class="px-6 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-50 transition-colors">
+                Cancel
+              </button>
+              <button type="submit" class="px-6 py-2 bg-gray-400 text-white rounded-full hover:bg-gray-500 transition-colors">
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- External Toggle Button (visible when sidebar is hidden) -->
+    <button 
+      id="externalToggle"
+      class="fixed top-4 left-4 z-50 p-2 bg-white text-gray-700 rounded-lg shadow-lg hover:shadow-xl hover:bg-gray-50 transition-all duration-300 hidden border border-gray-200"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-5 h-5"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+        />
+      </svg>
+    </button>
+
+    <!-- Full Height Sidebar -->
+    <aside
+      id="sidebar" 
+      class="fixed top-0 left-0 w-80 h-full bg-[#1D1354] text-white flex flex-col transform transition-transform duration-300 z-50 overflow-visible"
+    >
+      <!-- Sidebar Header with Logo and Toggle Button -->
+      <div
+        class="flex items-center justify-between p-4 h-16 border-b border-[#2E1B8C] relative"
+      >
+        <h2
+          class="text-2xl lg:text-3xl font-extrabold bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent"
+        >
+          Zyra
+        </h2>
+        <!-- Internal Hamburger button (inside sidebar) -->
+        <button
+          id="sidebarToggle"
+          class="hover:bg-[#2E1B8C] p-2 rounded transition-all duration-300 relative z-10"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="flex-1 px-4 py-6 space-y-2 text-sm overflow-y-auto">
+        <a
+          href="#"
+          class="block px-3 py-3 rounded-md hover:bg-[#2E1B8C] font-semibold text-lg transition-colors"
+          >Dashboard</a
+        >
+
+        <!-- Booking Dropdown -->
+        <div>
+          <button
+            id="bookingToggle"
+            class="flex items-center justify-between w-full px-3 py-3 rounded-md hover:bg-[#2E1B8C] transition-colors"
+          >
+            <span class="font-semibold text-lg">Booking</span>
+            <svg
+              id="bookingArrow"
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-4 h-4 transition-transform"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+          <div
+            id="bookingSubmenu"
+            class="ml-4 mt-2 space-y-1 overflow-hidden transition-all duration-300"
+            style="max-height: 0px"
+          >
+            <a
+              href="#"
+              class="block px-3 py-2 hover:bg-[#2E1B8C] rounded-md transition-colors font-semibold"
+              >Refund Bookings</a
+            >
+            <a
+              href="#"
+              class="block px-3 py-2 hover:bg-[#2E1B8C] rounded-md transition-colors font-semibold"
+              >Booking Records</a
+            >
+          </div>
+        </div>
+
+        <a
+          href="#"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Rooms</a
+        >
+        <a
+          href="#"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Ratings and Reviews</a
+        >
+        <a
+          href="#"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >User Queries</a
+        >
+        <a
+          href="#"
+          class="block px-3 py-3 bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Features & Facilities</a
+        >
+        <a
+          href="#"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Carousel</a
+        >
+        <a
+          href="#"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Backup & Restore</a
+        >
+        <a
+          href="#"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Settings</a
+        >
+      </nav>
+
+      <!-- Sidebar Footer -->
+      <div class="p-4 border-t border-[#2E1B8C]">
+        <div class="flex items-center space-x-3">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="#C2C6CC"
+            class="w-8 h-8"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
+            />
+          </svg>
+          <div>
+            <p class="font-medium text-sm">Admin User</p>
+            <p class="text-xs text-gray-300">Online</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="min-h-screen transition-all duration-300 lg:ml-80">
+      <main id="mainContentArea" class="p-4 sm:p-4 lg:p-8 mt-4 sm:mt-6 lg:mt-0">
+        
+        <!-- Main Page Header -->
+        <div class="transition-all duration-300 mb-8" id="headerContent">
+          <h1 class="text-3xl sm:text-3xl lg:text-4xl font-bold text-gray-800 transition-all duration-300 leading-tight" id="dashboardTitle">
+            FEATURES
+          </h1>
+        </div>
+
+        <!-- Features Section -->
+        <div class="mb-12">
+          <div class="flex justify-between items-center mb-4">
+            <div></div> <!-- Empty div for spacing -->
+            <button
+              id="addFeatureBtn"
+              class="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium text-sm"
+            >
+              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              <span>Add</span>
+            </button>
+          </div>
+
+          <!-- Features Table -->
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Naveen</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button class="delete-feature text-red-600 hover:text-red-900 p-1 rounded transition-colors" title="Delete">
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">2</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Larwin</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button class="delete-feature text-red-600 hover:text-red-900 p-1 rounded transition-colors" title="Delete">
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Facilities Section -->
+        <div class="mb-8">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-gray-800">FACILITIES</h2>
+            <button
+              id="addFacilityBtn"
+              class="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium text-sm"
+            >
+              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              <span>Add</span>
+            </button>
+          </div>
+
+          <!-- Facilities Table -->
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Icon</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">1</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="w-8 h-8 bg-gray-800 rounded flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"></path>
+                        </svg>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">WiFi</td>
+                    <td class="px-6 py-4 text-sm text-gray-600 max-w-xs">
+                      <p class="line-clamp-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button class="delete-facility text-red-600 hover:text-red-900 p-1 rounded transition-colors" title="Delete">
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+    <script>
+// Get elements
+const sidebar = document.getElementById("sidebar");
+const sidebarToggle = document.getElementById("sidebarToggle");
+const externalToggle = document.getElementById("externalToggle");
+const overlay = document.getElementById("overlay");
+const mainContent = document.getElementById("mainContent");
+const bookingToggle = document.getElementById("bookingToggle");
+const bookingSubmenu = document.getElementById("bookingSubmenu");
+const bookingArrow = document.getElementById("bookingArrow");
+
+// Modal elements
+const addFeatureModal = document.getElementById("addFeatureModal");
+const addFacilityModal = document.getElementById("addFacilityModal");
+const addFeatureBtn = document.getElementById("addFeatureBtn");
+const addFacilityBtn = document.getElementById("addFacilityBtn");
+const cancelAddFeature = document.getElementById("cancelAddFeature");
+const cancelAddFacility = document.getElementById("cancelAddFacility");
+const addFeatureForm = document.getElementById("addFeatureForm");
+const addFacilityForm = document.getElementById("addFacilityForm");
+const facilityIconInput = document.getElementById("facilityIconInput");
+const facilityFileName = document.getElementById("facilityFileName");
+
+let sidebarVisible = true;
+let isMobile = window.innerWidth < 1024;
+
+// Initialize sidebar state
+function initializeSidebar() {
+  if (isMobile) {
+    sidebar.style.transform = "translateX(-100%)";
+    mainContent.style.marginLeft = "0";
+    sidebarVisible = false;
+  } else {
+    sidebar.style.transform = "translateX(0)";
+    mainContent.style.marginLeft = "320px";
+    sidebarVisible = true;
+  }
+  updateToggleButtons();
+  updateContentSpacing();
+}
+
+// Update toggle buttons visibility and state
+function updateToggleButtons() {
+  if (sidebarVisible) {
+    externalToggle.classList.add("hidden");
+    sidebarToggle.style.display = "block";
+  } else {
+    externalToggle.classList.remove("hidden");
+    externalToggle.style.display = "block";
+    sidebarToggle.style.display = "none";
+  }
+}
+
+// Update content spacing to avoid overlap
+function updateContentSpacing() {
+  const mainContentArea = document.getElementById("mainContentArea");
+  const dashboardTitle = document.getElementById("dashboardTitle");
+  const headerContent = document.getElementById("headerContent");
+  
+  if (!sidebarVisible) {
+    if (mainContentArea) mainContentArea.style.paddingTop = "4rem";
+    if (dashboardTitle) dashboardTitle.style.paddingLeft = "3rem";
+    if (headerContent) headerContent.style.paddingLeft = "3rem";
+  } else {
+    if (mainContentArea) mainContentArea.style.paddingTop = "1rem";
+    if (dashboardTitle) dashboardTitle.style.paddingLeft = "0";
+    if (headerContent) headerContent.style.paddingLeft = "0";
+  }
+}
+
+// Toggle sidebar function
+function toggleSidebar() {
+  sidebarVisible = !sidebarVisible;
+
+  if (sidebarVisible) {
+    sidebar.style.transform = "translateX(0)";
+    if (isMobile) {
+      overlay.classList.remove("hidden");
+      mainContent.style.marginLeft = "0";
+    } else {
+      mainContent.style.marginLeft = "320px";
+    }
+  } else {
+    sidebar.style.transform = "translateX(-100%)";
+    overlay.classList.add("hidden");
+    mainContent.style.marginLeft = "0";
+  }
+
+  updateToggleButtons();
+  updateContentSpacing();
+}
+
+// Modal functions
+function openAddFeatureModal() {
+  addFeatureModal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+function closeAddFeatureModal() {
+  addFeatureModal.classList.add("hidden");
+  document.body.style.overflow = "";
+  addFeatureForm.reset();
+}
+
+function openAddFacilityModal() {
+  addFacilityModal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+function closeAddFacilityModal() {
+  addFacilityModal.classList.add("hidden");
+  document.body.style.overflow = "";
+  addFacilityForm.reset();
+  facilityFileName.textContent = "No file chosen";
+}
+
+// Handle window resize
+window.addEventListener("resize", () => {
+  const wasMobile = isMobile;
+  isMobile = window.innerWidth < 1024;
+
+  if (wasMobile !== isMobile) {
+    overlay.classList.add("hidden");
+    initializeSidebar();
+  }
+});
+
+// Event listeners for sidebar
+sidebarToggle.addEventListener("click", toggleSidebar);
+externalToggle.addEventListener("click", toggleSidebar);
+
+overlay.addEventListener("click", () => {
+  if (isMobile && sidebarVisible) {
+    toggleSidebar();
+  }
+});
+
+// Booking submenu toggle
+bookingToggle.addEventListener("click", () => {
+  const currentMaxHeight = bookingSubmenu.style.maxHeight;
+  const isOpen = currentMaxHeight && currentMaxHeight !== "0px";
+
+  if (isOpen) {
+    bookingSubmenu.style.maxHeight = "0px";
+    bookingArrow.style.transform = "rotate(0deg)";
+  } else {
+    const height = bookingSubmenu.scrollHeight;
+    bookingSubmenu.style.maxHeight = height + "px";
+    bookingArrow.style.transform = "rotate(180deg)";
+  }
+});
+
+// Modal event listeners
+addFeatureBtn.addEventListener("click", openAddFeatureModal);
+addFacilityBtn.addEventListener("click", openAddFacilityModal);
+cancelAddFeature.addEventListener("click", closeAddFeatureModal);
+cancelAddFacility.addEventListener("click", closeAddFacilityModal);
+
+// Close modals when clicking outside
+addFeatureModal.addEventListener("click", (e) => {
+  if (e.target === addFeatureModal) {
+    closeAddFeatureModal();
+  }
+});
+
+addFacilityModal.addEventListener("click", (e) => {
+  if (e.target === addFacilityModal) {
+    closeAddFacilityModal();
+  }
+});
+
+// Handle file input change
+facilityIconInput.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    facilityFileName.textContent = file.name;
+  } else {
+    facilityFileName.textContent = "No file chosen";
+  }
+});
+
+// Handle form submissions
+addFeatureForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const featureName = document.getElementById("featureName").value;
+  
+  if (featureName.trim()) {
+    alert(`Feature "${featureName}" added successfully!`);
+    closeAddFeatureModal();
+    // Here you would typically send the data to your server
+  } else {
+    alert("Please enter a feature name.");
+  }
+});
+
+addFacilityForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const facilityName = document.getElementById("facilityName").value;
+  const description = document.getElementById("facilityDescription").value;
+  
+  if (facilityName.trim() && description.trim()) {
+    alert(`Facility "${facilityName}" added successfully!`);
+    closeAddFacilityModal();
+    // Here you would typically send the data to your server
+  } else {
+    alert("Please fill in all required fields.");
+  }
+});
+
+// Delete Feature functionality
+document.addEventListener("click", (e) => {
+  if (e.target.closest(".delete-feature")) {
+    const row = e.target.closest("tr");
+    const featureName = row.querySelector("td:nth-child(2)").textContent;
+    
+    if (confirm(`Are you sure you want to delete the feature "${featureName}"?`)) {
+      row.remove();
+      alert("Feature deleted successfully!");
+    }
+  }
+});
+
+// Delete Facility functionality
+document.addEventListener("click", (e) => {
+  if (e.target.closest(".delete-facility")) {
+    const row = e.target.closest("tr");
+    const facilityName = row.querySelector("td:nth-child(3)").textContent;
+    
+    if (confirm(`Are you sure you want to delete the facility "${facilityName}"?`)) {
+      row.remove();
+      alert("Facility deleted successfully!");
+    }
+  }
+});
+
+// Close modals on Escape key
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    if (!addFeatureModal.classList.contains("hidden")) {
+      closeAddFeatureModal();
+    }
+    if (!addFacilityModal.classList.contains("hidden")) {
+      closeAddFacilityModal();
+    }
+  }
+});
+
+// Initialize everything when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  initializeSidebar();
+});
+
+initializeSidebar();
+
+    </script>
+  </body>
+</html>

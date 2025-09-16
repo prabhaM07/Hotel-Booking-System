@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Admin Login</title>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom gradient using #1D1354 */
+    body {
+      background: linear-gradient(135deg, #1D1354 0%, #0f0a2a 100%) !important;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center font-sans antialiased">
+
+  <!-- Login Card -->
+  <div id="loginCard"
+       class="relative w-full max-w-md bg-white/90 backdrop-blur rounded-xl shadow-xl p-8 sm:p-10">
+
+    <!-- Close button -->
+    <button id="closeBtn"
+            class="absolute top-4 right-4 text-slate-400 hover:text-indigo-600 text-xl leading-none">
+      &times;
+    </button>
+
+    <!-- Floating admin icon -->
+    <div class="absolute -top-10 left-1/2 -translate-x-1/2 h-20 w-20 flex items-center justify-center
+                bg-[#1D1354] text-white text-4xl rounded-full shadow-lg">
+      🔒
+    </div>
+
+    <!-- Heading -->
+    <h2 class="mt-12 mb-6 text-center text-2xl font-bold tracking-wide text-slate-800">
+      Admin&nbsp;Login
+    </h2>
+
+    <!-- Add inside your form -->
+<form id="loginForm" class="space-y-5">
+  <!-- Email / Mobile -->
+  <div>
+    <label for="email" class="block mb-1 font-medium text-slate-700">Email&nbsp;or&nbsp;Mobile</label>
+    <input id="email" type="text" placeholder="Enter your Email or Mobile"
+           class="w-full rounded-full border border-slate-300 py-3 px-5 text-sm
+                  focus:border-[#1D1354] focus:ring-[#1D1354]/30 focus:ring-4 outline-none">
+  </div>
+
+  <!-- Password -->
+  <div>
+    <label for="password" class="block mb-1 font-medium text-slate-700">Password</label>
+    <div class="relative">
+      <input id="password" type="password" placeholder="Enter your password"
+             class="w-full rounded-full border border-slate-300 py-3 px-5 pr-12 text-sm
+                    focus:border-[#1D1354] focus:ring-[#1D1354]/30 focus:ring-4 outline-none">
+      <button type="button" id="togglePwd"
+              class="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-[#1D1354]">
+        👁️
+      </button>
+    </div>
+  </div>
+
+  <!-- Error message -->
+  <p id="errorMsg" class="text-red-500 text-sm hidden">Invalid email or password</p>
+
+  <!-- Submit -->
+  <button type="submit"
+          class="w-full rounded-full bg-[#1D1354] hover:bg-[#160f45] active:bg-[#0f092f]
+                 text-white font-semibold py-3 transition">
+    Continue
+  </button>
+</form>
+
+
+<script src="/src/admin/features/auth/login.js"></script>
+
+</body>
+</html>

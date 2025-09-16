@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Responsive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="m-0 p-0 bg-gray-100">
+    <!-- Mobile Overlay -->
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+
+    <!-- External Toggle Button -->
+    <button id="externalToggle" class="fixed top-4 left-4 z-50 p-2 bg-white text-gray-700 rounded-lg shadow-lg hover:shadow-xl hover:bg-gray-50 transition-all duration-300 hidden border border-gray-200">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+      </svg>
+    </button>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed top-0 left-0 w-80 h-full bg-[#1D1354] text-white flex flex-col transform transition-transform duration-300 z-50 overflow-visible">
+      <!-- Sidebar Header -->
+      <div class="flex items-center justify-between p-4 h-16 border-b border-[#2E1B8C] relative">
+        <h2 class="text-2xl lg:text-3xl font-extrabold bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent">
+          Zyra
+        </h2>
+        <button id="sidebarToggle" class="hover:bg-[#2E1B8C] p-2 rounded transition-all duration-300 relative z-10">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="flex-1 px-4 py-6 space-y-2 text-sm overflow-y-auto">
+        <a href="#" class="block px-3 py-3 rounded-md bg-[#2E1B8C] font-semibold text-lg">Dashboard</a>
+
+        <!-- Booking Dropdown -->
+        <div>
+          <button id="bookingToggle" class="flex items-center justify-between w-full px-3 py-3 rounded-md hover:bg-[#2E1B8C] transition-colors">
+            <span class="font-semibold text-lg">Booking</span>
+            <svg id="bookingArrow" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div id="bookingSubmenu" class="ml-4 mt-2 space-y-1 overflow-hidden transition-all duration-300" style="max-height: 0px">
+            <a href="#" class="block px-3 py-2 hover:bg-[#2E1B8C] rounded-md transition-colors font-semibold">Refund Bookings</a>
+            <a href="#" class="block px-3 py-2 hover:bg-[#2E1B8C] rounded-md transition-colors font-semibold">Booking Records</a>
+          </div>
+        </div>
+
+        <a href="#" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Rooms</a>
+        <a href="#" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Ratings and Reviews</a>
+        <a href="#" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">User Queries</a>
+        <a href="#" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Features & Facilities</a>
+        <a href="#" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Carousel</a>
+        <a href="#" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Backup & Restore</a>
+        <a href="#" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Settings</a>
+      </nav>
+
+      <!-- Profile Section -->
+      <div class="p-4 border-t border-[#2E1B8C] relative">
+        <div class="flex items-center space-x-3 cursor-pointer hover:bg-[#2E1B8C] rounded-lg p-2 transition-colors duration-200" onclick="toggleProfileDropdown()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#C2C6CC" class="w-8 h-8">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+          </svg>
+          <div class="flex-1 sidebar-footer">
+            <p class="font-medium text-sm">Admin User</p>
+            <p class="text-xs text-gray-300">Online</p>
+          </div>
+          <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" id="dropdownArrow" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+
+        <!-- Profile Dropdown Menu -->
+        <div id="profileDropdown" class="hidden absolute bottom-full left-4 right-4 mb-2 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+          <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+            <svg class="w-4 h-4 mr-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+            </svg>
+            View Profile
+          </a>
+         
+          <hr class="my-1 border-gray-100">
+          <a href="#" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200">
+            <svg class="w-4 h-4 mr-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path>
+            </svg>
+            Logout
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="min-h-screen transition-all duration-300 lg:ml-80">
+      <main id="mainContentArea" class="p-4 sm:p-4 lg:p-8 mt-4 sm:mt-6 lg:mt-0">
+        <!-- Page Header -->
+        <div class="mb-8">
+          <div class="transition-all duration-300" id="headerContent">
+            <h1 class="text-3xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-2 transition-all duration-300" id="dashboardTitle">
+              Dashboard
+            </h1>
+            <p class="text-gray-600">Welcome to your admin dashboard</p>
+          </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div id="dashboardGrid" class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+          <!-- Stats Cards Section -->
+          <div class="xl:col-span-2">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-2 gap-4 lg:gap-6">
+              <!-- New Bookings Card -->
+              <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-gray-600 text-sm font-medium mb-1">New Bookings</p>
+                    <p class="text-3xl font-bold text-green-600" data-stat="bookings">0</p>
+                    <p class="text-xs text-gray-500 mt-1">↑ 12% from last month</p>
+                  </div>
+                  <div class="bg-green-100 p-3 rounded-full">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Refund Requests Card -->
+              <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-gray-600 text-sm font-medium mb-1">Refund Requests</p>
+                    <p class="text-3xl font-bold text-orange-600" data-stat="refunds">0</p>
+                    <p class="text-xs text-gray-500 mt-1">↓ 5% from last month</p>
+                  </div>
+                  <div class="bg-orange-100 p-3 rounded-full">
+                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- User Queries Card -->
+              <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-gray-600 text-sm font-medium mb-1">User Queries</p>
+                    <p class="text-3xl font-bold text-blue-600" data-stat="queries">0</p>
+                    <p class="text-xs text-gray-500 mt-1">↑ 8% from last month</p>
+                  </div>
+                  <div class="bg-blue-100 p-3 rounded-full">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Cancelled Card -->
+              <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-gray-600 text-sm font-medium mb-1">Cancelled</p>
+                    <p class="text-3xl font-bold text-red-600" data-stat="cancelled">0</p>
+                    <p class="text-xs text-gray-500 mt-1">↓ 15% from last month</p>
+                  </div>
+                  <div class="bg-red-100 p-3 rounded-full">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Activity Section -->
+          <div class="xl:col-span-1">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 h-fit sticky top-8">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-gray-800">Recent Activity</h2>
+                <div class="bg-red-100 text-red-600 text-xs font-medium px-2 py-1 rounded-full" id="activityBadge">
+                  0 new
+                </div>
+              </div>
+              <div class="space-y-3">
+                <!-- Activity items will be populated by JavaScript -->
+              </div>
+              <button class="w-full mt-3 text-sm text-blue-600 hover:text-blue-700 font-medium">
+                View all activities →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- User Analytics Chart -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-bold text-gray-800">User Analytics</h3>
+              <select id="userYearSelect" class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer">
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025" selected>2025</option>
+              </select>
+            </div>
+            <div class="h-64 relative">
+              <canvas id="userTrendsChart"></canvas>
+            </div>
+            <div class="mt-4 flex items-center justify-center space-x-6 text-sm">
+              <div class="flex items-center cursor-pointer hover:opacity-75 transition-opacity" id="totalUsersLegend">
+                <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                <span class="text-gray-600">Total Users</span>
+              </div>
+              <div class="flex items-center cursor-pointer hover:opacity-75 transition-opacity" id="activeUsersLegend">
+                <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                <span class="text-gray-600">Active Users</span>
+              </div>
+              <div class="flex items-center cursor-pointer hover:opacity-75 transition-opacity" id="inactiveUsersLegend">
+                <div class="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
+                <span class="text-gray-600">Inactive Users</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Room Occupancy -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Room Occupancy</h3>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between" data-room="deluxe">
+                <span class="text-sm text-gray-600">Deluxe Rooms</span>
+                <div class="flex items-center space-x-2">
+                  <div class="w-32 bg-gray-200 rounded-full h-2">
+                    <div class="bg-green-500 h-2 rounded-full" style="width: 0%"></div>
+                  </div>
+                  <span class="text-sm font-medium text-gray-700">0%</span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between" data-room="standard">
+                <span class="text-sm text-gray-600">Standard Rooms</span>
+                <div class="flex items-center space-x-2">
+                  <div class="w-32 bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
+                  </div>
+                  <span class="text-sm font-medium text-gray-700">0%</span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between" data-room="suite">
+                <span class="text-sm text-gray-600">Suite Rooms</span>
+                <div class="flex items-center space-x-2">
+                  <div class="w-32 bg-gray-200 rounded-full h-2">
+                    <div class="bg-orange-500 h-2 rounded-full" style="width: 0%"></div>
+                  </div>
+                  <span class="text-sm font-medium text-gray-700">0%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Booking Analytics Section -->
+        <div class="py-8">
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div class="mb-6">
+              <h3 class="text-xl font-bold text-gray-800 mb-2">Booking Analytics</h3>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="bg-gray-50 rounded-lg p-4 mb-6">
+              <div class="flex items-center justify-between mb-3">
+                <h4 class="text-sm font-semibold text-gray-700">Filter & Search Options</h4>
+              </div>
+              <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                <div class="flex items-center space-x-2">
+                  <label class="text-sm font-medium text-gray-600 min-w-0 whitespace-nowrap">Year:</label>
+                  <select id="analyticsYear" class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer min-w-0 flex-shrink-0">
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025" selected>2025</option>
+                  </select>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <label class="text-sm font-medium text-gray-600 min-w-0 whitespace-nowrap">From:</label>
+                  <select id="analyticsStartMonth" class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer min-w-0 flex-shrink-0">
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6" selected>June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                  </select>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <label class="text-sm font-medium text-gray-600 min-w-0 whitespace-nowrap">To:</label>
+                  <select id="analyticsEndMonth" class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer min-w-0 flex-shrink-0">
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12" selected>December</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Analytics Chart -->
+            <div class="h-64 relative mb-4">
+              <canvas id="userAnalyticsChart"></canvas>
+            </div>
+
+            <!-- Interactive Legend -->
+            <div class="flex items-center justify-center space-x-6 text-sm mb-2">
+              <div class="flex items-center cursor-pointer hover:opacity-75 transition-opacity" id="totalBookingsLegend">
+                <div class="w-4 h-4 bg-blue-500 rounded mr-2"></div>
+                <span class="text-gray-600">Total Bookings</span>
+              </div>
+              <div class="flex items-center cursor-pointer hover:opacity-75 transition-opacity" id="cancelledBookingsLegend">
+                <div class="w-4 h-4 bg-red-500 rounded mr-2"></div>
+                <span class="text-gray-600">Cancelled Bookings</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="/src/admin/features/dashboard/dashboard.js"></script>
+  </body>
+</html>
