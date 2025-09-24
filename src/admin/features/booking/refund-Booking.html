@@ -1,313 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Refund Bookings</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
-    <!-- Load jsPDF FIRST, then autoTable plugin -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-  </head>
-  <body class="m-0 p-0 bg-gray-100">
-    <!-- Mobile Overlay -->
-    <div
-      id="overlay"
-      class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"
-    ></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Refund-Booking</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/dotSpinner.js"></script>
 
-    <!-- External Toggle Button (visible when sidebar is hidden) -->
-    <button 
-      id="externalToggle"
-      class="fixed top-4 left-4 z-50 p-2 bg-white text-gray-700 rounded-lg shadow-lg hover:shadow-xl hover:bg-gray-50 transition-all duration-300 hidden border border-gray-200"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="w-5 h-5"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-        />
+  <style>
+    .relative {
+      position: relative;
+    }
+    #filtersDropdown {
+      animation: slideDown 0.2s ease-out;
+    }
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+  
+<body class="m-0 p-0 bg-gray-100">
+   <!-- Mobile Overlay -->
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+
+    <!-- External Toggle Button -->
+    <button id="externalToggle" class="fixed top-4 left-4 z-50 p-2 bg-white text-gray-700 rounded-lg shadow-lg hover:shadow-xl hover:bg-gray-50 transition-all duration-300 hidden border border-gray-200">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
       </svg>
     </button>
 
-    <!-- Full Height Sidebar -->
-    <aside
-      id="sidebar" 
-      class="fixed top-0 left-0 w-80 h-full bg-[#1D1354] text-white flex flex-col transform transition-transform duration-300 z-50 overflow-visible"
-    >
-      <!-- Sidebar Header with Logo and Toggle Button -->
-      <div
-        class="flex items-center justify-between p-4 h-16 border-b border-[#2E1B8C] relative"
-      >
-        <h2
-          class="text-2xl lg:text-3xl font-extrabold bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent"
-        >
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed top-0 left-0 w-80 h-full bg-[#1D1354] text-white flex flex-col transform transition-transform duration-300 z-50 overflow-hidden">
+      <!-- Sidebar Header -->
+      <div class="flex items-center justify-between p-4 h-16 border-b border-[#2E1B8C] relative">
+        <h2 class="text-2xl lg:text-3xl font-extrabold bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent">
           Zyra
         </h2>
-        <!-- Internal Hamburger button (inside sidebar) -->
-        <button
-          id="sidebarToggle"
-          class="hover:bg-[#2E1B8C] p-2 rounded transition-all duration-300 relative z-10"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="w-5 h-5"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-            />
+        <button id="sidebarToggle" class="hover:bg-[#2E1B8C] p-2 rounded transition-all duration-300 relative z-10">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
           </svg>
         </button>
       </div>
 
       <!-- Navigation -->
-      <nav class="flex-1 px-4 py-6 space-y-2 text-sm overflow-y-auto">
-        <a
-          href="#"
-          class="block px-3 py-3 rounded-md hover:bg-[#2E1B8C] font-semibold text-lg transition-colors"
-          >Dashboard</a
-        >
+    <nav class="flex-1 px-4 py-6 space-y-2 text-sm overflow-y-hidden">
+      <a href="/src/admin/features/dashboard/dashboard.html" class="block px-3 py-3 rounded-md hover:bg-[#2E1B8C] font-semibold text-lg">Dashboard</a>
 
         <!-- Booking Dropdown -->
         <div>
-          <button
-            id="bookingToggle"
-            class="flex items-center justify-between w-full px-3 py-3 rounded-md hover:bg-[#2E1B8C] transition-colors"
-          >
+          <button id="bookingToggle" class="flex items-center justify-between w-full px-3 py-3 rounded-md hover:bg-[#2E1B8C] transition-colors">
             <span class="font-semibold text-lg">Booking</span>
-            <svg
-              id="bookingArrow"
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-4 h-4 transition-transform"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M19 9l-7 7-7-7"
-              />
+            <svg id="bookingArrow" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-          <div
-            id="bookingSubmenu"
-            class="ml-4 mt-2 space-y-1 overflow-hidden transition-all duration-300"
-            style="max-height: 0px"
-          >
-            <a
-              href="#"
-              class="block px-3 py-2 bg-[#2E1B8C] rounded-md transition-colors font-semibold"
-              >Refund Bookings</a
-            >
-            <a
-              href="#"
-              class="block px-3 py-2 hover:bg-[#2E1B8C] rounded-md transition-colors font-semibold"
-              >Booking Records</a
-            >
+          <div id="bookingSubmenu" class="ml-4 mt-2 space-y-1 overflow-hidden transition-all duration-300" style="max-height: 0px">
+            <a href="#" class="block px-3 py-2 bg-[#2E1B8C] rounded-md transition-colors font-semibold">Refund Bookings</a>
+            <a href="/src/admin/features/booking/bookingRecords.html" class="block px-3 py-2 hover:bg-[#2E1B8C] rounded-md transition-colors font-semibold">Booking Records</a>
           </div>
         </div>
 
-        <a
-          href="#"
-          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
-          >Rooms</a
-        >
-        <a
-          href="#"
-          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
-          >Ratings and Reviews</a
-        >
-        <a
-          href="#"
-          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
-          >User Queries</a
-        >
-        <a
-          href="#"
-          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
-          >Features & Facilities</a
-        >
-        <a
-          href="#"
-          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
-          >Carousel</a
-        >
-        <a
-          href="#"
-          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
-          >Backup & Restore</a
-        >
-        <a
-          href="#"
-          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
-          >Settings</a
-        >
-      </nav>
+      <a href="/src/admin/features/rooms/rooms.html" id="rooms" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Rooms</a>
+      <a href="/src/admin/features/ratings-reviews/reviews-ratings.html" id="ratingsReviews" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Ratings and Reviews</a>
+      <a href="/src/admin/features/user-queries/queries.html" id="userQueries" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">User Queries</a>
+      <a href="/src/admin/features/feature-facilities/feature-facilities.html" id="featuresFacilities" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Features & Facilities</a>
+      <a href="#" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Backup & Restore</a>
+      <a href="/src/admin/features/content-management/content-management.html" id="settings" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Settings</a>
+    </nav>
 
-      <!-- Profile Section -->
-      <div class="p-4 border-t border-[#2E1B8C] relative">
-        <div class="flex items-center space-x-3 cursor-pointer hover:bg-[#2E1B8C] rounded-lg p-2 transition-colors duration-200" onclick="toggleProfileDropdown()">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#C2C6CC" class="w-8 h-8">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
-          </svg>
-          <div class="flex-1 sidebar-footer">
-            <p class="font-medium text-sm">Admin User</p>
-            <p class="text-xs text-gray-300">Online</p>
-          </div>
-          <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" id="dropdownArrow" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-          </svg>
-        </div>
-
-        <!-- Profile Dropdown Menu -->
-        <div id="profileDropdown" class="hidden absolute bottom-full left-4 right-4 mb-2 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-          <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200">
-            <svg class="w-4 h-4 mr-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-            </svg>
-            View Profile
-          </a>
-         
-          <hr class="my-1 border-gray-100">
-          <a href="#" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200">
-            <svg class="w-4 h-4 mr-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path>
-            </svg>
-            Logout
-          </a>
-        </div>
-      </div>
-    </aside>
-
-    <!-- Main Content -->
-    <div id="mainContent" class="min-h-screen transition-all duration-300 lg:ml-80">
-      <main id="mainContentArea" class="p-4 sm:p-4 lg:p-8 mt-4 sm:mt-6 lg:mt-0">
-        
-        <!-- Header -->
-        <div class="transition-all duration-300 mb-8" id="headerContent">
-          <h1 class="text-3xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-2 transition-all duration-300" id="dashboardTitle">
-            REFUND BOOKINGS
-          </h1>
-        </div>
-
-        <!-- Search, Export and Filter Section -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-            
-            <!-- Left side: Export All Button -->
-            <div class="flex items-center gap-4">
-              <button
-                id="exportAllBtn"
-                class="flex items-center gap-2 px-4 py-2 bg-[#1D1354] text-white rounded-lg hover:bg-[#2E1B8C] transition-colors font-medium"
-              >
-                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span>Export all</span>
-              </button>
-            </div>
-
-            <!-- Right side: Search and Filters -->
-            <div class="flex items-center gap-4 flex-1 justify-end">
-              <!-- Search Box -->
-              <div class="max-w-md">
-                <div class="relative">
-                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                  </div>
-                  <input
-                    type="text"
-                    id="searchInput"
-                    placeholder="Search refund requests..."
-                    class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1D1354] focus:border-transparent transition-all duration-200"
-                  />
-                </div>
-              </div>
-
-              <!-- Filters -->
-              <button
-                id="filtersBtn"
-                class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <svg class="h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z" />
-                </svg>
-                <span class="text-gray-700">Filters</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Loading Indicator -->
-        <div id="loadingIndicator" class="flex justify-center items-center py-8">
-          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1D1354]"></div>
-          <span class="ml-2 text-gray-600">Loading refund requests...</span>
-        </div>
-
-        <!-- Data Table -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" id="tableContainer" style="display: none;">
-          <div class="overflow-x-auto">
-            <table class="w-full">
-              <thead class="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order Id</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User Name</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone no</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category Type</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Room No</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Check in</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Check out</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Booked Date</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Refund Amount</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                </tr>
-              </thead>
-              <tbody id="bookingTableBody" class="bg-white divide-y divide-gray-200">
-                <!-- Data will be populated here by JavaScript -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- No Data Message -->
-        <div id="noDataMessage" class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center" style="display: none;">
-          <div class="text-gray-500">
-            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <h3 class="mt-2 text-sm font-medium text-gray-900">No refund requests found</h3>
-            <p class="mt-1 text-sm text-gray-500">There are no refund requests to display at this time.</p>
-          </div>
-        </div>
-
-      </main>
+       <!-- Profile Section -->
+    <div class="p-4 border-t border-[#2E1B8C] relative">
+  <div class="flex items-center space-x-3 cursor-pointer hover:bg-[#2E1B8C] rounded-lg p-2 transition-colors duration-200" onclick="toggleProfileDropdown()">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#C2C6CC" class="w-8 h-8">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+    </svg>
+    <div class="flex-1">
+      <p class="font-medium text-sm text-white">Admin User</p>
+      <p class="text-xs text-gray-300">Online</p>
     </div>
+    <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" id="dropdownArrow" fill="currentColor" viewBox="0 0 20 20">
+      <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+    </svg>
+  </div>
 
-    <!-- Include the separate JavaScript files -->
-    <script src="sidebar.js"></script>
-    <script src="refund-booking.js"></script>
-  </body>
+  <!-- Profile Dropdown Menu -->
+  <div id="profileDropdown" class="hidden absolute bottom-full left-4 right-4 mb-2 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+    <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+      <svg class="w-4 h-4 mr-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+      </svg>
+      View Profile
+    </a>
+   
+    <hr class="my-1 border-gray-100">
+    <a href="#" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200">
+      <svg class="w-4 h-4 mr-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path>
+      </svg>
+      Logout
+    </a>
+  </div>
+</div>
+</aside>
+
+  <!-- Main Content -->
+  <div id="mainContent" class="min-h-screen transition-all duration-300 lg:ml-80">
+    <main id="mainContentArea" class="p-4 sm:p-4 lg:p-8 mt-4 sm:mt-6 lg:mt-0" role="main">
+      
+      <!-- Header -->
+      <header class="transition-all duration-300 mb-8" id="headerContent">
+        <h1 class="text-3xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-2 transition-all duration-300" id="dashboardTitle">
+          REFUND BOOKINGS
+        </h1>
+      </header>
+
+      <!-- Search and Filter Section -->
+      <section class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6" aria-label="Search and filter options">
+        <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+          
+          <!-- Search Box -->
+          <div class="flex-1 max-w-md">
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Search by name, order ID, room number..."
+                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1D1354] focus:border-transparent transition-all duration-200"
+                aria-label="Search refund bookings"
+              />
+            </div>
+          </div>
+
+          <!-- Filters -->
+          <div class="flex items-center gap-4">
+            <button
+              id="filtersBtn"
+              class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              aria-label="Open filters menu"
+            >
+              <svg class="h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z" />
+              </svg>
+              <span class="text-gray-700">Filters</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      
+  <!-- Loading Indicator - positioned below table -->
+  <div id="loadingIndicator" class="flex justify-center items-center py-12 bg-white border-t border-gray-100 hidden" role="status" aria-label="Loading refund bookings">
+    <l-dot-spinner size="40" speed="0.9" color="#1D1354"></l-dot-spinner>
+    <span class="ml-3 text-gray-600 font-medium">Loading refund bookings...</span>
+  </div>
+
+     <!-- Data Table -->
+<section class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" id="tableContainer" aria-label="Refund bookings data">
+  <div class="overflow-x-auto">
+    <table class="w-full" role="table" aria-label="Refund bookings table">
+      <thead class="bg-gray-50 border-b border-gray-200">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Order ID</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">User Name</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Phone No</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Category Type</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Room No</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Date</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Check In</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Check Out</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Booked Date</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Price</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Refund Status</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Refund Amount</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Refund Reason</th>
+        </tr>
+      </thead>
+      <tbody id="bookingTableBody" class="bg-white divide-y divide-gray-200">
+        <!-- Data will be populated here by JavaScript -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- No Data Message -->
+  <div id="noDataMessage" class="bg-white p-8 text-center hidden" role="status">
+    <div class="text-gray-500">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">No refund bookings found</h3>
+      <p class="mt-1 text-sm text-gray-500">There are no refund bookings to display at this time.</p>
+    </div>
+  </div>
+</section>
+
+    </main>
+  </div>
+
+  <!-- Include the separate JavaScript files -->
+  <script src="sidebar.js"></script>
+  <script src="refund-booking.js"></script>
+</body>
 </html>

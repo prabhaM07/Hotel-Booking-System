@@ -39,40 +39,36 @@ function checkAuthStatus() {
 // Add logout functionality
 function logout() {
   localStorage.removeItem('adminUser');
-  localStorage.removeItem('dashboardData');
   window.location.href = '../auth/login.html';
 }
 
 // =================== API DATA INTEGRATION ===================
 
-// Load dashboard data from localStorage or API
+// Load dashboard data from API and update UI
 async function fetchAndIntegrateDashboardData() {
   try {
-    // First try to get data from localStorage (set during login)
-    const storedData = localStorage.getItem('dashboardData');
-    
-    if (storedData) {
-      dashboardData = JSON.parse(storedData);
-      console.log('Using stored dashboard data');
-    } else {
-      // Fallback: fetch from API
-      const response = await fetch(`${API_BASE}/admin/1`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      dashboardData = await response.json();
-      console.log('Fetched fresh dashboard data');
+    const response = await fetch(`${API_BASE}/admin/2`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    dashboardData = await response.json();
+    console.log('Fetched fresh dashboard data:', dashboardData);
     
-    // Update dashboard components with real data
-    updateStatsCards(dashboardData.stats);
-    updateRecentActivity(dashboardData.recentActivity);
-    updateRoomOccupancy(dashboardData.roomOccupancy);
-    updateAdminInfo(dashboardData.admin);
-    updateActivityBadge(dashboardData.recentActivity);
+    // Update dashboard components
+    updateStatsCards(dashboardData.dashboard.stats);
+    updateRecentActivity(dashboardData.dashboard.recentActivity || []);
+    updateRoomOccupancy(dashboardData.dashboard.roomOccupancy || {});
+    updateAdminInfo(dashboardData.dashboard.admin || {});
+    updateActivityBadge(dashboardData.dashboard.recentActivity);
     
-    // Initialize charts with real data
-    initializeChartsWithRealData(dashboardData.analytics, dashboardData.bookingTrends);
+    // Initialize charts with real data AFTER data is loaded
+    await initializeChartsWithRealData(
+      dashboardData.dashboard.analytics, 
+      dashboardData.dashboard.bookingTrends
+    );
+    
+    // Setup event listeners AFTER charts are initialized
+    setupChartEventListeners();
     
   } catch (error) {
     console.error('Error loading dashboard data:', error);
@@ -80,12 +76,11 @@ async function fetchAndIntegrateDashboardData() {
   }
 }
 
-// Show error message to user
+// Show error message in UI
 function showErrorMessage(message) {
   const errorDiv = document.createElement('div');
   errorDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4';
   errorDiv.textContent = message;
-  
   const mainContent = document.getElementById('mainContentArea');
   if (mainContent) {
     mainContent.insertBefore(errorDiv, mainContent.firstChild);
@@ -99,19 +94,18 @@ function updateStatsCards(stats) {
   const queriesStat = document.querySelector('[data-stat="queries"]');
   const cancelledStat = document.querySelector('[data-stat="cancelled"]');
   
-  if (bookingsStat) bookingsStat.textContent = stats.newBookings;
-  if (refundsStat) refundsStat.textContent = stats.refundRequests;
-  if (queriesStat) queriesStat.textContent = stats.userQueries;
-  if (cancelledStat) cancelledStat.textContent = stats.cancelled;
+  if (bookingsStat && stats.newBookings) bookingsStat.textContent = stats.newBookings;
+  if (refundsStat && stats.refundRequests) refundsStat.textContent = stats.refundRequests;
+  if (queriesStat && stats.userQueries) queriesStat.textContent = stats.userQueries;
+  if (cancelledStat && stats.cancelled) cancelledStat.textContent = stats.cancelled;
 }
 
 // Update recent activity with real data
 function updateRecentActivity(activities) {
   const activityContainer = document.querySelector('.space-y-3');
-  if (!activityContainer) return;
+  if (!activityContainer || !Array.isArray(activities)) return;
   
   activityContainer.innerHTML = '';
-  
   activities.forEach(activity => {
     const statusColors = {
       'booking': 'green',
@@ -139,7 +133,7 @@ function updateRecentActivity(activities) {
 // Update activity badge count
 function updateActivityBadge(activities) {
   const activityBadge = document.getElementById('activityBadge');
-  if (activityBadge) {
+  if (activityBadge && Array.isArray(activities)) {
     const newActivities = activities.filter(activity => activity.status === 'new').length;
     activityBadge.textContent = `${newActivities} new`;
   }
@@ -147,21 +141,26 @@ function updateActivityBadge(activities) {
 
 // Update room occupancy with real data
 function updateRoomOccupancy(occupancy) {
-  // Update deluxe rooms
+  if (!occupancy || !occupancy.deluxe || !occupancy.standard || !occupancy.suite) {
+    console.warn("Room occupancy data missing or incomplete.");
+    return;
+  }
+  
+  // Deluxe rooms
   const deluxePercent = Math.round((occupancy.deluxe.occupied / occupancy.deluxe.total) * 100);
   const deluxeBar = document.querySelector('[data-room="deluxe"] .bg-green-500');
   const deluxeText = document.querySelector('[data-room="deluxe"] .text-gray-700');
   if (deluxeBar) deluxeBar.style.width = `${deluxePercent}%`;
   if (deluxeText) deluxeText.textContent = `${deluxePercent}%`;
   
-  // Update standard rooms  
+  // Standard rooms  
   const standardPercent = Math.round((occupancy.standard.occupied / occupancy.standard.total) * 100);
   const standardBar = document.querySelector('[data-room="standard"] .bg-blue-500');
   const standardText = document.querySelector('[data-room="standard"] .text-gray-700');
   if (standardBar) standardBar.style.width = `${standardPercent}%`;
   if (standardText) standardText.textContent = `${standardPercent}%`;
   
-  // Update suite rooms
+  // Suite rooms
   const suitePercent = Math.round((occupancy.suite.occupied / occupancy.suite.total) * 100);
   const suiteBar = document.querySelector('[data-room="suite"] .bg-orange-500');
   const suiteText = document.querySelector('[data-room="suite"] .text-gray-700');
@@ -172,7 +171,7 @@ function updateRoomOccupancy(occupancy) {
 // Update admin info in sidebar
 function updateAdminInfo(admin) {
   const adminNameElement = document.querySelector('.sidebar-footer p');
-  if (adminNameElement) {
+  if (adminNameElement && admin.name) {
     adminNameElement.textContent = admin.name;
   }
 }
@@ -180,14 +179,19 @@ function updateAdminInfo(admin) {
 // =================== CHARTS WITH REAL DATA ===================
 
 // Initialize charts with real API data
-function initializeChartsWithRealData(analytics, bookingTrends) {
-  // Initialize User Trends Chart with real data
+async function initializeChartsWithRealData(analytics, bookingTrends) {
+  if (!analytics || !bookingTrends) {
+    console.error('Analytics or booking trends data missing');
+    return;
+  }
+  
+  // Initialize User Trends Chart
   const userCtx = document.getElementById('userTrendsChart');
   if (userCtx) {
     initUserTrendsChartWithRealData(userCtx.getContext('2d'), analytics);
   }
   
-  // Initialize Booking Analytics Chart with real data
+  // Initialize Booking Analytics Chart
   const analyticsCtx = document.getElementById('userAnalyticsChart');
   if (analyticsCtx) {
     initUserAnalyticsChartWithRealData(analyticsCtx.getContext('2d'), bookingTrends);
@@ -196,25 +200,8 @@ function initializeChartsWithRealData(analytics, bookingTrends) {
 
 // User Trends Chart with real data (12 months)
 function initUserTrendsChartWithRealData(ctx, analytics) {
-  const datasets = [
-    {
-      label: 'Total Users',
-      data: analytics.userTrends,
-      borderColor: '#3B82F6',
-      backgroundColor: 'rgba(59, 130, 246, 0.1)',
-      borderWidth: 3,
-      fill: false,
-      tension: 0.4,
-      pointRadius: 4,
-      pointBackgroundColor: '#3B82F6',
-      pointBorderColor: '#fff',
-      pointBorderWidth: 2,
-      pointHoverRadius: 6,
-      hidden: !userDataVisible.totalUsers
-    }
-  ];
+  const datasets = [];
 
-  // Add active/inactive user datasets if available in enhanced API
   if (analytics.activeUserTrends && analytics.inactiveUserTrends) {
     datasets.push(
       {
@@ -274,6 +261,14 @@ function initUserTrendsChartWithRealData(ctx, analytics) {
           callbacks: {
             label: function(context) {
               return context.dataset.label + ': ' + context.parsed.y.toLocaleString() + ' users';
+            },
+            afterBody: function(context) {
+              if (analytics.userTrends && analytics.userTrends[context[0].dataIndex]) {
+                const index = context[0].dataIndex;
+                const total = analytics.userTrends[index];
+                return 'Total Users: ' + total.toLocaleString();
+              }
+              return '';
             }
           }
         }
@@ -291,7 +286,7 @@ function initUserTrendsChartWithRealData(ctx, analytics) {
           ticks: { 
             color: '#6B7280', 
             font: { size: 11 },
-            callback: function(value) { return value.toLocaleString(); }
+            callback: value => value.toLocaleString()
           }
         }
       }
@@ -306,16 +301,19 @@ function initUserAnalyticsChartWithRealData(ctx, bookingTrends) {
   const year = document.getElementById('analyticsYear')?.value || '2025';
   const yearData = bookingTrends[year];
   
-  if (!yearData) return;
+  if (!yearData) {
+    console.warn(`No booking trends data found for year ${year}`);
+    return;
+  }
   
   userAnalyticsChart = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: yearData.months,
+      labels: yearData.months || [],
       datasets: [
         {
           label: 'Total Bookings',
-          data: yearData.bookings,
+          data: yearData.bookings || [],
           backgroundColor: 'rgba(37, 99, 235, 0.8)',
           borderColor: 'rgba(37, 99, 235, 1)',
           borderWidth: 2,
@@ -325,7 +323,7 @@ function initUserAnalyticsChartWithRealData(ctx, bookingTrends) {
         },
         {
           label: 'Cancelled Bookings',
-          data: yearData.cancelled,
+          data: yearData.cancelled || [],
           backgroundColor: 'rgba(239, 68, 68, 0.8)',
           borderColor: 'rgba(239, 68, 68, 1)',
           borderWidth: 2,
@@ -349,9 +347,7 @@ function initUserAnalyticsChartWithRealData(ctx, bookingTrends) {
           cornerRadius: 8,
           displayColors: true,
           callbacks: {
-            label: function(context) {
-              return context.dataset.label + ': ' + context.parsed.y.toLocaleString() + ' bookings';
-            }
+            label: context => context.dataset.label + ': ' + context.parsed.y.toLocaleString() + ' bookings'
           }
         }
       },
@@ -367,7 +363,7 @@ function initUserAnalyticsChartWithRealData(ctx, bookingTrends) {
           ticks: { 
             color: '#4B5563', 
             font: { size: 11 },
-            callback: function(value) { return value.toLocaleString(); }
+            callback: value => value.toLocaleString()
           },
           grid: { color: '#F3F4F6', drawBorder: false }
         }
@@ -380,28 +376,73 @@ function initUserAnalyticsChartWithRealData(ctx, bookingTrends) {
 
 // =================== CHART UPDATE FUNCTIONS ===================
 
-// Update booking analytics chart with real API data
+// Setup chart event listeners
+function setupChartEventListeners() {
+  console.log('Setting up chart event listeners...');
+  
+  const analyticsYearSelect = document.getElementById('analyticsYear');
+  const analyticsStartMonthSelect = document.getElementById('analyticsStartMonth');
+  const analyticsEndMonthSelect = document.getElementById('analyticsEndMonth');
+  const userYearSelect = document.getElementById('userYearSelect');
+  
+  if (analyticsYearSelect) {
+    analyticsYearSelect.addEventListener('change', updateUserAnalyticsChart);
+    console.log('Analytics year select listener added');
+  } else {
+    console.warn('Analytics year select element not found');
+  }
+  
+  if (analyticsStartMonthSelect) {
+    analyticsStartMonthSelect.addEventListener('change', updateUserAnalyticsChart);
+    console.log('Analytics start month select listener added');
+  } else {
+    console.warn('Analytics start month select element not found');
+  }
+  
+  if (analyticsEndMonthSelect) {
+    analyticsEndMonthSelect.addEventListener('change', updateUserAnalyticsChart);
+    console.log('Analytics end month select listener added');
+  } else {
+    console.warn('Analytics end month select element not found');
+  }
+  
+  if (userYearSelect) {
+    userYearSelect.addEventListener('change', updateUserTrendsChart);
+    console.log('User year select listener added');
+  } else {
+    console.warn('User year select element not found');
+  }
+}
+
+// Update booking analytics chart with filtering
 function updateUserAnalyticsChart() {
-  if (!userAnalyticsChart || !dashboardData) return;
+  console.log('Updating user analytics chart...');
+  
+  if (!userAnalyticsChart || !dashboardData) {
+    console.warn('Chart or dashboard data not available');
+    return;
+  }
   
   const yearSelect = document.getElementById('analyticsYear');
   const startMonthSelect = document.getElementById('analyticsStartMonth');
   const endMonthSelect = document.getElementById('analyticsEndMonth');
   
-  const selectedYear = parseInt(yearSelect.value);
-  const selectedStartMonth = parseInt(startMonthSelect.value);
-  const selectedEndMonth = parseInt(endMonthSelect.value);
+  const selectedYear = parseInt(yearSelect?.value || 2025);
+  const selectedStartMonth = parseInt(startMonthSelect?.value || 1);
+  const selectedEndMonth = parseInt(endMonthSelect?.value || 12);
   
   if (selectedStartMonth > selectedEndMonth) {
     alert('Start month must be before or equal to end month');
     return;
   }
   
-  // Get real data from API for selected year
-  const yearData = dashboardData.bookingTrends[selectedYear];
-  if (!yearData) return;
+  // FIXED: Correct data path
+  const yearData = dashboardData.dashboard.bookingTrends[selectedYear];
+  if (!yearData) {
+    console.warn(`No data found for year ${selectedYear}`);
+    return;
+  }
   
-  // Filter data for selected month range
   const startIndex = selectedStartMonth - 1;
   const endIndex = selectedEndMonth - 1;
   
@@ -409,7 +450,6 @@ function updateUserAnalyticsChart() {
   const filteredBookings = yearData.bookings.slice(startIndex, endIndex + 1);
   const filteredCancelled = yearData.cancelled.slice(startIndex, endIndex + 1);
   
-  // Update chart with filtered real data
   userAnalyticsChart.data.labels = filteredLabels;
   userAnalyticsChart.data.datasets[0].data = filteredBookings;
   userAnalyticsChart.data.datasets[1].data = filteredCancelled;
@@ -417,19 +457,27 @@ function updateUserAnalyticsChart() {
   userAnalyticsChart.data.datasets[1].hidden = !analyticsDataVisible.cancelledBookings;
   
   userAnalyticsChart.update('active');
+  console.log('Chart updated successfully');
 }
 
-// Update user trends chart based on year selection
+// Update user trends chart on year selection
 function updateUserTrendsChart() {
-  if (!userTrendsChart || !dashboardData) return;
+  console.log('Updating user trends chart...');
+  
+  if (!userTrendsChart || !dashboardData) {
+    console.warn('Chart or dashboard data not available');
+    return;
+  }
   
   const yearSelect = document.getElementById('userYearSelect');
   const selectedYear = parseInt(yearSelect?.value || 2025);
   
-  // Use the same data for all years (you can enhance this with year-specific user data)
-  const analytics = dashboardData.analytics;
+  // FIXED: Correct data path
+  const analytics = dashboardData.dashboard.analytics;
   
-  userTrendsChart.data.datasets[0].data = analytics.userTrends;
+  if (analytics.userTrends && userTrendsChart.data.datasets[0]) {
+    userTrendsChart.data.datasets[0].data = analytics.userTrends;
+  }
   if (analytics.activeUserTrends && userTrendsChart.data.datasets[1]) {
     userTrendsChart.data.datasets[1].data = analytics.activeUserTrends;
   }
@@ -437,21 +485,19 @@ function updateUserTrendsChart() {
     userTrendsChart.data.datasets[2].data = analytics.inactiveUserTrends;
   }
   
-  // Maintain visibility state
-  userTrendsChart.data.datasets[0].hidden = !userDataVisible.totalUsers;
-  if (userTrendsChart.data.datasets[1]) {
-    userTrendsChart.data.datasets[1].hidden = !userDataVisible.activeUsers;
-  }
-  if (userTrendsChart.data.datasets[2]) {
-    userTrendsChart.data.datasets[2].hidden = !userDataVisible.inactiveUsers;
-  }
+  userTrendsChart.data.datasets.forEach((dataset, index) => {
+    if (index === 0) dataset.hidden = !userDataVisible.totalUsers;
+    if (index === 1) dataset.hidden = !userDataVisible.activeUsers;
+    if (index === 2) dataset.hidden = !userDataVisible.inactiveUsers;
+  });
   
   userTrendsChart.update('active');
+  console.log('User trends chart updated successfully');
 }
 
 // =================== INTERACTIVE LEGENDS ===================
 
-// Setup interactive legend for analytics chart
+// Setup analytics chart legend toggle
 function setupAnalyticsInteractiveLegend() {
   const totalLegend = document.getElementById('totalBookingsLegend');
   const cancelledLegend = document.getElementById('cancelledBookingsLegend');
@@ -459,16 +505,18 @@ function setupAnalyticsInteractiveLegend() {
   if (totalLegend) {
     totalLegend.addEventListener('click', function() {
       analyticsDataVisible.totalBookings = !analyticsDataVisible.totalBookings;
-      userAnalyticsChart.data.datasets[0].hidden = !analyticsDataVisible.totalBookings;
-      userAnalyticsChart.update('active');
-      
-      const legendBox = this.querySelector('div');
-      if (analyticsDataVisible.totalBookings) {
-        legendBox.style.opacity = '1';
-        this.style.opacity = '1';
-      } else {
-        legendBox.style.opacity = '0.3';
-        this.style.opacity = '0.5';
+      if (userAnalyticsChart && userAnalyticsChart.data.datasets[0]) {
+        userAnalyticsChart.data.datasets[0].hidden = !analyticsDataVisible.totalBookings;
+        userAnalyticsChart.update('active');
+        
+        const legendBox = this.querySelector('div');
+        if (analyticsDataVisible.totalBookings) {
+          legendBox.style.opacity = '1';
+          this.style.opacity = '1';
+        } else {
+          legendBox.style.opacity = '0.3';
+          this.style.opacity = '0.5';
+        }
       }
     });
   }
@@ -476,22 +524,24 @@ function setupAnalyticsInteractiveLegend() {
   if (cancelledLegend) {
     cancelledLegend.addEventListener('click', function() {
       analyticsDataVisible.cancelledBookings = !analyticsDataVisible.cancelledBookings;
-      userAnalyticsChart.data.datasets[1].hidden = !analyticsDataVisible.cancelledBookings;
-      userAnalyticsChart.update('active');
-      
-      const legendBox = this.querySelector('div');
-      if (analyticsDataVisible.cancelledBookings) {
-        legendBox.style.opacity = '1';
-        this.style.opacity = '1';
-      } else {
-        legendBox.style.opacity = '0.3';
-        this.style.opacity = '0.5';
+      if (userAnalyticsChart && userAnalyticsChart.data.datasets[1]) {
+        userAnalyticsChart.data.datasets[1].hidden = !analyticsDataVisible.cancelledBookings;
+        userAnalyticsChart.update('active');
+        
+        const legendBox = this.querySelector('div');
+        if (analyticsDataVisible.cancelledBookings) {
+          legendBox.style.opacity = '1';
+          this.style.opacity = '1';
+        } else {
+          legendBox.style.opacity = '0.3';
+          this.style.opacity = '0.5';
+        }
       }
     });
   }
 }
 
-// Setup interactive legend for user trends chart
+// Setup user trends chart legend toggle
 function setupUserTrendsLegend() {
   const totalLegend = document.getElementById('totalUsersLegend');
   const activeLegend = document.getElementById('activeUsersLegend');
@@ -500,16 +550,18 @@ function setupUserTrendsLegend() {
   if (totalLegend) {
     totalLegend.addEventListener('click', function() {
       userDataVisible.totalUsers = !userDataVisible.totalUsers;
-      userTrendsChart.data.datasets[0].hidden = !userDataVisible.totalUsers;
-      userTrendsChart.update('active');
-      
-      const legendBox = this.querySelector('div');
-      if (userDataVisible.totalUsers) {
-        legendBox.style.opacity = '1';
-        this.style.opacity = '1';
-      } else {
-        legendBox.style.opacity = '0.3';
-        this.style.opacity = '0.5';
+      if (userTrendsChart && userTrendsChart.data.datasets[0]) {
+        userTrendsChart.data.datasets[0].hidden = !userDataVisible.totalUsers;
+        userTrendsChart.update('active');
+        
+        const legendBox = this.querySelector('div');
+        if (userDataVisible.totalUsers) {
+          legendBox.style.opacity = '1';
+          this.style.opacity = '1';
+        } else {
+          legendBox.style.opacity = '0.3';
+          this.style.opacity = '0.5';
+        }
       }
     });
   }
@@ -517,7 +569,7 @@ function setupUserTrendsLegend() {
   if (activeLegend) {
     activeLegend.addEventListener('click', function() {
       userDataVisible.activeUsers = !userDataVisible.activeUsers;
-      if (userTrendsChart.data.datasets[1]) {
+      if (userTrendsChart && userTrendsChart.data.datasets[1]) {
         userTrendsChart.data.datasets[1].hidden = !userDataVisible.activeUsers;
         userTrendsChart.update('active');
         
@@ -536,7 +588,7 @@ function setupUserTrendsLegend() {
   if (inactiveLegend) {
     inactiveLegend.addEventListener('click', function() {
       userDataVisible.inactiveUsers = !userDataVisible.inactiveUsers;
-      if (userTrendsChart.data.datasets[2]) {
+      if (userTrendsChart && userTrendsChart.data.datasets[2]) {
         userTrendsChart.data.datasets[2].hidden = !userDataVisible.inactiveUsers;
         userTrendsChart.update('active');
         
@@ -555,33 +607,35 @@ function setupUserTrendsLegend() {
 
 // =================== PROFILE DROPDOWN FUNCTIONALITY ===================
 
-// Profile dropdown functionality
+// Profile dropdown toggle
 function toggleProfileDropdown() {
   const dropdown = document.getElementById('profileDropdown');
   const arrow = document.getElementById('dropdownArrow');
   
-  if (dropdown.classList.contains('hidden')) {
-    dropdown.classList.remove('hidden');
-    arrow.style.transform = 'rotate(180deg)';
-  } else {
-    dropdown.classList.add('hidden');
-    arrow.style.transform = 'rotate(0deg)';
+  if (dropdown && arrow) {
+    if (dropdown.classList.contains('hidden')) {
+      dropdown.classList.remove('hidden');
+      arrow.style.transform = 'rotate(180deg)';
+    } else {
+      dropdown.classList.add('hidden');
+      arrow.style.transform = 'rotate(0deg)';
+    }
   }
 }
 
-// Close dropdown when clicking outside
+// Close dropdown on clicking outside
 function handleOutsideClick(event) {
   const profileSection = event.target.closest('.cursor-pointer');
   const dropdown = document.getElementById('profileDropdown');
   const arrow = document.getElementById('dropdownArrow');
   
-  if (!profileSection && !dropdown.classList.contains('hidden')) {
+  if (!profileSection && dropdown && arrow && !dropdown.classList.contains('hidden')) {
     dropdown.classList.add('hidden');
     arrow.style.transform = 'rotate(0deg)';
   }
 }
 
-// Handle profile dropdown menu clicks
+// Initialize dropdown menu click handling
 function initializeProfileDropdown() {
   const dropdownLinks = document.querySelectorAll('#profileDropdown a');
   
@@ -596,15 +650,17 @@ function initializeProfileDropdown() {
         }
       } else if (text === 'View Profile') {
         console.log('Navigating to profile...');
-        // Add your profile navigation here
       } else if (text === 'Settings') {
         console.log('Navigating to settings...');
-        // Add your settings navigation here
       }
       
       // Close dropdown after click
-      document.getElementById('profileDropdown').classList.add('hidden');
-      document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
+      const dropdown = document.getElementById('profileDropdown');
+      const arrow = document.getElementById('dropdownArrow');
+      if (dropdown && arrow) {
+        dropdown.classList.add('hidden');
+        arrow.style.transform = 'rotate(0deg)';
+      }
     });
   });
 }
@@ -618,6 +674,7 @@ const overlay = document.getElementById("overlay");
 const mainContent = document.getElementById("mainContent");
 const mainContentArea = document.getElementById("mainContentArea");
 const dashboardGrid = document.getElementById("dashboardGrid");
+const recentActivity = document.getElementById("recentActivity");
 const dashboardTitle = document.getElementById("dashboardTitle");
 const headerContent = document.getElementById("headerContent");
 const bookingToggle = document.getElementById("bookingToggle");
@@ -629,12 +686,12 @@ let isMobile = window.innerWidth < 1024;
 
 function initializeSidebar() {
   if (isMobile) {
-    sidebar.style.transform = "translateX(-100%)";
-    mainContent.style.marginLeft = "0";
+    if (sidebar) sidebar.style.transform = "translateX(-100%)";
+    if (mainContent) mainContent.style.marginLeft = "0";
     sidebarVisible = false;
   } else {
-    sidebar.style.transform = "translateX(0)";
-    mainContent.style.marginLeft = "320px";
+    if (sidebar) sidebar.style.transform = "translateX(0)";
+    if (mainContent) mainContent.style.marginLeft = "320px";
     sidebarVisible = true;
   }
   updateDashboardGrid();
@@ -643,50 +700,59 @@ function initializeSidebar() {
 }
 
 function updateToggleButtons() {
-  if (sidebarVisible) {
-    externalToggle.classList.add("hidden");
-    sidebarToggle.style.display = "block";
-  } else {
-    externalToggle.classList.remove("hidden");
-    sidebarToggle.style.display = "none";
+  if (externalToggle && sidebarToggle) {
+    if (sidebarVisible) {
+      externalToggle.classList.add("hidden");
+      sidebarToggle.style.display = "block";
+    } else {
+      externalToggle.classList.remove("hidden");
+      sidebarToggle.style.display = "none";
+    }
   }
 }
 
 function updateContentSpacing() {
-  if (!sidebarVisible) {
-    mainContentArea.style.paddingTop = "4rem";
-    dashboardTitle.style.paddingLeft = "0";
-    headerContent.style.paddingLeft = "3rem";
-  } else {
-    mainContentArea.style.paddingTop = "1rem";
-    dashboardTitle.style.paddingLeft = "0";
-    headerContent.style.paddingLeft = "0";
+  if (mainContentArea && dashboardTitle && headerContent) {
+    if (!sidebarVisible) {
+      mainContentArea.style.paddingTop = "4rem";
+      dashboardTitle.style.paddingLeft = "0";
+      headerContent.style.paddingLeft = "3rem";
+    } else {
+      mainContentArea.style.paddingTop = "1rem";
+      dashboardTitle.style.paddingLeft = "0";
+      headerContent.style.paddingLeft = "0";
+    }
   }
 }
 
 function updateDashboardGrid() {
-  if (isMobile || !sidebarVisible) {
-    dashboardGrid.className = "grid grid-cols-1 gap-8";
-  } else {
-    dashboardGrid.className = "grid grid-cols-1 xl:grid-cols-3 gap-8";
+  if (dashboardGrid && recentActivity) {
+    if (isMobile || !sidebarVisible) {
+      dashboardGrid.className = "grid grid-cols-1 gap-0";
+      recentActivity.className = "xl:col-span-1 mt-8";
+    } else {
+      dashboardGrid.className = "grid grid-cols-1 xl:grid-cols-3 gap-8";
+    }
   }
 }
 
 function toggleSidebar() {
   sidebarVisible = !sidebarVisible;
   
-  if (sidebarVisible) {
-    sidebar.style.transform = "translateX(0)";
-    if (isMobile) {
-      overlay.classList.remove("hidden");
-      mainContent.style.marginLeft = "0";
+  if (sidebar && mainContent && overlay) {
+    if (sidebarVisible) {
+      sidebar.style.transform = "translateX(0)";
+      if (isMobile) {
+        overlay.classList.remove("hidden");
+        mainContent.style.marginLeft = "0";
+      } else {
+        mainContent.style.marginLeft = "320px";
+      }
     } else {
-      mainContent.style.marginLeft = "320px";
+      sidebar.style.transform = "translateX(-100%)";
+      overlay.classList.add("hidden");
+      mainContent.style.marginLeft = "0";
     }
-  } else {
-    sidebar.style.transform = "translateX(-100%)";
-    overlay.classList.add("hidden");
-    mainContent.style.marginLeft = "0";
   }
   
   updateDashboardGrid();
@@ -694,70 +760,10 @@ function toggleSidebar() {
   updateContentSpacing();
 }
 
-// =================== EVENT LISTENERS ===================
-
-window.addEventListener("resize", () => {
-  const wasMobile = isMobile;
-  isMobile = window.innerWidth < 1024;
-  
-  if (wasMobile !== isMobile) {
-    overlay.classList.add("hidden");
-    initializeSidebar();
-  }
-});
-
-// =================== INITIALIZATION ===================
-
-document.addEventListener('DOMContentLoaded', function() {
-  // Check authentication first
-  if (!checkAuthStatus()) {
-    return;
-  }
-  
-  // Initialize sidebar
-  initializeSidebar();
-  
-  // Load dashboard data
-  fetchAndIntegrateDashboardData();
-  
-  // Initialize profile dropdown
-  initializeProfileDropdown();
-  
-  // Add click outside listener for profile dropdown
-  document.addEventListener('click', handleOutsideClick);
-  
-  // Chart filter event listeners
-  const analyticsYearSelect = document.getElementById('analyticsYear');
-  const analyticsStartMonthSelect = document.getElementById('analyticsStartMonth');
-  const analyticsEndMonthSelect = document.getElementById('analyticsEndMonth');
-  const userYearSelect = document.getElementById('userYearSelect');
-  
-  if (analyticsYearSelect && analyticsStartMonthSelect && analyticsEndMonthSelect) {
-    analyticsYearSelect.addEventListener('change', updateUserAnalyticsChart);
-    analyticsStartMonthSelect.addEventListener('change', updateUserAnalyticsChart);
-    analyticsEndMonthSelect.addEventListener('change', updateUserAnalyticsChart);
-  }
-  
-  if (userYearSelect) {
-    userYearSelect.addEventListener('change', updateUserTrendsChart);
-  }
-  
-  // Sidebar toggle listeners
-  if (sidebarToggle) sidebarToggle.addEventListener("click", toggleSidebar);
-  if (externalToggle) externalToggle.addEventListener("click", toggleSidebar);
-  
-  // Overlay click listener
-  if (overlay) {
-    overlay.addEventListener("click", () => {
-      if (isMobile && sidebarVisible) {
-        toggleSidebar();
-      }
-    });
-  }
-  
-  // Booking dropdown listener
-  if (bookingToggle) {
-    bookingToggle.addEventListener("click", () => {
+// Setup booking dropdown functionality
+function setupBookingDropdown() {
+  if (bookingToggle && bookingSubmenu && bookingArrow) {
+    bookingToggle.addEventListener('click', function() {
       const currentMaxHeight = bookingSubmenu.style.maxHeight;
       const isOpen = currentMaxHeight && currentMaxHeight !== "0px";
       
@@ -771,7 +777,65 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
+}
+
+// =================== EVENT LISTENERS ===================
+
+window.addEventListener("resize", () => {
+  const wasMobile = isMobile;
+  isMobile = window.innerWidth < 1024;
+  
+  if (wasMobile !== isMobile) {
+    if (overlay) overlay.classList.add("hidden");
+    initializeSidebar();
+  }
 });
 
-// Make toggleProfileDropdown globally available
+// =================== INITIALIZATION ===================
+
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM Content Loaded - Initializing dashboard...');
+  
+  // Check authentication first
+  if (!checkAuthStatus()) {
+    return;
+  }
+  
+  // Initialize sidebar
+  initializeSidebar();
+  
+  // Setup booking dropdown
+  setupBookingDropdown();
+  
+  // Load dashboard data and initialize charts
+  fetchAndIntegrateDashboardData();
+  
+  // Initialize profile dropdown
+  initializeProfileDropdown();
+  
+  // Add click outside listener for profile dropdown
+  document.addEventListener('click', handleOutsideClick);
+  
+  // Sidebar toggle listeners
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener("click", toggleSidebar);
+  }
+  if (externalToggle) {
+    externalToggle.addEventListener("click", toggleSidebar);
+  }
+  
+  // Overlay click listener
+  if (overlay) {
+    overlay.addEventListener("click", () => {
+      if (isMobile && sidebarVisible) {
+        toggleSidebar();
+      }
+    });
+  }
+});
+
+// Make functions globally available
 window.toggleProfileDropdown = toggleProfileDropdown;
+window.logout = logout;
+
+console.log('Dashboard script loaded successfully');

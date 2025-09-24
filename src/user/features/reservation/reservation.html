@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zyra Hotel - Bookings</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <!-- Google Fonts: Montserrat -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Montserrat', sans-serif;
+    }
+  </style>
+</head>
+<body class="m-0 p-0">
+  <!-- Header -->
+  <header class="fixed top-0 w-full z-50 shadow-md bg-white">
+    <nav class="flex h-16 items-center justify-between px-6">
+      <!-- Logo -->
+      <div>
+        <img src="/src/assets/logo.png" alt="Zyra Hotel Logo" class="h-10 w-auto" />
+      </div>
+      
+      <div class="flex items-center space-x-4">
+        <!-- Menu + Book Now -->
+        <div class="flex items-center space-x-4">
+          <ul class="hidden md:flex space-x-6 font-semibold text-[#413030]">
+            <li>
+              <span class="cursor-pointer relative inline-block group">
+                <a href="#home" class="hover:text-yellow-400 transition">Home</a>
+                <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
+              </span>
+            </li>
+            <li>
+              <span class="cursor-pointer relative inline-block group">
+                <a href="#rooms" class="hover:text-yellow-400 transition">Rooms</a>
+                <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
+              </span>
+            </li>
+            <li>
+              <span class="cursor-pointer relative inline-block group">
+                <a href="#amenities" class="hover:text-yellow-400 transition">Facilities</a>
+                <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
+              </span>
+            </li>
+            <li>
+              <span class="cursor-pointer relative inline-block group">
+                <a href="#contact" class="hover:text-yellow-400 transition">Contact Us</a>
+                <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
+              </span>
+            </li>
+          </ul>
+          <button class="rounded-full px-4 py-3 text-white text-sm font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
+            Book Now
+          </button>
+        </div>
+        <!-- Mobile Icons -->
+        <div id="mobileIcons" class="flex relative h-full items-center cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
+              stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" 
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+              fill="#C2C6CC" class="w-8 h-8">
+            <path fill-rule="evenodd" 
+                  d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" 
+                  clip-rule="evenodd"/>
+          </svg>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div id="mainContent" class="min-h-screen transition-all duration-300 pt-16">
+    <main id="mainContentArea" class="w-full p-4 sm:p-6 lg:p-8 mt-4 sm:mt-6 lg:mt-0">
+      <!-- Breadcrumb Navigation -->
+      <nav class="mb-6 text-gray-500 text-sm ml-10">
+        <a href="#" class="hover:text-[#F26538] transition">Home</a> 
+        <span class="mx-2">></span>
+        <a href="#" class="hover:text-[#F26538] transition">Rooms</a>
+        <span class="mx-2">></span>
+        <span class="text-gray-700">Confirm</span>
+      </nav>
+
+      <!-- Page Title -->
+      <div class="mb-8 ml-10">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Confirm Booking</h1>
+      </div>
+
+      <!-- Main Content Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 px-10">
+        
+        <!-- Room Image Section -->
+        <div class="bg-gray-200 rounded-lg h-200 flex items-center justify-center relative overflow-hidden">
+          <!-- Placeholder for room image -->
+          <div class="absolute inset-0 bg-gray-200 flex items-center justify-center">
+            <div class="text-center text-gray-400">
+              <i class="fas fa-search text-6xl mb-4 opacity-50"></i>
+              <p class="text-lg">Room Image</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Booking Form Section -->
+        <div class="bg-white">
+          <h2 class="text-2xl font-semibold text-gray-800 mb-6">Booking Details</h2>
+          
+          <form class="space-y-6">
+            <!-- Name Field -->
+            <div>
+              <label for="name" class="block text-sm font-semibold text-[#E11162] mb-2">Name</label>
+              <input 
+                type="text" 
+                id="name" 
+                name="name" 
+                placeholder="Enter your Name"
+                class="w-full px-4 py-3 border-2 border-[#EFB85A]/30  rounded-lg focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent outline-none transition"
+                required
+              />
+            </div>
+
+            <!-- Mobile Number Field -->
+            <div>
+              <label for="mobile" class="block text-sm font-semibold text-[#E11162] mb-2">Mobile no</label>
+              <input 
+                type="tel" 
+                id="mobile" 
+                name="mobile" 
+                placeholder="Enter your Number"
+                class="w-full px-4 py-3 border-2 border-[#EFB85A]/30  rounded-lg focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent outline-none transition"
+                required
+              />
+            </div>
+
+            <!-- Address Field -->
+            <div>
+              <label for="address" class="block text-sm font-semibold text-[#E11162] mb-2">Address</label>
+              <textarea 
+                id="address" 
+                name="address" 
+                rows="4"
+                placeholder="Enter your Address"
+                class="w-full px-4 py-3 border-2 border-[#EFB85A]/30  rounded-lg focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent outline-none transition resize-none"
+                required
+              ></textarea>
+            </div>
+
+            <!-- Booking Details Row -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <!-- Quantity -->
+              <div>
+                <label for="quantity" class="block text-sm font-semibold text-[#E11162] mb-2 ">Quantity</label>
+                <div class="flex items-center space-x-3 border border-[#F26538] p-2 justify-center rounded-lg">
+            <button class="w-7 h-7 rounded-full border-2 border-[#EFB85A]/30  flex items-center justify-center hover:bg-gray-100 focus:ring-2 focus:ring-[#EFB85A] focus:border-[#EFB85A] outline-none" onclick="decrementGuest('adults')">
+              <span class="text-gray-600">-</span>
+            </button>
+            <span id="adultCount" class="w-8 text-center font-semibold">1</span>
+            <button class="w-7 h-7 rounded-full border-2 border-[#EFB85A]/30  flex items-center justify-center hover:bg-gray-100 focus:ring-2 focus:ring-[#EFB85A] focus:border-[#EFB85A] outline-none" onclick="incrementGuest('adults')">
+              <span class="text-gray-600">+</span>
+            </button>
+          </div>
+              </div>
+
+              <!-- Check In -->
+              <div>
+                <label for="checkin" class="block text-sm font-semibold text-[#E11162] mb-2">Check In</label>
+                <div class="relative">
+                       <input type="date" class="w-full px-3 py-2 border border-[#F26538] rounded-lg focus:ring-2 focus:ring-[#EFB85A] focus:border-[#EFB85A] outline-none">
+
+                </div>
+              </div>
+
+              <!-- Check Out -->
+              <div>
+                <label for="checkout" class="block text-sm font-semibold text-[#E11162] mb-2">Check out</label>
+                <div class="relative">
+                        <input type="date" class="w-full px-3 py-2 border border-[#F26538] rounded-lg focus:ring-2 focus:ring-[#EFB85A] focus:border-[#EFB85A] outline-none">
+
+                </div>
+              </div>
+            </div>
+
+            <!-- Terms and Conditions -->
+            <div class="flex items-start space-x-3">
+              <input 
+                type="checkbox" 
+                id="terms" 
+                name="terms" 
+                class="mt-1 w-4 h-4 text-[#EFB85A] border-gray-300 rounded focus:ring-[#EFB85A]"
+                required
+              />
+              <label for="terms" class="text-sm text-gray-700">
+                Accept <a href="#" class="text-[#F26538] hover:underline">Terms and Condition</a>
+              </label>
+            </div>
+
+            <!-- Pay Now Button -->
+            <div class="pt-4">
+              <button 
+                type="submit" 
+                class="w-full bg-gradient-to-br from-[#EFB85A] via-[#F26538] to-[#E11162] text-white py-3 px-6 rounded-lg font-semibold hover:scale-105 transition duration-200"
+              >
+                Pay now
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-100 text-gray-700 pt-2">
+    <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+      
+      <!-- Logo & About -->
+      <div class="text-left">
+        <h2 class="text-4xl font-extrabold mb-4 bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent">
+          Zyra
+        </h2>
+        <p class="text-gray-600 mb-6">
+          Experience luxury and comfort at Zyra Hotel. We provide exceptional hospitality with world-class amenities for an unforgettable stay.
+        </p>
+        <h3 class="font-semibold mb-2">Customer Support</h3>
+        <p class="text-gray-600">feedback@gmail.com</p>
+      </div>
+      
+      <!-- Quick Links -->
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <h3 class="font-semibold mb-4">Quick Links</h3>
+          <ul class="space-y-2">
+            <li><a href="#home" class="hover:text-[#413030] transition">Home</a></li>
+            <li><a href="#rooms" class="hover:text-[#413030] transition">Rooms</a></li>
+            <li><a href="#amenities" class="hover:text-[#413030] transition">Facilities</a></li>
+            <li><a href="#testimonials" class="hover:text-[#413030] transition">Reviews</a></li>
+            <li><a href="#contact" class="hover:text-[#413030] transition">About us</a></li>
+          </ul>
+        </div>
+        <div class="pt-8 md:pt-0">
+          <ul class="space-y-2">
+            <li><a href="#" class="hover:text-[#413030] transition">FAQs</a></li>
+            <li><a href="#" class="hover:text-[#413030] transition">Privacy Policy</a></li>
+            <li><a href="#" class="hover:text-[#413030] transition">Terms and Condition</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Social Media -->
+      <div class="flex flex-col items-center md:items-start">
+        <h3 class="font-semibold mb-4">Follow us</h3>
+        <div class="flex space-x-6 text-2xl">
+          <a href="#" class="text-[#1877F2] hover:opacity-80 transition" aria-label="Facebook">
+            <i class="fab fa-facebook"></i>
+          </a>
+          <a href="#" class="text-[#1DA1F2] hover:opacity-80 transition" aria-label="Twitter">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="#" class="text-[#0A66C2] hover:opacity-80 transition" aria-label="LinkedIn">
+            <i class="fab fa-linkedin"></i>
+          </a>
+          <a href="#" class="text-[#E4405F] hover:opacity-80 transition" aria-label="Instagram">
+            <i class="fab fa-instagram"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="bg-gray-200 text-center py-4">
+      <p class="text-sm text-gray-600">&copy; 2024 Zyra Hotel. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Quantity controls
+    function increaseQuantity() {
+      const quantityInput = document.getElementById('quantity');
+      let currentValue = parseInt(quantityInput.value);
+      quantityInput.value = currentValue + 1;
+    }
+
+    function decreaseQuantity() {
+      const quantityInput = document.getElementById('quantity');
+      let currentValue = parseInt(quantityInput.value);
+      if (currentValue > 1) {
+        quantityInput.value = currentValue - 1;
+      }
+    }
+
+    // Form validation
+    document.querySelector('form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('name').value;
+      const mobile = document.getElementById('mobile').value;
+      const address = document.getElementById('address').value;
+      const checkin = document.getElementById('checkin').value;
+      const checkout = document.getElementById('checkout').value;
+      const terms = document.getElementById('terms').checked;
+      
+      if (!name || !mobile || !address || !checkin || !checkout || !terms) {
+        alert('Please fill in all required fields and accept the terms and conditions.');
+        return;
+      }
+      
+      // Check if checkout date is after checkin date
+      if (new Date(checkout) <= new Date(checkin)) {
+        alert('Check-out date must be after check-in date.');
+        return;
+      }
+      
+      alert('Booking confirmed! Redirecting to payment...');
+      // Here you would normally process the booking
+    });
+
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('checkin').setAttribute('min', today);
+    document.getElementById('checkout').setAttribute('min', today);
+    
+    // Update checkout minimum date when checkin changes
+    document.getElementById('checkin').addEventListener('change', function() {
+      const checkinDate = this.value;
+      const checkoutInput = document.getElementById('checkout');
+      checkoutInput.setAttribute('min', checkinDate);
+      
+      // If checkout is before new checkin date, clear it
+      if (checkoutInput.value && checkoutInput.value <= checkinDate) {
+        checkoutInput.value = '';
+      }
+    });
+  </script>
+  </body>
+</html>

@@ -1,1070 +1,866 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zyra Hotel - Your Perfect Stay Awaits</title>
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Font Awesome -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Google Fonts: Montserrat -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/lineSpinner.js"></script>
 
 
-    
-    <!-- Load Font Awesome -->
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <style>
+    * {
+      font-family: 'Montserrat', sans-serif;
+    }
 
-    <!-- Google Fonts: Montserrat -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    .indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: rgba(63, 60, 60, 0.54);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
 
-      <style>
-      * {
-          font-family: 'Montserrat', sans-serif;
-        }
-     
-      .indicator {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background-color: rgba(63, 60, 60, 0.54);  /* default black */
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
+    .indicator.active {
+      background-color: BLACK;
+      transform: scale(1.3);
+    }
 
-      .indicator.active {
-        background-color: BLACK; /* purple active */
-        transform: scale(1.3);
-      }
+    ::-webkit-scrollbar {
+      width: 1px;
+    }
 
-    </style>
+    /* Loading animations */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease-out;
+    }
 
-  </head>
+    .fade-in.loaded {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
-  <body class="m-0 p-0">
-    <div class="grid grid-rows-[auto_auto_auto_auto_auto_auto_auto_auto] min-h-screen">
+    .slide-in-left {
+      opacity: 0;
+      transform: translateX(-50px);
+      transition: all 0.8s ease-out;
+    }
 
-      <!-- Navbar -->
-      <nav class="fixed top-0 w-full z-50 shadow-md bg-white">
-        <div class="flex h-16 items-center justify-between px-6">
-          <!-- Logo -->
-          <div>
-            <img src="/src/assets/logo.png" alt="Logo" class="h-10 w-auto" />
-          </div>
-          <div class = "flex items-center space-x-4">
-          <!-- Menu + Book Now -->
-          <div class="flex items-center space-x-4">
-            <ul class="hidden md:flex space-x-6 font-semibold text-[#413030]">
-              <li>
-                <span class="text-cursor-pointer relative inline-block group">
-                <a href="#" class="hover:text-yellow-400 transition">Home</a>
+    .slide-in-left.loaded {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .slide-in-right {
+      opacity: 0;
+      transform: translateX(50px);
+      transition: all 0.8s ease-out;
+    }
+
+    .slide-in-right.loaded {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Skeleton loading */
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+    }
+
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .lazy-load-container {
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Image lazy loading */
+    img[data-src] {
+      filter: blur(5px);
+      transition: filter 0.3s;
+    }
+
+    img[data-src].loaded {
+      filter: blur(0);
+    }
+
+    /* Faster, smoother animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.15s ease-out;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Ensure modals appear above everything */
+.auth-modal-overlay {
+  z-index: 9999;
+}
+  * {
+    user-select: none;
+  }
+
+  </style>
+</head>
+
+<body class="m-0 p-0">
+  <!-- Header -->
+  <header class="fixed top-0 w-full z-50 shadow-md bg-white">
+    <nav class="flex h-16 items-center justify-between px-6">
+      <!-- Logo -->
+      <div>
+        <img src="/src/assets/logo.png" alt="Zyra Hotel Logo" class="h-10 w-auto" />
+      </div>
+      
+      <div class="flex items-center space-x-4">
+        <!-- Menu + Book Now -->
+        <div class="flex items-center space-x-4">
+          <ul class="hidden md:flex space-x-6 font-semibold text-[#413030]">
+            <li>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="#home" class="hover:text-yellow-400 transition">Home</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
-              </li>
-              <li>
-                <span class="cursor-pointer relative inline-block group">
-                <a href="#" class="hover:text-yellow-400 transition">Rooms</a>
+              </span>
+            </li>
+            <li>
+              <span class="cursor-pointer relative inline-block group">
+                <a href="/src/user/features/bookings/booking.html" class="hover:text-yellow-400 transition">Rooms</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
-              </li>
-              <li>
-                <span class="text-cursor-pointer relative inline-block group">
+              </span>
+            </li>
+            <li>
+              <span class="text-cursor-pointer relative inline-block group">
                 <a href="#" class="hover:text-yellow-400 transition">Facilities</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
-              </li>
-              <li>
-                <span class="text-cursor-pointer relative inline-block group">
-                <a href="#" class="hover:text-yellow-400 transition">Contact Us</a>
+              </span>
+            </li>
+            <li>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="/src/user/features/contact/contactUs.html" class="hover:text-yellow-400 transition">Contact Us</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
-              </li>
-            </ul>
+              </span>
+            </li>
+          </ul>
 
-            <button class="rounded-full px-4 py-3 text-white text-sm font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
-              Book Now
-            </button>
-          </div>
+          <button id = "homeBookNow-btn"class="rounded-full px-4 py-3 text-white text-sm font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
+            Book Now
+          </button>
+        </div>
 
-          <!-- Mobile Icons -->
-          <div class="flex h-full items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
+        <!-- Mobile Icons -->
+        <div id="mobileIcons" class="flex relative h-full items-center cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
+              stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" 
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+              fill="#C2C6CC" class="w-8 h-8">
+            <path fill-rule="evenodd"
+                  d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" 
+                  clip-rule="evenodd"/>
+          </svg>
+        </div>
 
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#C2C6CC" class="w-8 h-8">
-              <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd"/>
-            </svg>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="grid grid-rows-[auto_auto_auto_auto_auto_auto_auto_auto] min-h-screen">
+    
+  <!-- Hero Section (Always loaded immediately) -->
+<section id="home" class="w-full h-[calc(100vh-64px)] mt-16 relative overflow-hidden">
+  <!-- Carousel Container -->
+  <div id="carouselSlides" class="flex transition-transform duration-500 ease-in-out w-[300%]">
+    <div class="w-[33.3333%] h-[calc(100vh-64px)] flex-shrink-0 relative">
+      <img src="/src/assets/carousel2.jpg" alt="Hotel Room View 1" class="w-full h-full object-cover" />
+    </div>
+    
+    <div class="w-[33.3333%] h-[calc(100vh-64px)] flex-shrink-0 relative">
+      <img data-src="/src/assets/carousel4.jpg" alt="Hotel Room View 3" class="w-full h-full object-cover lazy-image" />
+    </div>
+  </div>
+
+  <!-- Carousel Indicators -->
+  <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-3">
+    <button class="carousel-dot w-3 h-3 rounded-full bg-white/70" data-index="0" aria-label="View slide 1"></button>
+    <button class="carousel-dot w-3 h-3 rounded-full bg-white/70" data-index="1" aria-label="View slide 2"></button>
+  </div>
+
+  <!-- Hero Heading -->
+  <div class="absolute bottom-60 left-1/2 transform -translate-x-1/2 z-20 text-center sm:text-left">
+    <h1 class="text-6xl sm:text-4xl md:text-7xl lg:text-8xl font-extrabold bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] bg-clip-text text-transparent drop-shadow-lg animate-[pulse_3s_ease-in-out_infinite]">
+      Your Perfect Stay Awaits
+    </h1>
+    <p class="mt-4 text-xl sm:text-2xl font-semibold text-gray-600">
+      Book Your Room Today!
+    </p>
+  </div>
+
+  <!-- Floating Search Bar -->
+  <div class="absolute bottom-20 left-1/2 transform -translate-x-1/2 w-[95%] sm:w-4/5 lg:w-3/4 bg-white rounded-2xl sm:rounded-full shadow-xl z-20 px-2 sm:px-6 py-1 flex flex-col sm:flex-row items-stretch sm:items-center">
+
+    <!-- Check In -->
+    <div class="flex-1 ml-5 text-center sm:text-left border-b sm:border-b-0 sm:border-r border-gray-200 px-2 py-2 relative">
+      <label class="text-sm mb-2 sm:text-base font-semibold text-[#413030] block">Check In</label>
+      <input id="checkinDate" type="date" class="p-2 border border-gray-300 rounded-md w-full max-w-[150px] focus:outline-none focus:ring-2 focus:ring-[#EFB85A]" />
+    </div>
+
+    <!-- Check Out -->
+    <div class="flex-1 ml-5 text-center sm:text-left border-b sm:border-b-0 sm:border-r border-gray-200 px-2 py-2 relative">
+      <label class="text-sm mb-2 sm:text-base font-semibold text-[#413030] block">Check Out</label>
+      <input id="checkoutDate" type="date" class="p-2 border border-gray-300 rounded-md w-full max-w-[150px] focus:outline-none focus:ring-2 focus:ring-[#EFB85A]" />
+    </div>
+
+    <!-- Adults -->
+    <div class="flex-1 ml-5 text-center sm:text-left border-b sm:border-b-0 sm:border-r border-gray-200 px-2 py-2 relative">
+      <p class="text-sm mb-2 sm:text-base font-semibold text-[#413030]">Adults</p>
+      <div class="flex items-center justify-center sm:justify-start space-x-3 mx-auto">
+        <button id="adultMinus" class="w-8 h-8 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition" aria-label="Decrease adults">
+          <i class="fas fa-minus text-gray-600"></i>
+        </button>
+        <span id="adultCount" class="text-lg font-semibold text-[#413030] min-w-[2rem] text-center">0</span>
+        <button id="adultPlus" class="w-8 h-8 bg-[#EFB85A] hover:bg-[#E11162] text-white rounded-full flex items-center justify-center transition" aria-label="Increase adults">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Children -->
+    <div class="flex-1 ml-5 text-center sm:text-left px-2 py-2 relative">
+      <p class="text-sm mb-2 sm:text-base font-semibold text-[#413030]">Children</p>
+      <div class="flex items-center justify-center sm:justify-start space-x-3 mx-auto">
+        <button id="childrenMinus" class="w-8 h-8 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition" aria-label="Decrease children">
+          <i class="fas fa-minus text-gray-600"></i>
+        </button>
+        <span id="childrenCount" class="text-lg font-semibold text-[#413030] min-w-[2rem] text-center">0</span>
+        <button id="childrenPlus" class="w-8 h-8 bg-[#EFB85A] hover:bg-[#E11162] text-white rounded-full flex items-center justify-center transition" aria-label="Increase children">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search Button for Desktop -->
+    <div class="absolute right-4 top-1/2 transform -translate-y-1/2 hidden sm:flex">
+      <button id="searchButton" class="bg-gradient-to-r from-[#EFB85A] to-[#E11162] text-white w-12 h-12 flex items-center justify-center rounded-full shadow-lg hover:scale-110 transition" aria-label="Search rooms">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Search Button -->
+    <div class="block sm:hidden mt-3">
+      <button id="mobileSearchButton" class="w-full bg-gradient-to-r from-[#EFB85A] to-[#E11162] text-white font-semibold py-3 rounded-xl shadow-md">
+        Search
+      </button>
+    </div>
+  </div>
+</section>
+
+    <!-- Rooms Section (Lazy loaded) -->
+    <section id="rooms" class="lazy-section fade-in flex bg-white text-center flex-col" data-section="rooms">
+      <!-- Loading Skeleton -->
+      <div class="loading-skeleton">
+        <div class="lazy-load-container">
+          <div class="text-center w-full">
+            <div class="skeleton h-8 w-48 mx-auto mb-8 rounded"></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-6 md:px-12 lg:px-20">
+              <div class="skeleton h-96 w-full rounded-2xl"></div>
+              <div class="skeleton h-96 w-full rounded-2xl"></div>
+              <div class="skeleton h-96 w-full rounded-2xl"></div>
+              <div class="skeleton h-96 w-full rounded-2xl"></div>
             </div>
           </div>
         </div>
-      </nav>
-
-
-
-
-<!-- Carousel Container -->
-<div class="w-full h-[calc(100vh-64px)] mt-16 relative overflow-hidden">
-  <!-- Slides Wrapper -->
-  <div id="carouselSlides" class="flex transition-transform duration-500 ease-in-out">
-    <div class="w-screen h-[calc(100vh-64px)] flex-shrink-0 relative">
-      <img src="/src/assets/carousel2.jpg" class="w-full h-full object-cover" />
-    </div>
-    <div class="w-screen h-[calc(100vh-64px)] flex-shrink-0 relative">
-      <img src="/src/assets/carousel3.jpg" class="w-full h-full object-cover" />
-    </div>
-    <div class="w-screen h-[calc(100vh-64px)] flex-shrink-0 relative">
-      <img src="/src/assets/carousel4.jpg" class="w-full h-full object-cover" />
-    </div>
-  </div>
-
-  <!-- Indicators -->
-  <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-3">
-    <button class="w-3 h-3 rounded-full bg-white/50" data-index="0"></button>
-    <button class="w-3 h-3 rounded-full bg-white/50" data-index="1"></button>
-    <button class="w-3 h-3 rounded-full bg-white/50" data-index="2"></button>
-  </div>
-</div>
-
-        
-
-
-
-
-
-
-
-  <!-- Heading -->
-<div class="absolute bottom-60 left-1/2 transform -translate-x-1/2 z-20 text-center sm:text-left">
-  <h1 class="text-6xl sm:text-4xl md:text-7xl lg:text-8xl font-extrabold bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] bg-clip-text text-transparent drop-shadow-lg animate-[pulse_3s_ease-in-out_infinite]">
-    Your Perfect Stay Awaits
-  </h1>
-  <p class="mt-4 text-xl sm:text-2xl font-semibold text-gray-600 animate-fadeIn">
-    Book Your Room Today !
-  </p>
-</div>
-
-
-
-<!-- Floating Search Bar -->
-<div class="absolute bottom-20 left-1/2 transform -translate-x-1/2 
-            w-[95%] sm:w-4/5 lg:w-3/4 
-            bg-white rounded-2xl sm:rounded-full shadow-xl z-20 
-            px-4 sm:px-6 py-3 sm:py-4 
-            flex flex-col sm:flex-row 
-            items-stretch sm:items-center">
-
-  <!-- Check In with Calendar -->
-<div class="flex-1 text-center sm:text-left border-b sm:border-b-0 sm:border-r border-gray-200 px-2 py-2 relative">
-  <p class="text-sm sm:text-base font-semibold text-[#413030]">Check In</p>
-
-  <!-- Clickable span -->
-  <span id="checkinToggle" class="text-xs sm:text-sm text-gray-400 cursor-pointer relative inline-block group">
-    Add Dates
-    <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-gray-500 transition-all duration-300 group-hover:w-full"></span>
-  </span>
-
-  <!-- Hidden calendar input -->
-  <input id="checkinDate" type="date" class="absolute top-full left-0 mt-2 p-2 border rounded-md shadow-md hidden" />
-</div>
-
-
-
-
-  <!-- Check Out -->
-  <div class="flex-1 text-center sm:text-left border-b sm:border-b-0 sm:border-r border-gray-200 px-2 py-2">
-    <p class="text-sm sm:text-base font-semibold text-[#413030]">Check Out</p>
-    <span class="text-xs sm:text-sm text-gray-400 cursor-pointer relative inline-block group">
-      Add Dates
-      <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-gray-500 transition-all duration-300 group-hover:w-full"></span>
-    </span>
-
-     <!-- Hidden calendar input -->
-  <input id="checkinDate" type="date" class="absolute top-full left-0 mt-2 p-2 border rounded-md shadow-md hidden" />
-  </div>
-
-  <!-- Adult -->
-  <div class="flex-1 text-center sm:text-left border-b sm:border-b-0 sm:border-r border-gray-200 px-2 py-2">
-    <p class="text-sm sm:text-base font-semibold text-[#413030]">Adult</p>
-    <span class="text-xs sm:text-sm text-gray-400 cursor-pointer relative inline-block group">
-      Add Guests
-      <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-gray-500 transition-all duration-300 group-hover:w-full"></span>
-    </span>
-
-
-  </div>
-
-  <!-- Children -->
-  <div class="flex-1 text-center sm:text-left px-2 py-2">
-    <p class="text-sm sm:text-base font-semibold text-[#413030]">Children</p>
-    <span class="text-xs sm:text-sm text-gray-400 cursor-pointer relative inline-block group">
-      Add Guests
-      <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-gray-500 transition-all duration-300 group-hover:w-full"></span>
-    </span>
-  </div>
-
-  <!-- Search Button for Desktop -->
-  <div class="absolute right-4 top-1/2 transform -translate-y-1/2 hidden sm:flex">
-    <button class="bg-gradient-to-r from-[#EFB85A] to-[#E11162] text-white w-12 h-12 flex items-center justify-center rounded-full shadow-lg hover:scale-110 transition">
-      <i class="fas fa-search"></i>
-    </button>
-  </div>
-
-  <!-- Mobile Search Button -->
-  <div class="block sm:hidden mt-3">
-    <button class="w-full bg-gradient-to-r from-[#EFB85A] to-[#E11162] text-white font-semibold py-3 rounded-xl shadow-md">
-      Search
-    </button>
-  </div>
-</div>
-
-
-
-
-
-
-
       </div>
 
+      <!-- Actual Content -->
+      <div class="section-content" style="display: none;">
+        <div class="flex-1 align-center font-bold text-[#413030] text-3xl p-8">Our Rooms</div>
 
-
-
-      <!-- Sections -->
-      <div class="flex bg-white text-center flex-col">
-        <div class="flex-1 align-center font-bold text-[#413030] text-3xl p-8 ">Our Rooms</div>
-
-          <div class="px-6 md:px-12 lg:px-20">
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="bg-white border rounded-2xl border-[#CAC1C1] p-6 overflow-hidden shadow-md w-full max-w-sm mx-auto flex flex-col 
-     transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
-  
-            <!-- Image -->
-            <div class="mb-4">
-              <img src="/src/assets/carousel2.jpg" class="rounded-xl w-full h-auto">
-            </div>
-
-            <!-- Content -->
-            <div class="flex flex-col flex-grow">
-              
-              <!-- Room Info -->
-              <div class="flex flex-col items-start">
-                <h3 class="text-lg font-bold text-[#413030] mb-4">Supreme Duluxe Room</h3>
-                <p class="text-base text-gray-900">$12 per night</p>
-              </div>
-
-
-                <!-- Features Section -->
-                <div class="space-y-2 py-3">
-                  <!-- Feature -->
-                  <div class="flex flex-col items-start">
-                    <h1 class="text-sm font-bold text-[#413030] mb-2">Feature</h1>
-                    <ul class="flex list-none space-x-2 text-xs text-gray-600">
-                      <li>Bedroom</li>
-                      <li>Balcony</li>
-                      <li>Kitchen</li>
-                    </ul>
-                  </div>
-
-                  <!-- Facilities -->
-                  <div class="flex flex-col items-start">
-                    <h1 class="text-sm font-bold text-[#413030] mb-2">Facilities</h1>
-                    <ul class="flex list-none space-x-4 text-xs text-gray-400 items-center">
-                      <li><img src="/src/assets/TV.jpeg" alt="TV" class="w-6 h-6 object-contain"></li>
-                      <li><img src="/src/assets/AC.avif" alt="AC" class="w-6 h-6 object-contain"></li>
-                      <li><img src="/src/assets/refrigerator.png" alt="Refrigerator" class="w-6 h-6 object-contain"></li>
-                    </ul>
-                  </div>
-
-                  <!-- Guests -->
-                  <div class="flex flex-col items-start">
-                    <h1 class="text-sm font-bold text-[#413030] mb-2">Guests</h1>
-                    <ul class="flex list-none space-x-2 text-xs text-gray-600">
-                      <li>4 Adults</li>
-                      <li>5 Children</li>
-                    </ul>
-                  </div>
-                </div>
-
-                <!-- Footer -->
-                <div class="flex justify-between items-center px-6">
-                  <span class="inline-block text-xs font-bold text-[#413030] border-b-2 border-[#413030] pb-1">
-                    more details
-                  </span>
-                  <button class="rounded-full px-4 py-3 text-xs text-white font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
-                    Book Now
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="bg-white border rounded-2xl border-[#CAC1C1] p-6 overflow-hidden shadow-md w-full max-w-sm mx-auto flex flex-col 
-     transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
-  
-            <!-- Image -->
-            <div class="mb-4">
-              <img src="/src/assets/carousel2.jpg" class="rounded-xl w-full h-auto">
-            </div>
-
-            <!-- Content -->
-            <div class="flex flex-col flex-grow">
-              
-              <!-- Room Info -->
-              <div class="flex flex-col items-start">
-                <h3 class="text-lg font-bold text-[#413030] mb-4">Supreme Duluxe Room</h3>
-                <p class="text-base text-gray-900">$12 per night</p>
-              </div>
-
-
-                <!-- Features Section -->
-                <div class="space-y-2 py-4">
-                  <!-- Feature -->
-                  <div class="flex flex-col items-start">
-                    <h1 class="text-sm font-bold text-[#413030] mb-2">Feature</h1>
-                    <ul class="flex list-none space-x-2 text-xs text-gray-600">
-                      <li>Bedroom</li>
-                      <li>Balcony</li>
-                      <li>Kitchen</li>
-                    </ul>
-                  </div>
-
-                  <!-- Facilities -->
-                  <div class="flex flex-col items-start">
-                    <h1 class="text-sm font-bold text-[#413030] mb-2">Facilities</h1>
-                    <ul class="flex list-none space-x-4 text-xs text-gray-400 items-center">
-                      <li><img src="/src/assets/TV.jpeg" alt="TV" class="w-6 h-6 object-contain"></li>
-                      <li><img src="/src/assets/AC.avif" alt="AC" class="w-6 h-6 object-contain"></li>
-                      <li><img src="/src/assets/refrigerator.png" alt="Refrigerator" class="w-6 h-6 object-contain"></li>
-                    </ul>
-                  </div>
-
-                  <!-- Guests -->
-                  <div class="flex flex-col items-start">
-                    <h1 class="text-sm font-bold text-[#413030] mb-2">Guests</h1>
-                    <ul class="flex list-none space-x-2 text-xs text-gray-600">
-                      <li>4 Adults</li>
-                      <li>5 Children</li>
-                    </ul>
-                  </div>
-                </div>
-
-                <!-- Footer -->
-                <div class="flex justify-between items-center px-6">
-                  <span class="inline-block text-xs font-bold text-[#413030] border-b-2 border-[#413030] pb-1">
-                    more details
-                  </span>
-                  <button class="rounded-full px-4 py-3 text-xs text-white font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
-                    Book Now
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="bg-white border rounded-2xl border-[#CAC1C1] p-6 overflow-hidden shadow-md w-full max-w-sm mx-auto flex flex-col 
-     transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
-  
-            <!-- Image -->
-            <div class="mb-4">
-              <img src="/src/assets/carousel2.jpg" class="rounded-xl w-full h-auto">
-            </div>
-
-            <!-- Content -->
-            <div class="flex flex-col flex-grow">
-              
-              <!-- Room Info -->
-              <div class="flex flex-col items-start">
-                <h3 class="text-lg font-bold text-[#413030] mb-4">Supreme Duluxe Room</h3>
-                <p class="text-base text-gray-900">$12 per night</p>
-              </div>
-
-                <!-- Features Section -->
-                <div class="space-y-2 py-4">
-                  <!-- Feature -->
-                  <div class="flex flex-col items-start">
-                    <h1 class="text-sm font-bold text-[#413030] mb-2">Feature</h1>
-                    <ul class="flex list-none space-x-2 text-xs text-gray-600">
-                      <li>Bedroom</li>
-                      <li>Balcony</li>
-                      <li>Kitchen</li>
-                    </ul>
-                  </div>
-
-                  <!-- Facilities -->
-                  <div class="flex flex-col items-start">
-                    <h1 class="text-sm font-bold text-[#413030] mb-2">Facilities</h1>
-                    <ul class="flex list-none space-x-4 text-xs text-gray-400 items-center">
-                      <li><img src="/src/assets/TV.jpeg" alt="TV" class="w-6 h-6 object-contain"></li>
-                      <li><img src="/src/assets/AC.avif" alt="AC" class="w-6 h-6 object-contain"></li>
-                      <li><img src="/src/assets/refrigerator.png" alt="Refrigerator" class="w-6 h-6 object-contain"></li>
-                    </ul>
-                  </div>
-
-                  <!-- Guests -->
-                  <div class="flex flex-col items-start">
-                    <h1 class="text-sm font-bold text-[#413030] mb-2">Guests</h1>
-                    <ul class="flex list-none space-x-2 text-xs text-gray-600">
-                      <li>4 Adults</li>
-                      <li>5 Children</li>
-                    </ul>
-                  </div>
-                </div>
-
-                <!-- Footer -->
-                <div class="flex justify-between items-center px-6">
-                  <span class="inline-block text-xs font-bold text-[#413030] border-b-2 border-[#413030] pb-1">
-                    more details
-                  </span>
-                  <button class="rounded-full px-4 py-3 text-xs text-white font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
-                    Book Now
-                  </button>
-                </div>
-              </div>
-            </div>
-           
-            <div class="bg-white border rounded-2xl border-[#CAC1C1] p-6 overflow-hidden shadow-md w-full max-w-sm mx-auto flex flex-col 
-     transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
-  
-            <!-- Image -->
-            <div class="mb-4">
-              <img src="/src/assets/carousel2.jpg" class="rounded-xl w-full h-auto">
-            </div>
-
-            <!-- Content -->
-            <div class="flex flex-col flex-grow">
-              
-              <!-- Room Info -->
-              <div class="flex flex-col items-start">
-                <h3 class="text-lg font-bold text-[#413030] mb-4">Supreme Duluxe Room</h3>
-                <p class="text-base text-gray-900">$12 per night</p>
-              </div>
-
-
-                <!-- Features Section -->
-                <div class="space-y-2 py-4">
-                  <!-- Feature -->
-                  <div class="flex flex-col items-start">
-                    <h1 class="text-sm font-bold text-[#413030] mb-2">Feature</h1>
-                    <ul class="flex list-none space-x-2 text-xs text-gray-600">
-                      <li>Bedroom</li>
-                      <li>Balcony</li>
-                      <li>Kitchen</li>
-                    </ul>
-                  </div>
-
-                  <!-- Facilities -->
-                  <div class="flex flex-col items-start">
-                    <h1 class="text-sm font-bold text-[#413030] mb-2">Facilities</h1>
-                    <ul class="flex list-none space-x-4 text-xs text-gray-400 items-center">
-                      <li><img src="/src/assets/TV.jpeg" alt="TV" class="w-6 h-6 object-contain"></li>
-                      <li><img src="/src/assets/AC.avif" alt="AC" class="w-6 h-6 object-contain"></li>
-                      <li><img src="/src/assets/refrigerator.png" alt="Refrigerator" class="w-6 h-6 object-contain"></li>
-                    </ul>
-                  </div>
-
-                  <!-- Guests -->
-                  <div class="flex flex-col items-start">
-                    <h1 class="text-sm font-bold text-[#413030] mb-2">Guests</h1>
-                    <ul class="flex list-none space-x-2 text-xs text-gray-600">
-                      <li>4 Adults</li>
-                      <li>5 Children</li>
-                    </ul>
-                  </div>
-                </div>
-
-                <!-- Footer -->
-                <div class="flex justify-between items-center px-6">
-                  <span class="inline-block text-xs font-bold text-[#413030] border-b-2 border-[#413030] pb-1">
-                    more details
-                  </span>
-                  <button class="rounded-full px-4 py-3 text-xs text-white font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
-                    Book Now
-                  </button>
-                </div>
-              </div>
-            </div>
-
-
+        <div class="px-6 md:px-12 lg:px-20">
+          <div id = "roomsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- dynamically added -->
           </div>
+        </div>
 
+        <div class="px-6 md:px-12 lg:px-20">
+          <div class="flex justify-end py-5">
+            <span class="inline-block text-base font-bold text-[#413030] pb-1 cursor-pointer hover:text-[#EFB85A]">
+              More Rooms >>>
+            </span>
           </div>
+        </div>
+      </div>
+    </section>
 
-          <div class="px-6 md:px-12 lg:px-20">
-            <div class="flex justify-end py-5">
-              <span class="inline-block text-base font-bold text-[#413030] pb-1 cursor-pointer hover:text-[#EFB85A]">
-                More Rooms >>>
-              </span>
+    <!-- Amenities Section (Lazy loaded) -->
+    <section id="amenities" class="lazy-section fade-in flex flex-col text-center" data-section="amenities">
+      <!-- Loading Skeleton -->
+      <div class="loading-skeleton">
+        <div class="lazy-load-container">
+          <div class="text-center w-full">
+            <div class="skeleton h-8 w-40 mx-auto mb-10 rounded"></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-10">
+              <div class="skeleton h-64 w-full rounded"></div>
+              <div class="skeleton h-64 w-full rounded"></div>
+              <div class="skeleton h-64 w-full rounded"></div>
+              <div class="skeleton h-64 w-full rounded"></div>
             </div>
           </div>
-    </div>
+        </div>
+      </div>
 
-
-      <div class="flex flex-col text-center">
-
-        <!-- Amenities Section -->
-        <div class="font-bold text-[#413030] text-3xl py-10">Amenities</div>
+      <!-- Actual Content -->
+      <div class="section-content" style="display: none;">
+        <h2 class="font-bold text-[#413030] text-3xl py-10">Amenities</h2>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-10">
-          <!-- Amenity Item -->
-          <div class="bg-white p-6 w-full max-w-sm mx-auto justify-center">
-            <img src="/src/assets/parking.jpg" alt="Parking" class="w-40 h-40 mx-auto object-contain">
-            <p class="mt-6 text-xl font-semibold text-[#413030]">Parking</p>
-          </div>
+          <article class="slide-in-left bg-white p-6 w-full max-w-sm mx-auto justify-center">
+            <img data-src="/src/assets/parking.jpg" alt="Parking facility" class="lazy-image w-40 h-40 mx-auto object-contain">
+            <h3 class="mt-6 text-xl font-semibold text-[#413030]">Parking</h3>
+          </article>
 
-          <div class="bg-white p-6 w-full max-w-sm mx-auto justify-center">
-            <img src="/src/assets/swimming.png" alt="Swimming" class="w-40 h-40 mx-auto object-contain">
-            <p class="mt-6 text-xl font-semibold text-[#413030]">swimming pool</p>
-          </div>
+          <article class="slide-in-right bg-white p-6 w-full max-w-sm mx-auto justify-center" style="animation-delay: 0.1s;">
+            <img data-src="/src/assets/swimming.png" alt="Swimming pool" class="lazy-image w-40 h-40 mx-auto object-contain">
+            <h3 class="mt-6 text-xl font-semibold text-[#413030]">Swimming Pool</h3>
+          </article>
 
-          <div class="bg-white p-6 w-full max-w-sm mx-auto justify-center">
-            <img src= "/src/assets/gym.jpg" alt="gym" class="w-40 h-40 mx-auto object-contain">
-            <p class="mt-6 text-xl font-semibold text-[#413030]">gym</p>
-          </div>
+          <article class="slide-in-left bg-white p-6 w-full max-w-sm mx-auto justify-center" style="animation-delay: 0.2s;">
+            <img data-src="/src/assets/gym.jpg" alt="Fitness center" class="lazy-image w-40 h-40 mx-auto object-contain">
+            <h3 class="mt-6 text-xl font-semibold text-[#413030]">Gym</h3>
+          </article>
 
-          <div class="bg-white p-6 w-full max-w-sm mx-auto justify-center">
-            <img src="/src/assets/playstation.png" alt="Playstation" class="w-40 h-40 mx-auto object-contain">
-            <p class="mt-6 text-xl font-semibold text-[#413030]">Play Station</p>
-          </div>
-
+          <article class="slide-in-right bg-white p-6 w-full max-w-sm mx-auto justify-center" style="animation-delay: 0.3s;">
+            <img data-src="/src/assets/playstation.png" alt="Gaming area" class="lazy-image w-40 h-40 mx-auto object-contain">
+            <h3 class="mt-6 text-xl font-semibold text-[#413030]">Play Station</h3>
+          </article>
         </div>
+      </div>
+    </section>
 
+    <!-- Nearby Services Section (Lazy loaded) -->
+    <section id="nearby-services" class="lazy-section fade-in" data-section="nearby-services">
+      <!-- Loading Skeleton -->
+      <div class="loading-skeleton">
+        <div class="lazy-load-container">
+          <div class="text-center w-full">
+            <div class="skeleton h-8 w-56 mx-auto mb-20 rounded"></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4 max-w-7xl mx-auto">
+              <div class="skeleton h-40 w-full rounded-2xl"></div>
+              <div class="skeleton h-40 w-full rounded-2xl"></div>
+              <div class="skeleton h-40 w-full rounded-2xl"></div>
+              <div class="skeleton h-40 w-full rounded-2xl"></div>
+            </div>
+          </div>
+        </div>
+      </div>
 
+      <!-- Actual Content -->
+      <div class="section-content" style="display: none;">
+        <h2 class="font-bold text-[#413030] text-3xl p-12 pb-20 text-center">Nearby Services</h2>
 
+        <div class="w-full max-w-7xl mx-auto px-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <article class="slide-in-left bg-white border rounded-2xl p-6 shadow-md">
+              <h3 class="text-lg font-bold mb-1">Service 1</h3>
+              <p class="text-sm text-gray-600">12 miles away</p>
+              <div class="flex flex-row space-x-1 text-yellow-500 mt-4 justify-end" aria-label="5 star rating">⭐⭐⭐⭐⭐</div>
+            </article>
 
+            <article class="slide-in-right bg-white border rounded-2xl p-6 shadow-md" style="animation-delay: 0.1s;">
+              <h3 class="text-lg font-bold mb-1">Service 2</h3>
+              <p class="text-sm text-gray-600">8 miles away</p>
+              <div class="flex flex-row space-x-1 text-yellow-500 mt-4 justify-end" aria-label="4 star rating">⭐⭐⭐⭐</div>
+            </article>
 
+            <article class="slide-in-left bg-white border rounded-2xl p-6 shadow-md" style="animation-delay: 0.2s;">
+              <h3 class="text-lg font-bold mb-1">Service 3</h3>
+              <p class="text-sm text-gray-600">5 miles away</p>
+              <div class="flex flex-row space-x-1 text-yellow-500 mt-4 justify-end" aria-label="5 star rating">⭐⭐⭐⭐⭐</div>
+            </article>
 
+            <article class="slide-in-right bg-white border rounded-2xl p-6 shadow-md" style="animation-delay: 0.3s;">
+              <h3 class="text-lg font-bold mb-1">Service 4</h3>
+              <p class="text-sm text-gray-600">7 miles away</p>
+              <div class="flex flex-row space-x-1 text-yellow-500 mt-4 justify-end" aria-label="5 star rating">⭐⭐⭐⭐⭐</div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
 
+    <!-- Testimonials Section (Lazy loaded) -->
+    <section id="testimonials" class="lazy-section fade-in max-w-7xl mx-auto py-20" data-section="testimonials">
+      <!-- Loading Skeleton -->
+      <div class="loading-skeleton">
+        <div class="lazy-load-container">
+          <div class="text-center w-full">
+            <div class="skeleton h-8 w-64 mx-auto mb-12 rounded"></div>
+            <div class="skeleton h-96 w-full max-w-4xl mx-auto rounded-2xl"></div>
+          </div>
+        </div>
+      </div>
 
+      <!-- Actual Content -->
+      <div class="section-content" style="display: none;">
+        <h2 class="text-3xl font-bold text-[#413030] text-center mb-12">What Our Guests Say</h2>
+        
+        <!-- 3D Carousel Container -->
+        <div class="relative mx-auto h-[400px] [perspective:1200px]" id="carouselContainer">
+          <!-- Hover zones -->
+          <div class="absolute top-0 left-0 h-full w-[200px] z-20 cursor-w-resize" id="hoverLeft"></div>
+          <div class="absolute top-0 right-0 h-full w-[200px] z-20 cursor-e-resize" id="hoverRight"></div>
 
-
-<!-- Nearby Services Section -->
-<div class="font-bold text-[#413030] text-3xl p-12 pb-20">Nearby Services</div>
-
-<div class="w-full max-w-7xl mx-auto px-4">
-  <!-- Grid Container -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-    
-    <!-- Card -->
-    <div class="bg-white border rounded-2xl p-6 shadow-md">
-      <h2 class="text-lg font-bold mb-1">Service 1</h2>
-      <p class="text-sm text-gray-600">12 miles away</p>
-      <div class="flex flex-row space-x-1 text-yellow-500 mt-4 justify-end">⭐⭐⭐⭐⭐</div>
-    </div>
-
-    <div class="bg-white border rounded-2xl p-6 shadow-md">
-      <h2 class="text-lg font-bold mb-1">Service 2</h2>
-      <p class="text-sm text-gray-600">8 miles away</p>
-      <div class="flex flex-row space-x-1 text-yellow-500 mt-4 justify-end">⭐⭐⭐⭐</div>
-    </div>
-
-    <div class="bg-white border rounded-2xl p-6 shadow-md">
-      <h2 class="text-lg font-bold mb-1">Service 3</h2>
-      <p class="text-sm text-gray-600">5 miles away</p>
-      <div class="flex flex-row space-x-1 text-yellow-500 mt-4 justify-end">⭐⭐⭐⭐⭐</div>
-    </div>
-
-    <div class="bg-white border rounded-2xl p-6 shadow-md">
-      <h2 class="text-lg font-bold mb-1">Service 4</h2>
-      <p class="text-sm text-gray-600">7 miles away</p>
-      <div class="flex flex-row space-x-1 text-yellow-500 mt-4 justify-end">⭐⭐⭐⭐⭐</div>
-    </div>
-
-  </div>
-</div>
-
-
-
-
-
-<div class="max-w-7xl mx-auto py-20">
-    
-
-    <!-- 3D Carousel Container -->
-    <div class="relative mx-auto h-[400px] [perspective:1200px]" id="carouselContainer">
-      <!-- Hover zones -->
-      <div class="absolute top-0 left-0 h-full w-[200px] z-20 cursor-w-resize" id="hoverLeft"></div>
-      <div class="absolute top-0 right-0 h-full w-[200px] z-20 cursor-e-resize" id="hoverRight"></div>
-
-      <!-- Card 1 (Gold Gradient) -->
-      <div class="testimonial-card absolute top-1/2 left-1/2 w-[280px] h-[320px] rounded-2xl overflow-hidden text-white transition-all duration-700 ease-in-out" data-index="0" style="transform-style:preserve-3d">
-        <div class="p-8 h-full flex flex-col justify-between relative bg-gradient-to-br from-[#EFB85A] to-[#fde68a]">
-          <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
-          <div>
-            <div class="flex items-center mb-6">
-              <div class="w-14 h-14 bg-gradient-to-br from-[#EFB85A] to-[#fde68a] rounded-full mr-4 flex items-center justify-center font-bold text-lg text-black">SJ</div>
+          <!-- Testimonial Cards -->
+          <article class="testimonial-card absolute top-1/2 left-1/2 w-[280px] h-[320px] rounded-2xl overflow-hidden text-white transition-all duration-700 ease-in-out" data-index="0" style="transform-style:preserve-3d">
+            <div class="p-8 h-full flex flex-col justify-between relative bg-gradient-to-br from-[#EFB85A] to-[#fde68a]">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
               <div>
-                <h3 class="font-bold text-lg">Sarah Johnson</h3>
-                <p class="text-sm opacity-80">CEO, Tech Startup</p>
+                <div class="flex items-center mb-6">
+                  <div class="w-14 h-14 bg-gradient-to-br from-[#EFB85A] to-[#fde68a] rounded-full mr-4 flex items-center justify-center font-bold text-lg text-black">SJ</div>
+                  <div>
+                    <h3 class="font-bold text-lg">Sarah Johnson</h3>
+                    <p class="text-sm opacity-80">CEO, Tech Startup</p>
+                  </div>
+                </div>
+                <p class="text-sm leading-relaxed mb-6 opacity-90">
+                  This product has completely transformed how we operate. The intuitive design and powerful features have boosted our productivity by 300%.
+                </p>
+              </div>
+              <div class="flex justify-between items-center">
+                <div class="text-lg" aria-label="5 star rating">★★★★★</div>
+                <div class="text-xs opacity-70">1 week ago</div>
               </div>
             </div>
-            <p class="text-sm leading-relaxed mb-6 opacity-90">
-              This product has completely transformed how we operate. The intuitive design and powerful features have boosted our productivity by 300%.
-            </p>
-          </div>
-          <div class="flex justify-between items-center">
-            <div class="text-lg">★★★★★</div>
-            <div class="text-xs opacity-70">1 week ago</div>
-          </div>
-        </div>
-      </div>
+          </article>
 
-       <!-- Card 2 (Orange Gradient) -->
-      <div class="testimonial-card absolute top-1/2 left-1/2 w-[280px] h-[320px] rounded-2xl overflow-hidden text-white transition-all duration-700 ease-in-out" data-index="1" style="transform-style:preserve-3d">
-        <div class="p-8 h-full flex flex-col justify-between relative bg-gradient-to-br from-[#F26538] to-[#fdba74]">
-          <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
-          <div>
-            <div class="flex items-center mb-6">
-              <div class="w-14 h-14 bg-gradient-to-br from-[#F26538] to-[#fdba74] rounded-full mr-4 flex items-center justify-center font-bold text-lg text-black">MR</div>
+          <article class="testimonial-card absolute top-1/2 left-1/2 w-[280px] h-[320px] rounded-2xl overflow-hidden text-white transition-all duration-700 ease-in-out" data-index="1" style="transform-style:preserve-3d">
+            <div class="p-8 h-full flex flex-col justify-between relative bg-gradient-to-br from-[#F26538] to-[#fdba74]">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
               <div>
-                <h3 class="font-bold text-lg">Mike Rodriguez</h3>
-                <p class="text-sm opacity-80">Marketing Director</p>
+                <div class="flex items-center mb-6">
+                  <div class="w-14 h-14 bg-gradient-to-br from-[#F26538] to-[#fdba74] rounded-full mr-4 flex items-center justify-center font-bold text-lg text-black">MR</div>
+                  <div>
+                    <h3 class="font-bold text-lg">Mike Rodriguez</h3>
+                    <p class="text-sm opacity-80">Marketing Director</p>
+                  </div>
+                </div>
+                <p class="text-sm leading-relaxed mb-6 opacity-90">
+                  Outstanding customer service and product quality. The team went above and beyond to ensure everything was perfect.
+                </p>
+              </div>
+              <div class="flex justify-between items-center">
+                <div class="text-lg" aria-label="5 star rating">★★★★★</div>
+                <div class="text-xs opacity-70">5 days ago</div>
               </div>
             </div>
-            <p class="text-sm leading-relaxed mb-6 opacity-90">
-              Outstanding customer service and product quality. The team went above and beyond to ensure everything was perfect.
-            </p>
-          </div>
-          <div class="flex justify-between items-center">
-            <div class="text text-lg">★★★★★</div>
-            <div class="text-xs opacity-70">5 days ago</div>
-          </div>
-        </div>
-      </div>
+          </article>
 
-      <!-- Card 3 (Pink Gradient) -->
-      <div class="testimonial-card absolute top-1/2 left-1/2 w-[280px] h-[320px] rounded-2xl overflow-hidden text-white transition-all duration-700 ease-in-out" data-index="2" style="transform-style:preserve-3d">
-        <div class="p-8 h-full flex flex-col justify-between relative bg-gradient-to-br from-[#E11162] to-[#f9a8d4]">
-          <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
-          <div>
-            <div class="flex items-center mb-6">
-              <div class="w-14 h-14 bg-gradient-to-br from-[#E11162] to-[#f9a8d4] rounded-full mr-4 flex items-center justify-center font-bold text-lg text-black">AL</div>
+          <article class="testimonial-card absolute top-1/2 left-1/2 w-[280px] h-[320px] rounded-2xl overflow-hidden text-white transition-all duration-700 ease-in-out" data-index="2" style="transform-style:preserve-3d">
+            <div class="p-8 h-full flex flex-col justify-between relative bg-gradient-to-br from-[#E11162] to-[#f9a8d4]">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
               <div>
-                <h3 class="font-bold text-lg">Anna Liu</h3>
-                <p class="text-sm opacity-80">UX Designer</p>
+                <div class="flex items-center mb-6">
+                  <div class="w-14 h-14 bg-gradient-to-br from-[#E11162] to-[#f9a8d4] rounded-full mr-4 flex items-center justify-center font-bold text-lg text-black">AL</div>
+                  <div>
+                    <h3 class="font-bold text-lg">Anna Liu</h3>
+                    <p class="text-sm opacity-80">UX Designer</p>
+                  </div>
+                </div>
+                <p class="text-sm leading-relaxed mb-6 opacity-90">
+                  The attention to detail is incredible. Every feature feels thoughtfully designed. It's rare to find a product that combines functionality with such beautiful aesthetics.
+                </p>
+              </div>
+              <div class="flex justify-between items-center">
+                <div class="text-lg" aria-label="5 star rating">★★★★★</div>
+                <div class="text-xs opacity-70">1 week ago</div>
               </div>
             </div>
-            <p class="text-sm leading-relaxed mb-6 opacity-90">
-              The attention to detail is incredible. Every feature feels thoughtfully designed. It's rare to find a product that combines functionality with such beautiful aesthetics.
-            </p>
-          </div>
-          <div class="flex justify-between items-center">
-            <div class=" text-lg">★★★★★</div>
-            <div class="text-xs opacity-70">1 week ago</div>
-          </div>
-        </div>
-      </div>
+          </article>
 
-      <!-- Card 4 (Mixed Gradient) -->
-      <div class="testimonial-card absolute top-1/2 left-1/2 w-[280px] h-[320px] rounded-2xl overflow-hidden text-white transition-all duration-700 ease-in-out" data-index="3" style="transform-style:preserve-3d">
-        <div class="p-8 h-full flex flex-col justify-between relative bg-gradient-to-br from-[#EFB85A] via-[#F26538] to-[#E11162]">
-          <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
-          <div>
-            <div class="flex items-center mb-6">
-              <div class="w-14 h-14 bg-gradient-to-br from-[#EFB85A] to-[#E11162] rounded-full mr-4 flex items-center justify-center font-bold text-lg text-black">JS</div>
+          <article class="testimonial-card absolute top-1/2 left-1/2 w-[280px] h-[320px] rounded-2xl overflow-hidden text-white transition-all duration-700 ease-in-out" data-index="3" style="transform-style:preserve-3d">
+            <div class="p-8 h-full flex flex-col justify-between relative bg-gradient-to-br from-[#EFB85A] via-[#F26538] to-[#E11162]">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
               <div>
-                <h3 class="font-bold text-lg">James Smith</h3>
-                <p class="text-sm opacity-80">Project Manager</p>
+                <div class="flex items-center mb-6">
+                  <div class="w-14 h-14 bg-gradient-to-br from-[#EFB85A] to-[#E11162] rounded-full mr-4 flex items-center justify-center font-bold text-lg text-black">JS</div>
+                  <div>
+                    <h3 class="font-bold text-lg">James Smith</h3>
+                    <p class="text-sm opacity-80">Project Manager</p>
+                  </div>
+                </div>
+                <p class="text-sm leading-relaxed mb-6 opacity-90">
+                  Game changer for our team! The collaboration features are top-notch and the learning curve is minimal. We saw immediate results from day one.
+                </p>
+              </div>
+              <div class="flex justify-between items-center">
+                <div class="text-lg" aria-label="5 star rating">★★★★★</div>
+                <div class="text-xs opacity-70">1 week ago</div>
               </div>
             </div>
-            <p class="text-sm leading-relaxed mb-6 opacity-90">
-              Game changer for our team! The collaboration features are top-notch and the learning curve is minimal. We saw immediate results from day one.
-            </p>
-          </div>
-          <div class="flex justify-between items-center">
-            <div class="text-lg">★★★★★</div>
-            <div class="text-xs opacity-70">1 week ago</div>
-          </div>
+          </article>
         </div>
 
-      </div>
-    </div>
+        <!-- Indicators -->
+        <div class="flex justify-center space-x-3 mt-8" id="indicators"></div>
 
-
-
-    <!-- Indicators -->
-    <div class="flex justify-center space-x-3 mt-8" id="indicators"></div>
-
-    <!-- More Reviews Link -->
-    <div class="text-center mt-10">
-      <a href="#" class="text-[#EFB85A] hover:text-[#F26538] transition-colors duration-300 font-medium text-lg">
-        View All Reviews →
-      </a>
-    </div>
-  </div>
-
-      <div>
-      
-         
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <div class="flex flex-col p-12 text-center">
-  <h2 class="text-3xl font-bold text-[#413030] mb-10">Reach Us</h2>
-
-  <div class="flex flex-col md:flex-row gap-10">
-    <!-- Map -->
-    <div class="flex-1">
-      <div class="w-full h-80 rounded-xl overflow-hidden shadow-lg">
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15692.29028264205!2d76.95708832279107!3d11.017583907160297!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba85855910aed83%3A0x80875de5cd370a9d!2sGandhipuram%2C%20Tamil%20Nadu%20641012!5e0!3m2!1sen!2sin!4v1757909444353!5m2!1sen!2sin"
-          class="w-full h-full"
-          style="border:0;"
-          allowfullscreen=""
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
-      </div>
-    </div>
-
-    <!-- Contact Info Card -->
-    <div class="flex-1 bg-white shadow-lg rounded-xl p-8 text-left transition-transform transform hover:scale-[1.02]">
-      
-      <!-- Call Section -->
-      <div class="mb-6">
-        <h2 class="flex items-center text-lg font-bold mb-3 text-[#413030]">
-          <i class="fas fa-phone-alt mr-2 text-[#EFB85A]"></i> Call Us
-        </h2>
-        <p class="text-gray-600 hover:text-[#413030] transition-colors">+91 9524650818</p>
-        <p class="text-gray-600 hover:text-[#413030] transition-colors">+91 3534562266</p>
-      </div>
-
-      <!-- Email Section -->
-      <div class="mb-6">
-        <h2 class="flex items-center text-lg font-bold mb-3 text-[#413030]">
-          <i class="fas fa-envelope mr-2 text-[#EFB85A]"></i> Email
-        </h2>
-        <p class="text-gray-600 hover:text-[#413030] transition-colors">prabha@gmail.com</p>
-      </div>
-
-      <!-- Follow Us Section -->
-      <div>
-        <h2 class="flex items-center text-lg font-bold mb-3 text-[#413030]">
-          <i class="fas fa-share-alt mr-2 text-[#EFB85A]"></i> Follow Us
-        </h2>
-        <div class="flex space-x-6 text-2xl text-gray-600">
-          <a href="#" class="hover:text-blue-600 transition-colors duration-300">
-            <i class="fab fa-facebook"></i>
-          </a>
-          <a href="#" class="hover:text-sky-500 transition-colors duration-300">
-            <i class="fab fa-twitter"></i>
-          </a>
-          <a href="#" class="hover:text-pink-500 transition-colors duration-300">
-            <i class="fab fa-instagram"></i>
-          </a>
-          <a href="#" class="hover:text-blue-500 transition-colors duration-300">
-            <i class="fab fa-linkedin"></i>
+        <!-- More Reviews Link -->
+        <div class="text-center mt-10">
+          <a href="#" class="text-[#EFB85A] hover:text-[#F26538] transition-colors duration-300 font-medium text-lg">
+            View All Reviews →
           </a>
         </div>
       </div>
-    </div>
-  </div>
-</div>
+    </section>
 
-    <div class="bg-gray-100 text-gray-700 pt-20">
-  <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8 ">
+    <!-- Contact Section (Lazy loaded) -->
+    <section id="contact" class="lazy-section fade-in flex flex-col p-12 text-center" data-section="contact">
+      <!-- Loading Skeleton -->
+      <div class="loading-skeleton">
+        <div class="lazy-load-container">
+          <div class="text-center w-full">
+            <div class="skeleton h-8 w-32 mx-auto mb-10 rounded"></div>
+            <div class="flex flex-col md:flex-row gap-10">
+              <div class="skeleton h-80 w-full rounded-xl"></div>
+              <div class="skeleton h-80 w-full rounded-xl"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actual Content -->
+      <div class="section-content" style="display: none;">
+        <h2 class="text-3xl font-bold text-[#413030] mb-10">Reach Us</h2>
+
+        <div class="flex flex-col md:flex-row gap-10">
+          <!-- Map -->
+          <div class="flex-1 slide-in-left">
+            <div class="w-full h-80 rounded-xl overflow-hidden shadow-lg">
+              <iframe
+                data-src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15692.29028264205!2d76.95708832279107!3d11.017583907160297!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba85855910aed83%3A0x80875de5cd370a9d!2sGandhipuram%2C%20Tamil%20Nadu%20641012!5e0!3m2!1sen!2sin!4v1757909444353!5m2!1sen!2sin"
+                class="w-full h-full lazy-iframe"
+                style="border:0;"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title="Hotel location map">
+              </iframe>
+            </div>
+          </div>
+
+          <!-- Contact Info Card -->
+          <div class="slide-in-right flex-1 bg-white shadow-lg rounded-xl p-8 text-left transition-transform transform">
+            
+            <!-- Call Section -->
+            <div class="mb-6">
+              <h3 class="flex items-center text-lg font-bold mb-3 text-[#413030]">
+                <i class="fas fa-phone-alt mr-2 text-[#EFB85A]" aria-hidden="true"></i> Call Us
+              </h3>
+              <p class="text-gray-600 hover:text-[#413030] transition-colors">+91 9524650818</p>
+              <p class="text-gray-600 hover:text-[#413030] transition-colors">+91 3534562266</p>
+            </div>
+
+            <!-- Email Section -->
+            <div class="mb-6">
+              <h3 class="flex items-center text-lg font-bold mb-3 text-[#413030]">
+                <i class="fas fa-envelope mr-2 text-[#EFB85A]" aria-hidden="true"></i> Email
+              </h3>
+              <p class="text-gray-600 hover:text-[#413030] transition-colors">prabha@gmail.com</p>
+            </div>
+
+            <!-- Follow Us Section -->
+            <div class="flex space-x-6 text-2xl">
+              <a href="#"
+                class="text-[#1877F2] hover:opacity-80 transition-transform duration-300 transform hover:scale-110"
+                aria-label="Facebook">
+                <i class="fab fa-facebook"></i>
+              </a>
+              <a href="#"
+                class="text-[#1DA1F2] hover:opacity-80 transition-transform duration-300 transform hover:scale-110"
+                aria-label="Twitter">
+                <i class="fab fa-twitter"></i>
+              </a>
+              <a href="#"
+                class="text-[#E4405F] hover:opacity-80 transition-transform duration-300 transform hover:scale-110"
+                aria-label="Instagram">
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a href="#"
+                class="text-[#0A66C2] hover:opacity-80 transition-transform duration-300 transform hover:scale-110"
+                aria-label="LinkedIn">
+                <i class="fab fa-linkedin"></i>
+              </a>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+<footer class="bg-gray-100 text-gray-700 pt-2">
+  <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
     
     <!-- Logo & About -->
-    <div class = "text-left">
+    <div class="text-left">
       <h2 class="text-4xl font-extrabold mb-4 bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent">
         Zyra
       </h2>
       <p class="text-gray-600 mb-6">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        Experience luxury and comfort at Zyra Hotel. We provide exceptional hospitality with world-class amenities for an unforgettable stay.
       </p>
       <h3 class="font-semibold mb-2">Customer Support</h3>
       <p class="text-gray-600">feedback@gmail.com</p>
     </div>
 
     <!-- Quick Links -->
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-2 gap-6">
       <div>
         <h3 class="font-semibold mb-4">Quick Links</h3>
         <ul class="space-y-2">
-          <li><a href="#" class="hover:text-[#413030]">Home</a></li>
-          <li><a href="#" class="hover:text-[#413030]">Rooms</a></li>
-          <li><a href="#" class="hover:text-[#413030]">Facilities</a></li>
-          <li><a href="#" class="hover:text-[#413030]">Reviews</a></li>
-          <li><a href="#" class="hover:text-[#413030]">About us</a></li>
+          <li><a href="#home" class="hover:text-[#413030] transition">Home</a></li>
+          <li><a href="#rooms" class="hover:text-[#413030] transition">Rooms</a></li>
+          <li><a href="#amenities" class="hover:text-[#413030] transition">Facilities</a></li>
+          <li><a href="#testimonials" class="hover:text-[#413030] transition">Reviews</a></li>
+          <li><a href="#contact" class="hover:text-[#413030] transition">About us</a></li>
         </ul>
       </div>
       <div class="pt-8 md:pt-0">
         <ul class="space-y-2">
-          <li><a href="#" class="hover:text-[#413030]">FAQs</a></li>
-          <li><a href="#" class="hover:text-[#413030]">Privacy Policy</a></li>
-          <li><a href="#" class="hover:text-[#413030]">Terms and Condition</a></li>
+          <li><a href="#" class="hover:text-[#413030] transition">FAQs</a></li>
+          <li><a href="#" class="hover:text-[#413030] transition">Privacy Policy</a></li>
+          <li><a href="#" class="hover:text-[#413030] transition">Terms and Condition</a></li>
         </ul>
       </div>
     </div>
 
-    <!-- Follow Us -->
-    <div>
+    <!-- Social Media -->
+    <div class="flex flex-col items-center md:items-start">
       <h3 class="font-semibold mb-4">Follow us</h3>
-      <div class="flex flex-col space-y-4 text-xl">
-        <a href="#" class="hover:text-blue-600"><i class="fab fa-facebook"></i></a>
-        <a href="#" class="hover:text-sky-500"><i class="fab fa-twitter"></i></a>
-        <a href="#" class="hover:text-blue-700"><i class="fab fa-linkedin"></i></a>
-        <a href="#" class="hover:text-pink-500"><i class="fab fa-instagram"></i></a>
+      <div class="flex space-x-6 text-2xl">
+        <a href="#" class="text-[#1877F2] hover:opacity-80 transition" aria-label="Facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+        <a href="#" class="text-[#1DA1F2] hover:opacity-80 transition" aria-label="Twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#" class="text-[#0A66C2] hover:opacity-80 transition" aria-label="LinkedIn">
+          <i class="fab fa-linkedin"></i>
+        </a>
+        <a href="#" class="text-[#E4405F] hover:opacity-80 transition" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
       </div>
     </div>
   </div>
 
-  <!-- Bottom Bar -->
+  <!-- Copyright -->
   <div class="border-t border-gray-300 py-4 text-center text-sm text-gray-500">
-    © 2022 thecreation.design | All rights reserved
+    © 2025 Zyra Hotel | All rights reserved
   </div>
-</div>
+</footer>
+  
+  <!-- Scroll to Top Button -->
+  <button id="scrollToTopBtn" 
+    class="hidden fixed bottom-6 right-6 bg-gradient-to-r from-[#EFB85A] to-[#E11162] text-white w-12 h-12 flex items-center justify-center rounded-full shadow-lg hover:scale-110 transition z-50"
+    aria-label="Scroll to top">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  
 
 
+<script>
 
+  // Declare roomsData in global scope first
+var roomsData = [];
 
+// Function to render room cards dynamically
+function renderRoomCards() {
+  const roomsContainer = document.getElementById('roomsContainer');
+  
+  // Clear existing content
+  roomsContainer.innerHTML = '';
+  
+  // Generate cards for each room
+  roomsData.forEach(room => {
+    const roomCard = createRoomCard(room);
+    roomsContainer.appendChild(roomCard);
+  });
+}
 
-    
-    <button id="scrollToTopBtn" 
-  class="hidden fixed bottom-6 right-6 bg-gradient-to-r from-[#EFB85A] to-[#E11162] text-white w-12 h-12 flex items-center justify-center rounded-full shadow-lg">
-  <i class="fas fa-arrow-up"></i>
-</button>
-    
-    
-    
-    
+// Function to create individual room card
+function createRoomCard(room) {
+  // Create article element
+  const article = document.createElement('article');
+  article.className = 'slide-in-left bg-white border rounded-2xl border-[#CAC1C1] p-6 overflow-hidden shadow-md w-full max-w-sm mx-auto flex flex-col transform transition-transform duration-300 hover:scale-105 hover:shadow-xl';
+  
+  // Get first image or fallback
+  const mainImage = room.images && room.images.length > 0 
+    ? room.images[0].thumbnailUrl || room.images[0].url 
+    : '/src/assets/carousel2.jpg';
+  
+  // Generate features list
+  const featuresHTML = room.selectedFeatures
+    ? room.selectedFeatures.map(feature => `<li>${feature.name}</li>`).join('')
+    : '';
+  
+  // Generate facilities icons
+  const facilitiesHTML = room.selectedFacilities
+    ? room.selectedFacilities.map(facility => 
+        `<li><img data-src="${facility.icon}" alt="${facility.name}" class="lazy-image w-6 h-6 object-contain"></li>`
+      ).join('')
+    : '';
+  
+  // Set innerHTML
+  article.innerHTML = `
+    <div class="mb-4">
+      <img data-src="${mainImage}" alt="${room.categoryType}" class="lazy-image rounded-xl w-full h-auto">
     </div>
+    <div class="flex flex-col flex-grow">
+      <div class="flex flex-col items-start">
+        <h3 class="text-lg font-bold text-[#413030] mb-4">${room.categoryType}</h3>
+        <p class="text-base text-gray-900">${room.price} per night</p>
+      </div>
+      <div class="space-y-2 py-3">
+        ${featuresHTML ? `
+        <div class="flex flex-col items-start">
+          <h4 class="text-sm font-bold text-[#413030] mb-2">Features</h4>
+          <ul class="flex list-none space-x-2 text-xs text-gray-600">
+            ${featuresHTML}
+          </ul>
+        </div>
+        ` : ''}
+        ${facilitiesHTML ? `
+        <div class="flex flex-col items-start">
+          <h4 class="text-sm font-bold text-[#413030] mb-2">Facilities</h4>
+          <ul class="flex list-none space-x-4 text-xs text-gray-400 items-center">
+            ${facilitiesHTML}
+          </ul>
+        </div>
+        ` : ''}
+        <div class="flex flex-col items-start">
+          <h4 class="text-sm font-bold text-[#413030] mb-2">Guests</h4>
+          <ul class="flex list-none space-x-2 text-xs text-gray-600">
+            <li>${room.adultMax} Adults</li>
+            <li>${room.childrenMax} Children</li>
+          </ul>
+        </div>
+      </div>
+      <div class="flex justify-between items-center px-6">
+        <span class="inline-block text-xs font-bold text-[#413030] border-b-2 border-[#413030] pb-1">
+          more details
+        </span>
+        <button  onclick = "redirect(${room.id})" class="rounded-full px-4 py-3 text-xs text-white font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
+          Book Now
+        </button>
+      </div>
     </div>
-
-   
-
-
-
-
+  `;
+  
+  return article;
+}
 
 
-    <script>
-
-
-    const slides = document.getElementById('carouselSlides');
-  const indicators = document.querySelectorAll('[data-index]');
-  const totalSlides = 3; // only 3 slides
-  let currentIndex = 0;
-
-  function goToSlide(index) {
-    slides.style.transform = `translateX(-${index * 100}vw)`;
-    indicators.forEach(btn => btn.classList.remove('bg-white'));
-    indicators[index].classList.add('bg-white');
-    currentIndex = index;
+  function redirect(room_id) {
+    localStorage.setItem('booking_room_id', room_id);
+    window.location.href = '/src/user/features/bookings/booking.html';
   }
 
-  // Auto slide every 5 seconds
-  setInterval(() => {
-    let nextIndex = (currentIndex + 1) % totalSlides;
-    goToSlide(nextIndex);
-  }, 5000);
 
-  // Indicator click
-  indicators.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const index = parseInt(btn.dataset.index);
-      goToSlide(index);
-    });
-  });
-
-  // Initialize first slide
-  goToSlide(0);
-
-
-      const toggle = document.getElementById('checkinToggle');
-  const dateInput = document.getElementById('checkinDate');
-
-  toggle.addEventListener('click', () => {
-    dateInput.classList.toggle('hidden'); // show/hide calendar
-    dateInput.focus(); // focus on date input
-  });
-
-  // Optional: hide calendar when clicking outside
-  document.addEventListener('click', (e) => {
-    if (!toggle.contains(e.target) && !dateInput.contains(e.target)) {
-      dateInput.classList.add('hidden');
-    }
-  });
-
-  const scrollBtn = document.getElementById("scrollToTopBtn");
-
-  // Show button after scrolling 200px
-  window.addEventListener("scroll", () => {
-    if (window.scrollY > 300) {
-      scrollBtn.classList.remove("hidden");
-    } else {
-      scrollBtn.classList.add("hidden");
-    }
-  });
-
-  // Scroll back to carousel section smoothly
- scrollBtn.addEventListener("click", () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-  });
-
-class Carousel3D {
-  constructor() {
-    this.currentIndex = 0;
-    this.isAnimating = false;
-    this.autoPlayInterval = null;
-    this.cards = document.querySelectorAll('.testimonial-card');
-    this.totalCards = this.cards.length;
-    this.container = document.getElementById('carouselContainer');
-    this.indicatorsContainer = document.getElementById('indicators');
-    this.init();
-  }
-
-  init() {
-    this.createIndicators();
-    this.updatePositions();
-    this.bindEvents();
-    this.startAutoPlay();
-  }
-
-  createIndicators() {
-    this.indicatorsContainer.innerHTML = '';
-    for (let i = 0; i < this.totalCards; i++) {
-      const indicator = document.createElement('div');
-      indicator.className = 'indicator'; // use CSS class
-      indicator.addEventListener('click', () => this.goToSlide(i));
-      this.indicatorsContainer.appendChild(indicator);
-    }
-    this.updateIndicators();
-  }
-
-  updateIndicators() {
-    const indicators = this.indicatorsContainer.children;
-    for (let i = 0; i < indicators.length; i++) {
-      indicators[i].classList.toggle('active', i === this.currentIndex);
-    }
-  }
-
-  getRelativePosition(cardIndex) {
-    let pos = cardIndex - this.currentIndex;
-    const half = Math.floor(this.totalCards / 2);
-    if (pos > half) pos -= this.totalCards;
-    else if (pos < -half) pos += this.totalCards;
-    return pos;
-  }
-
-  updatePositions() {
-    this.cards.forEach((card, index) => {
-      const relativePos = this.getRelativePosition(index);
-      let transform =
-        'translate(-50%,-50%) scale(0.3) rotateY(90deg) translateZ(-100px)';
-      let zClasses = ['z-[1]', 'opacity-0', 'pointer-events-none'];
-
-      switch (relativePos) {
-        case 0:
-          transform =
-            'translate(-50%,-50%) scale(1.15) rotateY(0deg) translateZ(80px)';
-          zClasses = ['z-10', 'opacity-100'];
-          break;
-        case -1:
-          transform =
-            'translate(-50%,-50%) scale(0.95) rotateY(35deg) translateZ(40px) translateX(-130px)';
-          zClasses = ['z-8', 'opacity-85'];
-          break;
-        case 1:
-          transform =
-            'translate(-50%,-50%) scale(0.95) rotateY(-35deg) translateZ(40px) translateX(130px)';
-          zClasses = ['z-8', 'opacity-85'];
-          break;
-        case -2:
-          transform =
-            'translate(-50%,-50%) scale(0.75) rotateY(55deg) translateZ(0px) translateX(-220px)';
-          zClasses = ['z-6', 'opacity-60'];
-          break;
-        case 2:
-          transform =
-            'translate(-50%,-50%) scale(0.75) rotateY(-55deg) translateZ(0px) translateX(220px)';
-          zClasses = ['z-6', 'opacity-60'];
-          break;
-      }
-
-      card.style.transform = transform;
-      // Remove old z/opacity classes
-      card.classList.remove('z-[1]', 'z-6', 'z-8', 'z-10', 'opacity-0', 'opacity-60', 'opacity-85', 'opacity-100', 'pointer-events-none');
-      card.classList.add(...zClasses);
-    });
-    this.updateIndicators();
-  }
-
-  goToSlide(index) {
-    if (this.isAnimating || index === this.currentIndex) return;
-    this.isAnimating = true;
-    this.currentIndex = index;
-    this.updatePositions();
-    setTimeout(() => (this.isAnimating = false), 800);
-  }
-
-  nextSlide() {
-    this.goToSlide((this.currentIndex + 1) % this.totalCards);
-  }
-
-  prevSlide() {
-    this.goToSlide((this.currentIndex - 1 + this.totalCards) % this.totalCards);
-  }
-
-  startAutoPlay() {
-    this.stopAutoPlay();
-    this.autoPlayInterval = setInterval(() => this.nextSlide(), 4000);
-  }
-
-  stopAutoPlay() {
-    if (this.autoPlayInterval) clearInterval(this.autoPlayInterval);
-    this.autoPlayInterval = null;
-  }
-
-  bindEvents() {
-    document.getElementById('hoverLeft').addEventListener('click', () =>
-      this.prevSlide()
-    );
-    document.getElementById('hoverRight').addEventListener('click', () =>
-      this.nextSlide()
-    );
-
-    this.container.addEventListener('mouseenter', () => this.stopAutoPlay());
-    this.container.addEventListener('mouseleave', () => this.startAutoPlay());
-
-    let touchStartX = 0;
-    this.container.addEventListener('touchstart', e => {
-      touchStartX = e.touches[0].clientX;
-      this.stopAutoPlay();
-    });
-    this.container.addEventListener('touchend', e => {
-      const diff = touchStartX - e.changedTouches[0].clientX;
-      if (Math.abs(diff) > 50) diff > 0 ? this.nextSlide() : this.prevSlide();
-      this.startAutoPlay();
-    });
-
-    document.addEventListener('keydown', e => {
-      if (e.key === 'ArrowLeft') this.prevSlide();
-      else if (e.key === 'ArrowRight') this.nextSlide();
-    });
+// Your fetch function with proper error handling
+async function fun() { 
+  try {
+    const ROOMS = await fetch('https://68c8b85aceef5a150f622643.mockapi.io/admin/5'); 
+    const data = (await ROOMS.json()).rooms; 
+    
+    // Clear existing data and populate
+    roomsData.length = 0;
+    data.forEach(i => roomsData.push(i)); 
+    
+    // Render cards after data is loaded
+    renderRoomCards();
+    
+    return roomsData; 
+  } catch (error) {
+    console.error('Error fetching rooms data:', error);
+    return [];
   }
 }
 
-// Initialize carousel
-document.addEventListener('DOMContentLoaded', () => new Carousel3D());
+// Call the function
+fun().then(data => { 
+  console.log('Rooms loaded and rendered:', data.length);
+});
+
+// Lazy loading reinitialization function
+function reinitializeLazyImages() {
+  const lazyImages = document.querySelectorAll('.lazy-image');
+  
+  if ('IntersectionObserver' in window) {
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          img.src = img.dataset.src;
+          img.classList.remove('lazy-image');
+          imageObserver.unobserve(img);
+        }
+      });
+    });
+    
+    lazyImages.forEach(img => imageObserver.observe(img));
+  }
+}
+
+
+
 </script>
+    
+
+<script src="./app.js"></script>
 
 
-
-
-
-
-
-
-  </body>
+</body>
 </html>
