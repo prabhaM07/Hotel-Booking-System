@@ -90,7 +90,22 @@ function setupEventListeners() {
     // Modal event listeners
     if (closeQueryModal) closeQueryModal.addEventListener('click', closeModal);
     if (closeQueryModalBtn) closeQueryModalBtn.addEventListener('click', closeModal);
-    if (deleteQueryFromModal) deleteQueryFromModal.addEventListener('click', deleteCurrentQuery);
+    // Fixed: Delete from modal
+    if (deleteQueryFromModal) {
+        deleteQueryFromModal.addEventListener('click', async () => {
+            console.log('🗑️ Delete from modal clicked, currentQueryId:', currentQueryId);
+            if (currentQueryId) {
+                if (confirm('Are you sure you want to delete this query? This action cannot be undone.')) {
+                    const success = await deleteQueryFromApi(currentQueryId);
+                    if (success) {
+                        updateUI();
+                        closeModal();
+                    }
+                }
+            }
+        });
+    }
+
 
     // Mark as read from modal
     const markReadFromModal = document.getElementById('markReadFromModal');
@@ -119,24 +134,26 @@ function setupEventListeners() {
 
     // Event delegation for table buttons
     if (tableBody) {
-        tableBody.addEventListener('click', async (event) => {
-            const target = event.target.closest('button');
-            if (!target) return;
+    tableBody.addEventListener('click', async (event) => {
+        const target = event.target.closest('button');
+        if (!target) return;
 
-            const id = target.dataset.id;
-            
-            if (target.classList.contains('view-btn')) {
-                openQueryModal(id);
-            } else if (target.classList.contains('mark-read-btn')) {
-                await markSingleAsRead(parseInt(id));
-            } else if (target.classList.contains('delete-btn')) {
-                if (confirm('Are you sure you want to delete this query? This action cannot be undone.')) {
-                    await deleteQueryFromApi(parseInt(id));
+        console.log('🔘 Button clicked:', target.className);
+        const id = target.dataset.id;
+        console.log('📋 Query ID:', id);
+        
+        if (target.classList.contains('delete-btn')) {
+            console.log('🗑️ Delete button clicked for ID:', id);
+            if (confirm('Are you sure you want to delete this query? This action cannot be undone.')) {
+                const success = await deleteQueryFromApi(parseInt(id));
+                if (success) {
                     updateUI();
                 }
             }
-        });
-    }
+        }
+    });
+}
+
 
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
@@ -285,24 +302,107 @@ async function updateApiData(updatedData) {
  */
 async function deleteQueryFromApi(queryId) {
     try {
-        console.log('🗑️ Deleting query with ID:', queryId);
+        console.log('🗑️ Attempting to delete query with ID:', queryId);
         
-        const updatedQueries = userQueriesData.filter(query => parseInt(query.id) !== parseInt(queryId));
+        // Validate input
+        if (!queryId) {
+            console.error('❌ No query ID provided');
+            showError('Invalid query ID');
+            return false;
+        }
         
-        await updateApiData(updatedQueries);
+        const numericId = parseInt(queryId);
+        if (isNaN(numericId)) {
+            console.error('❌ Invalid query ID format:', queryId);
+            showError('Invalid query ID format');
+            return false;
+        }
         
+        console.log('🔢 Numeric ID for deletion:', numericId);
+        
+        // Check if userQueriesData is available
+        if (!userQueriesData || userQueriesData.length === 0) {
+            console.error('❌ No queries data available');
+            showError('No queries data available');
+            return false;
+        }
+        
+        // Find the query first to verify it exists
+        const queryToDelete = userQueriesData.find(query => parseInt(query.id) === numericId);
+        if (!queryToDelete) {
+            console.error('❌ Query not found with ID:', numericId);
+            console.log('📋 Available query IDs:', userQueriesData.map(q => q.id));
+            showError('Query not found');
+            return false;
+        }
+        
+        console.log('🎯 Found query to delete:', queryToDelete);
+        
+        // Filter out the query to delete
+        const updatedQueries = userQueriesData.filter(query => {
+            const queryIdInt = parseInt(query.id);
+            const keep = queryIdInt !== numericId;
+            console.log(`Query ID ${query.id} (${queryIdInt}): ${keep ? 'keeping' : 'deleting'}`);
+            return keep;
+        });
+        
+        console.log('📊 Queries before deletion:', userQueriesData.length);
+        console.log('📊 Queries after deletion:', updatedQueries.length);
+        
+        // Verify deletion worked
+        if (updatedQueries.length !== userQueriesData.length - 1) {
+            console.error('❌ Deletion filter failed - count mismatch');
+            showError('Internal error during deletion');
+            return false;
+        }
+        
+        // Show loading state
+        showLoading(true);
+        
+        try {
+            // Update the API
+            await updateApiData(updatedQueries);
+            console.log('✅ API update successful');
+        } catch (apiError) {
+            console.error('❌ API update failed:', apiError);
+            throw new Error('Failed to update server: ' + apiError.message);
+        }
+        
+        // Update local data only after successful API update
         userQueriesData = updatedQueries;
         filteredData = userQueriesData;
         
-        console.log('✅ Query deleted successfully');
+        console.log('✅ Query deleted successfully from API and local storage');
+        console.log('📊 Current queries count:', userQueriesData.length);
+        
         showSuccess('Query deleted successfully');
         return true;
+        
     } catch (error) {
         console.error('❌ Error deleting query:', error);
-        showError('Failed to delete query. Please try again.');
+        
+        // Provide more specific error messages
+        let errorMessage = 'Failed to delete query. ';
+        if (error.message.includes('Failed to update server')) {
+            errorMessage += 'Server communication error. Please check your connection.';
+        } else if (error.message.includes('404')) {
+            errorMessage += 'Query not found on server.';
+        } else if (error.message.includes('500')) {
+            errorMessage += 'Server error. Please try again later.';
+        } else {
+            errorMessage += 'Please try again.';
+        }
+        
+        showError(errorMessage);
         return false;
+        
+    } finally {
+        // Always hide loading state
+        showLoading(false);
     }
 }
+
+
 
 /**
  * Mark queries as read in API
@@ -478,18 +578,6 @@ function closeModal() {
     currentQueryId = null;
 }
 
-/**
- * Delete current query from modal
- */
-async function deleteCurrentQuery() {
-    if (currentQueryId && confirm('Are you sure you want to delete this query? This action cannot be undone.')) {
-        const success = await deleteQueryFromApi(currentQueryId);
-        if (success) {
-            updateUI();
-            closeModal();
-        }
-    }
-}
 
 /**
  * Mark all visible queries as read
@@ -600,6 +688,15 @@ function escapeHtml(text) {
 
 function showSuccess(message) {
     console.log('✅', message);
+    const toast = document.createElement('div');
+    toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => document.body.removeChild(toast), 300);
+    }, 3000);
 }
 
 function showError(message) {
@@ -621,3 +718,453 @@ function toggleProfileDropdown() {
         arrow.classList.toggle('rotate-180');
     }
 }
+
+
+
+
+// =========================
+// Generic Pagination Factory
+// =========================
+function createPager(config) {
+  const state = {
+    currentPage: 1,
+    itemsPerPage: 10,
+    totalItems: 0,
+    allData: [],
+    filteredData: []
+  };
+
+  const els = {
+    startRecord: document.getElementById(config.startRecordId),
+    endRecord: document.getElementById(config.endRecordId),
+    totalRecords: document.getElementById(config.totalRecordsId),
+    currentPageNumber: document.getElementById(config.currentPageNumberId),
+    totalPages: document.getElementById(config.totalPagesId),
+    prevBtn: document.getElementById(config.prevBtnId),
+    nextBtn: document.getElementById(config.nextBtnId),
+    itemsPerPage: document.getElementById(config.itemsPerPageId),
+    searchInput: document.getElementById(config.searchInputId),
+    container: document.getElementById(config.containerId),
+    noData: document.getElementById(config.noDataId)
+  };
+
+  function updateButtonStyles(button, disabled) {
+    if (!button) return;
+    button.disabled = disabled;
+    if (disabled) {
+      button.classList.add('opacity-40','cursor-not-allowed');
+      button.classList.remove('hover:border-primary','hover:text-primary');
+    } else {
+      button.classList.remove('opacity-40','cursor-not-allowed');
+      button.classList.add('hover:border-primary','hover:text-primary');
+    }
+  }
+
+  function updateUI() {
+    const totalPages = Math.max(1, Math.ceil(state.totalItems / state.itemsPerPage) || 1);
+    state.currentPage = Math.min(Math.max(1, state.currentPage), totalPages);
+    const start = state.totalItems > 0 ? (state.currentPage - 1) * state.itemsPerPage + 1 : 0;
+    const end = Math.min(state.currentPage * state.itemsPerPage, state.totalItems);
+
+    if (els.startRecord) els.startRecord.textContent = start;
+    if (els.endRecord) els.endRecord.textContent = end;
+    if (els.totalRecords) els.totalRecords.textContent = state.totalItems;
+    if (els.currentPageNumber) els.currentPageNumber.textContent = state.totalItems > 0 ? state.currentPage : 0;
+    if (els.totalPages) els.totalPages.textContent = Math.ceil(state.totalItems / state.itemsPerPage) || 0;
+
+    const disablePrev = state.currentPage <= 1 || state.totalItems === 0;
+    const disableNext = state.currentPage >= Math.ceil(state.totalItems / state.itemsPerPage) || state.totalItems === 0;
+    updateButtonStyles(els.prevBtn, disablePrev);
+    updateButtonStyles(els.nextBtn, disableNext);
+
+    if (els.container && els.noData) {
+      if (state.totalItems === 0) {
+        els.noData.classList.remove('hidden');
+        els.container.classList.add('hidden');
+      } else {
+        els.noData.classList.add('hidden');
+        els.container.classList.remove('hidden');
+      }
+    }
+  }
+
+  function render() {
+    const startIndex = (state.currentPage - 1) * state.itemsPerPage;
+    const endIndex = startIndex + state.itemsPerPage;
+    const pageData = state.filteredData.slice(startIndex, endIndex);
+    config.renderPage(pageData);
+  }
+
+  function initialize() {
+    state.totalItems = state.filteredData.length;
+    state.currentPage = 1;
+    updateUI();
+    render();
+  }
+
+  // Event listeners
+  els.prevBtn?.addEventListener('click', (e) => {
+    if (e.currentTarget.disabled) return;
+    state.currentPage -= 1;
+    updateUI();
+    render();
+  });
+  els.nextBtn?.addEventListener('click', (e) => {
+    if (e.currentTarget.disabled) return;
+    state.currentPage += 1;
+    updateUI();
+    render();
+  });
+  els.itemsPerPage?.addEventListener('change', (e) => {
+    state.itemsPerPage = parseInt(e.target.value) || 10;
+    state.currentPage = 1;
+    updateUI();
+    render();
+  });
+  if (els.searchInput) {
+    const debounce = (fn, wait) => {
+      let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
+    };
+    els.searchInput.addEventListener('input', debounce((e) => {
+      const term = e.target.value.toLowerCase().trim();
+      state.filteredData = term
+        ? state.allData.filter(config.matches(term))
+        : [...state.allData];
+      initialize();
+    }, 300));
+  }
+
+  // Public API
+  return {
+    setData(data) {
+      state.allData = data || [];
+      state.filteredData = [...state.allData];
+      initialize();
+    },
+    refresh() { updateUI(); render(); },
+    get state() { return { ...state }; }
+  };
+}
+
+// =========================
+// Renderers
+// =========================
+function renderFeaturesPage(pageData) {
+  const tbody = document.getElementById('featuresTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  pageData.forEach((feature) => {
+    const tr = document.createElement('tr');
+    tr.classList.add('hover:bg-gray-50');
+    tr.innerHTML = `
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${feature.id ?? ''}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${feature.name || 'N/A'}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${getFeatureActionButtons(feature)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderFacilitiesPage(pageData) {
+  const tbody = document.getElementById('facilitiesTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  pageData.forEach((facility) => {
+    const tr = document.createElement('tr');
+    tr.classList.add('hover:bg-gray-50');
+    const iconDisplay = facility.icon
+      ? `<img src="${facility.icon}" alt="Icon" class="w-8 h-8 object-cover rounded">`
+      : '<span class="text-gray-400">N/A</span>';
+    tr.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${facility.id || index + 1}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                ${iconDisplay}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${facility.name || 'N/A'}</td>
+            <td class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate" title="${facility.description || 'N/A'}">${facility.description || 'N/A'}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                ${getFacilityActionButtons(facility)}
+            </td>
+        `;
+    tbody.appendChild(tr);
+  });
+}
+
+// =========================
+// Pager Instances
+// =========================
+const featuresPager = createPager({
+  startRecordId: 'featuresStartRecord',
+  endRecordId: 'featuresEndRecord',
+  totalRecordsId: 'featuresTotalRecords',
+  currentPageNumberId: 'featuresCurrentPageNumber',
+  totalPagesId: 'featuresTotalPages',
+  prevBtnId: 'featuresPrevPage',
+  nextBtnId: 'featuresNextPage',
+  itemsPerPageId: 'featuresItemsPerPage',
+  searchInputId: 'featuresSearchInput', // optional
+  containerId: 'featuresTableContainer',
+  noDataId: 'noFeaturesDataMessage',
+  renderPage: renderFeaturesPage,
+  matches: (term) => (item) =>
+    (item.name || '').toLowerCase().includes(term) ||
+    String(item.id || '').includes(term)
+});
+
+const facilitiesPager = createPager({
+  startRecordId: 'facilitiesStartRecord',
+  endRecordId: 'facilitiesEndRecord',
+  totalRecordsId: 'facilitiesTotalRecords',
+  currentPageNumberId: 'facilitiesCurrentPageNumber',
+  totalPagesId: 'facilitiesTotalPages',
+  prevBtnId: 'facilitiesPrevPage',
+  nextBtnId: 'facilitiesNextPage',
+  itemsPerPageId: 'facilitiesItemsPerPage',
+  searchInputId: 'facilitiesSearchInput', // optional
+  containerId: 'facilitiesTableContainer',
+  noDataId: 'noFacilitiesDataMessage',
+  renderPage: renderFacilitiesPage,
+  matches: (term) => (item) =>
+    (item.name || '').toLowerCase().includes(term) ||
+    (item.description || '').toLowerCase().includes(term) ||
+    String(item.id || '').includes(term)
+});
+
+// =========================
+// Modal Helpers
+// =========================
+function openModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('hidden');
+}
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('hidden');
+}
+function resetFeatureModal() {
+  const form = document.getElementById('addFeatureForm');
+  if (form) form.reset();
+  isEditingFeature = false;
+  editingFeatureId = null;
+}
+function resetFacilityModal() {
+  const form = document.getElementById('addFacilityForm');
+  if (form) form.reset();
+  isEditingFacility = false;
+  editingFacilityId = null;
+}
+
+// =========================
+// Feature Handlers
+// =========================
+function populateFeatureFormForEdit(feature) {
+  const nameInput = document.getElementById('featureName');
+  if (nameInput) nameInput.value = feature?.name || '';
+}
+
+async function handleFeatureSubmit(e) {
+  e.preventDefault();
+  const nameInput = document.getElementById('featureName');
+  const name = (nameInput?.value || '').trim();
+  if (!name) {
+    toastError('Feature name is required');
+    return;
+  }
+
+  try {
+    if (isEditingFeature && editingFeatureId != null) {
+      // Edit existing
+      const idx = featuresFilteredData.findIndex(f => String(f.id) === String(editingFeatureId));
+      if (idx !== -1) {
+        featuresFilteredData[idx] = { ...featuresFilteredData[idx], name };
+      }
+      await updateFeaturesOnAPI(featuresFilteredData);
+      toastSuccess('Feature updated');
+    } else {
+      // Add new
+      const newId = generateNextId(featuresFilteredData);
+      const newItem = { id: String(newId), name };
+      featuresFilteredData.unshift(newItem);
+      await updateFeaturesOnAPI(featuresFilteredData);
+      toastSuccess('Feature added');
+    }
+    featuresPager.setData([...featuresFilteredData]); // re-init and render
+    closeModal('addFeatureModal');
+    resetFeatureModal();
+  } catch (err) {
+    toastError(`Failed to save feature: ${err.message}`);
+  }
+}
+
+function onFeaturesTableClick(e) {
+  const editBtn = e.target.closest('.edit-feature');
+  const deleteBtn = e.target.closest('.delete-feature');
+
+  if (editBtn) {
+    const id = editBtn.getAttribute('data-id');
+    const feature = featuresFilteredData.find(f => String(f.id) === String(id));
+    if (!feature) return;
+    isEditingFeature = true;
+    editingFeatureId = id;
+    populateFeatureFormForEdit(feature);
+    openModal('addFeatureModal');
+  }
+
+  if (deleteBtn) {
+    const id = deleteBtn.getAttribute('data-id');
+    confirmFeatureDelete(id);
+  }
+}
+
+async function confirmFeatureDelete(id) {
+  // Replace with real confirmation modal if available
+  const ok = window.confirm('Delete this feature?');
+  if (!ok) return;
+  try {
+    featuresFilteredData = featuresFilteredData.filter(f => String(f.id) !== String(id));
+    await updateFeaturesOnAPI(featuresFilteredData);
+    toastSuccess('Feature deleted');
+    featuresPager.setData([...featuresFilteredData]);
+  } catch (err) {
+    toastError(`Failed to delete feature: ${err.message}`);
+  }
+}
+
+// =========================
+// Facility Handlers
+// =========================
+function populateFacilityFormForEdit(facility) {
+  const nameInput = document.getElementById('facilityName');
+  const descInput = document.getElementById('facilityDescription');
+  if (nameInput) nameInput.value = facility?.name || '';
+  if (descInput) descInput.value = facility?.description || '';
+  // icon file input left blank by design
+}
+
+async function handleFacilitySubmit(e) {
+  e.preventDefault();
+  const nameInput = document.getElementById('facilityName');
+  const descInput = document.getElementById('facilityDescription');
+  const iconInput = document.getElementById('facilityIcon');
+
+  const name = (nameInput?.value || '').trim();
+  const description = (descInput?.value || '').trim();
+  if (!name) {
+    toastError('Facility name is required');
+    return;
+  }
+
+  try {
+    let iconUrl = null;
+    const file = iconInput?.files?.[0];
+    if (file) {
+      iconUrl = await uploadImageToCloudinary(file);
+    }
+
+    if (isEditingFacility && editingFacilityId != null) {
+      const idx = facilitiesFilteredData.findIndex(f => String(f.id) === String(editingFacilityId));
+      if (idx !== -1) {
+        facilitiesFilteredData[idx] = {
+          ...facilitiesFilteredData[idx],
+          name,
+          description,
+          icon: iconUrl || facilitiesFilteredData[idx].icon || null
+        };
+      }
+      await updateFacilitiesOnAPI(facilitiesFilteredData);
+      toastSuccess('Facility updated');
+    } else {
+      const newId = generateNextId(facilitiesFilteredData);
+      const newItem = { id: String(newId), name, description, icon: iconUrl || null };
+      facilitiesFilteredData.unshift(newItem);
+      await updateFacilitiesOnAPI(facilitiesFilteredData);
+      toastSuccess('Facility added');
+    }
+    facilitiesPager.setData([...facilitiesFilteredData]); // re-init and render
+    closeModal('addFacilityModal');
+    resetFacilityModal();
+  } catch (err) {
+    toastError(`Failed to save facility: ${err.message}`);
+  }
+}
+
+function onFacilitiesTableClick(e) {
+  const editBtn = e.target.closest('.edit-facility');
+  const deleteBtn = e.target.closest('.delete-facility');
+
+  if (editBtn) {
+    const id = editBtn.getAttribute('data-id');
+    const facility = facilitiesFilteredData.find(f => String(f.id) === String(id));
+    if (!facility) return;
+    isEditingFacility = true;
+    editingFacilityId = id;
+    populateFacilityFormForEdit(facility);
+    openModal('addFacilityModal');
+  }
+
+  if (deleteBtn) {
+    const id = deleteBtn.getAttribute('data-id');
+    confirmFacilityDelete(id);
+  }
+}
+
+async function confirmFacilityDelete(id) {
+  // Replace with real confirmation modal if available
+  const ok = window.confirm('Delete this facility?');
+  if (!ok) return;
+  try {
+    facilitiesFilteredData = facilitiesFilteredData.filter(f => String(f.id) !== String(id));
+    await updateFacilitiesOnAPI(facilitiesFilteredData);
+    toastSuccess('Facility deleted');
+    facilitiesPager.setData([...facilitiesFilteredData]);
+  } catch (err) {
+    toastError(`Failed to delete facility: ${err.message}`);
+  }
+}
+
+// =========================
+// Helpers
+// =========================
+function generateNextId(arr) {
+  // derive numeric id by scanning existing numeric-ish ids
+  const maxId = arr.reduce((max, item) => {
+    const n = parseInt(item.id, 10);
+    return Number.isFinite(n) ? Math.max(max, n) : max;
+  }, 0);
+  return maxId + 1;
+}
+
+// =========================
+// Init
+// =========================
+document.addEventListener('DOMContentLoaded', async () => {
+  // Wire forms & buttons
+  document.getElementById('addFeatureBtn')?.addEventListener('click', () => {
+    resetFeatureModal();
+    openModal('addFeatureModal');
+  });
+  document.getElementById('cancelAddFeature')?.addEventListener('click', () => {
+    closeModal('addFeatureModal');
+    resetFeatureModal();
+  });
+  document.getElementById('addFeatureForm')?.addEventListener('submit', handleFeatureSubmit);
+
+  document.getElementById('addFacilityBtn')?.addEventListener('click', () => {
+    resetFacilityModal();
+    openModal('addFacilityModal');
+  });
+  document.getElementById('cancelAddFacility')?.addEventListener('click', () => {
+    closeModal('addFacilityModal');
+    resetFacilityModal();
+  });
+  document.getElementById('addFacilityForm')?.addEventListener('submit', handleFacilitySubmit);
+
+  // Delegate table actions
+  document.getElementById('featuresTableBody')?.addEventListener('click', onFeaturesTableClick);
+  document.getElementById('facilitiesTableBody')?.addEventListener('click', onFacilitiesTableClick);
+
+  // Initial load
+  const { features, facilities } = await fetchFeaturesFacilitiesData();
+  featuresPager.setData(features || []);
+  facilitiesPager.setData(facilities || []);
+});

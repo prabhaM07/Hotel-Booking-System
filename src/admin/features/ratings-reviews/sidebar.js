@@ -1,192 +1,104 @@
-// Global variables
+// Global variables for profile dropdown
 let isProfileDropdownOpen = false;
-let sidebarVisible = true;
-let isMobile = window.innerWidth < 1024;
 
-// Profile dropdown functions
-function toggleProfileDropdown() {
-  const profileDropdown = document.getElementById('profileDropdown');
-  const dropdownArrow = document.getElementById('dropdownArrow');
-  
-  isProfileDropdownOpen = !isProfileDropdownOpen;
-  
-  if (isProfileDropdownOpen) {
-    profileDropdown.classList.remove('hidden');
-    dropdownArrow.style.transform = 'rotate(180deg)';
-  } else {
-    profileDropdown.classList.add('hidden');
-    dropdownArrow.style.transform = 'rotate(0deg)';
-  }
-}
 
-function closeProfileDropdownOnOutsideClick(event) {
-  const profileDropdown = document.getElementById('profileDropdown');
-  const profileSection = event.target.closest('.p-4');
-  
-  if (isProfileDropdownOpen && (!profileSection || !profileSection.contains(event.target))) {
-    profileDropdown.classList.add('hidden');
-    document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
-    isProfileDropdownOpen = false;
-  }
-}
-
-// Auth functions
-function checkAuthStatus() {
-  const adminUser = localStorage.getItem('adminUser');
-  if (!adminUser) {
-    // Uncomment if you want to redirect to login
-    // window.location.href = '../auth/login.html';
-    return false;
-  }
-  return true;
-}
-
-function logout() {
-  localStorage.removeItem('adminUser');
-  localStorage.removeItem('dashboardData');
-  // Uncomment if you want to redirect to login
-  // window.location.href = '../auth/login.html';
-  alert('Logged out successfully!');
-}
-
-// Sidebar functions
-function initializeSidebar() {
-  const sidebar = document.getElementById("sidebar");
-  const mainContent = document.getElementById("mainContent");
-  const externalToggle = document.getElementById("externalToggle");
-  
-  if (isMobile) {
-    sidebar.style.transform = "translateX(-100%)";
-    mainContent.classList.remove("lg:ml-80");
-    sidebarVisible = false;
-    externalToggle.classList.remove("hidden");
-  } else {
-    sidebar.style.transform = "translateX(0)";
-    mainContent.classList.add("lg:ml-80");
-    sidebarVisible = true;
-    externalToggle.classList.add("hidden");
-  }
-  updateContentSpacing();
-}
-
-function updateContentSpacing() {
-  const mainContentArea = document.getElementById("mainContentArea");
-  
-  if (!sidebarVisible) {
-    if (mainContentArea) mainContentArea.style.paddingLeft = "4rem";
-  } else {
-    if (mainContentArea) mainContentArea.style.paddingLeft = "";
-  }
-}
-
-function toggleSidebar() {
-  const sidebar = document.getElementById("sidebar");
-  const overlay = document.getElementById("overlay");
-  const mainContent = document.getElementById("mainContent");
-  const externalToggle = document.getElementById("externalToggle");
-  
-  sidebarVisible = !sidebarVisible;
-
-  if (sidebarVisible) {
-    sidebar.style.transform = "translateX(0)";
-    externalToggle.classList.add("hidden");
-    
-    if (isMobile) {
-      overlay.classList.remove("hidden");
-      mainContent.classList.remove("lg:ml-80");
-    } else {
-      mainContent.classList.add("lg:ml-80");
-    }
-  } else {
-    sidebar.style.transform = "translateX(-100%)";
-    overlay.classList.add("hidden");
-    mainContent.classList.remove("lg:ml-80");
-    externalToggle.classList.remove("hidden");
-  }
-
-  updateContentSpacing();
-}
-
-// Initialize profile dropdown
-function initializeProfileDropdown() {
-  const dropdownLinks = document.querySelectorAll('#profileDropdown a');
-  
-  dropdownLinks.forEach(link => {
-    link.addEventListener('click', function(e) {
-      e.preventDefault();
-      const text = this.textContent.trim();
-      
-      if (text === 'Logout') {
-        if (confirm('Are you sure you want to logout?')) {
-          logout();
-        }
-      } else if (text === 'View Profile') {
-        alert('Profile functionality can be implemented here');
-      }
-      
-      document.getElementById('profileDropdown').classList.add('hidden');
-      document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
-      isProfileDropdownOpen = false;
-    });
-  });
-  
-  document.addEventListener('click', closeProfileDropdownOnOutsideClick);
-}
-
-// Main initialization
+// Main sidebar functionality
 document.addEventListener('DOMContentLoaded', function() {
-  checkAuthStatus();
-
+  // Check authentication first
+  
+  // Get elements
+  const sidebar = document.getElementById("sidebar");
   const sidebarToggle = document.getElementById("sidebarToggle");
   const externalToggle = document.getElementById("externalToggle");
   const overlay = document.getElementById("overlay");
-  const bookingToggle = document.getElementById("bookingToggle");
+  const mainContent = document.getElementById("mainContent");
+  const bookingToggle  = document.getElementById("bookingToggle");
   const bookingSubmenu = document.getElementById("bookingSubmenu");
-  const bookingArrow = document.getElementById("bookingArrow");
+  const bookingArrow   = document.getElementById("bookingArrow");
 
-  // Initialize sidebar
-  initializeSidebar();
-  initializeProfileDropdown();
+  bookingToggle.addEventListener("click", () => {
+    bookingSubmenu.classList.toggle("open");
+    bookingArrow.classList.toggle("open");
+  });
 
-  // Event listeners for toggle buttons
-  if (sidebarToggle) {
-    sidebarToggle.addEventListener("click", toggleSidebar);
+
+  let sidebarVisible = true;
+  let isMobile = window.innerWidth < 1024;
+
+  // Initialize sidebar state
+  function initializeSidebar() {
+    if (isMobile) {
+      // On mobile, sidebar starts hidden
+      sidebar.style.transform = "translateX(-100%)";
+      mainContent.style.marginLeft = "0";
+      sidebarVisible = false;
+    } else {
+      // On desktop, sidebar starts visible
+      sidebar.style.transform = "translateX(0)";
+      mainContent.style.marginLeft = "320px";
+      sidebarVisible = true;
+    }
+    updateToggleButtons();
+    updateContentSpacing();
   }
-  
-  if (externalToggle) {
-    externalToggle.addEventListener("click", toggleSidebar);
-  }
 
-  // Close sidebar when clicking overlay (mobile)
-  if (overlay) {
-    overlay.addEventListener("click", () => {
-      if (isMobile && sidebarVisible) {
-        toggleSidebar();
-      }
-    });
-  }
-
-  // Booking submenu toggle
-  if (bookingToggle && bookingSubmenu && bookingArrow) {
-    // ENSURE BOOKING SUBMENU STARTS CLOSED
-    bookingSubmenu.style.maxHeight = "0px";
-    bookingArrow.style.transform = "rotate(0deg)";
+  // Update toggle buttons visibility and state
+  function updateToggleButtons() {
+    console.log("Updating toggle buttons. Sidebar visible:", sidebarVisible);
     
-    bookingToggle.addEventListener("click", () => {
-      const currentMaxHeight = bookingSubmenu.style.maxHeight;
-      const isOpen = currentMaxHeight && currentMaxHeight !== "0px";
+    if (sidebarVisible) {
+      // Sidebar is visible - hide external button, show internal button
+      externalToggle.classList.add("hidden");
+      sidebarToggle.style.display = "block";
+    } else {
+      // Sidebar is hidden - show external button, hide internal button
+      externalToggle.classList.remove("hidden");
+      externalToggle.style.display = "block";
+      sidebarToggle.style.display = "none";
+    }
+  }
 
-      if (isOpen) {
-        // Close submenu
-        bookingSubmenu.style.maxHeight = "0px";
-        bookingArrow.style.transform = "rotate(0deg)";
+  // Update content spacing to avoid overlap
+  function updateContentSpacing() {
+    const mainContentArea = document.getElementById("mainContentArea");
+    const dashboardTitle = document.getElementById("dashboardTitle");
+    const headerContent = document.getElementById("headerContent");
+    
+    if (!sidebarVisible) {
+      // When sidebar is hidden, add extra padding to avoid overlap with external toggle
+      if (mainContentArea) mainContentArea.style.paddingTop = "4rem";
+      if (dashboardTitle) dashboardTitle.style.paddingLeft = "3rem";
+      if (headerContent) headerContent.style.paddingLeft = "3rem";
+    } else {
+      // When sidebar is visible, use normal spacing
+      if (mainContentArea) mainContentArea.style.paddingTop = "1rem";
+      if (dashboardTitle) dashboardTitle.style.paddingLeft = "0";
+      if (headerContent) headerContent.style.paddingLeft = "0";
+    }
+  }
+
+  // Toggle sidebar function
+  function toggleSidebar() {
+    sidebarVisible = !sidebarVisible;
+
+    if (sidebarVisible) {
+      // Show sidebar
+      sidebar.style.transform = "translateX(0)";
+      if (isMobile) {
+        overlay.classList.remove("hidden");
+        mainContent.style.marginLeft = "0";
       } else {
-        // Open submenu
-        const height = bookingSubmenu.scrollHeight;
-        bookingSubmenu.style.maxHeight = height + "px";
-        bookingArrow.style.transform = "rotate(180deg)";
+        mainContent.style.marginLeft = "320px";
       }
-    });
+    } else {
+      // Hide sidebar
+      sidebar.style.transform = "translateX(-100%)";
+      overlay.classList.add("hidden");
+      mainContent.style.marginLeft = "0";
+    }
+
+    updateToggleButtons();
+    updateContentSpacing();
   }
 
   // Handle window resize
@@ -195,14 +107,45 @@ document.addEventListener('DOMContentLoaded', function() {
     isMobile = window.innerWidth < 1024;
 
     if (wasMobile !== isMobile) {
-      const overlay = document.getElementById("overlay");
-      if (overlay) overlay.classList.add("hidden");
+      // Screen size changed - reinitialize
+      overlay.classList.add("hidden");
       initializeSidebar();
     }
   });
+
+  // Event listeners for both toggle buttons
+  sidebarToggle.addEventListener("click", toggleSidebar);
+  externalToggle.addEventListener("click", toggleSidebar);
+
+  // Close sidebar when clicking overlay (mobile only)
+  overlay.addEventListener("click", () => {
+    if (isMobile && sidebarVisible) {
+      toggleSidebar();
+    }
+  });
+
+  // Booking submenu toggle
+  bookingToggle.addEventListener("click", () => {
+    const currentMaxHeight = bookingSubmenu.style.maxHeight;
+    const isOpen = currentMaxHeight && currentMaxHeight !== "0px";
+
+    if (isOpen) {
+      bookingSubmenu.style.maxHeight = "0px";
+      bookingArrow.style.transform = "rotate(0deg)";
+    } else {
+      const height = bookingSubmenu.scrollHeight;
+      bookingSubmenu.style.maxHeight = height + "px";
+      bookingArrow.style.transform = "rotate(180deg)";
+    }
+  });
+
+  // Initialize everything
+  initializeSidebar();
+  
+  // Initialize booking submenu as open since "Booking Records" is active
+  const height = bookingSubmenu.scrollHeight;
+  bookingSubmenu.style.maxHeight =  "0px";
+  bookingArrow.style.transform = "rotate(180deg)";
 });
 
-// Make functions available globally
-window.toggleProfileDropdown = toggleProfileDropdown;
-window.logout = logout;
-window.checkAuthStatus = checkAuthStatus;
+

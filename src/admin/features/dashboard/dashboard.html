@@ -1,368 +1,866 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard - Responsive</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-       .profile-dropdown {
-  position: absolute;
-  background: white;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  border-radius: 8px;
-  min-width: 160px;
-  z-index: 1000;
-}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zyra Admin – Analytics</title>
 
-.profile-dropdown.show {
-  display: block;
-}
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-.profile-dropdown.hidden,
-.profile-dropdown:not(.show) {
-  display: none;
-}
-    </style>
-   
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    .profile-dropdown {
+      position: absolute;
+      background: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      min-width: 160px;
+      z-index: 1000;
+    }
+    .profile-dropdown.show { display: block; }
+    .profile-dropdown.hidden, .profile-dropdown:not(.show) { display: none; }
+
+    .truncate-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
 </head>
-  </head>
-  <body class="m-0 p-0 bg-gray-100">
-    <!-- Mobile Overlay -->
-    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+<body class="m-0 p-0 bg-gray-100">
 
-    <!-- External Toggle Button -->
-    <button id="externalToggle" class="fixed top-4 left-4 z-50 p-2 bg-white text-gray-700 rounded-lg shadow-lg hover:shadow-xl hover:bg-gray-50 transition-all duration-300 hidden border border-gray-200">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-      </svg>
-    </button>
+  <!-- Mobile Overlay -->
+  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
 
-    <!-- Sidebar -->
-    <aside id="sidebar" class="fixed top-0 left-0 w-80 h-full bg-[#1D1354] text-white flex flex-col transform transition-transform duration-300 z-50 overflow-hidden">
-      <!-- Sidebar Header -->
-      <div class="flex items-center justify-between p-4 h-16 border-b border-[#2E1B8C] relative">
-        <h2 class="text-2xl lg:text-3xl font-extrabold bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent">
-          Zyra
-        </h2>
-        <button id="sidebarToggle" class="hover:bg-[#2E1B8C] p-2 rounded transition-all duration-300 relative z-10">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-          </svg>
-        </button>
-      </div>
+  <!-- External Toggle Button (mobile) -->
+  <button
+    id="externalToggle"
+    class="fixed top-4 left-4 z-50 p-2 bg-white text-gray-700 rounded-lg shadow-lg hover:shadow-xl hover:bg-gray-50 transition-all duration-300 border border-gray-200 lg:hidden"
+    aria-label="Open sidebar"
+    type="button"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+         stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+      <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+    </svg>
+  </button>
 
-      <!-- Navigation -->
-    <nav class="flex-1 px-4 py-6 space-y-2 text-sm overflow-y-hidden">
+  <!-- Sidebar -->
+  <aside
+    id="sidebar"
+    class="fixed top-0 left-0 w-80 h-full bg-[#1D1354] text-white flex flex-col transform transition-transform duration-300 z-50 overflow-hidden -translate-x-full lg:translate-x-0"
+    aria-label="Sidebar"
+  >
+    <!-- Sidebar Header -->
+    <div class="flex items-center justify-between p-4 h-16 border-b border-[#2E1B8C] relative">
+      <h2 class="text-2xl lg:text-3xl font-extrabold bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent">
+        Zyra
+      </h2>
+      <button
+        id="sidebarToggle"
+        class="hover:bg-[#2E1B8C] p-2 rounded transition-all duration-300 relative z-10 lg:hidden"
+        aria-label="Close sidebar"
+        type="button"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+             stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 px-4 py-6 space-y-2 text-sm overflow-y-auto">
       <a href="#" class="block px-3 py-3 rounded-md bg-[#2E1B8C] font-semibold text-lg">Dashboard</a>
 
-        <!-- Booking Dropdown -->
-        <div>
-          <button id="bookingToggle" class="flex items-center justify-between w-full px-3 py-3 rounded-md hover:bg-[#2E1B8C] transition-colors">
-            <span class="font-semibold text-lg">Booking</span>
-            <svg id="bookingArrow" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-          <div id="bookingSubmenu" class="ml-4 mt-2 space-y-1 overflow-hidden transition-all duration-300" style="max-height: 0px">
-            <a href="/src/admin/features/booking/refund-Booking.html" class="block px-3 py-2 hover:bg-[#2E1B8C] rounded-md transition-colors font-semibold">Refund Bookings</a>
-            <a href="/src/admin/features/booking/bookingRecords.html" class="block px-3 py-2 hover:bg-[#2E1B8C] rounded-md transition-colors font-semibold">Booking Records</a>
-          </div>
+      <!-- Booking Dropdown -->
+      <div>
+        <button
+          id="bookingToggle"
+          class="flex items-center justify-between w-full px-3 py-3 rounded-md hover:bg-[#2E1B8C] transition-colors"
+          type="button"
+          aria-expanded="false"
+        >
+          <span class="font-semibold text-lg">Booking</span>
+          <svg id="bookingArrow" xmlns="http://www.w3.org/2000/svg"
+               class="w-4 h-4 transition-transform" fill="none" viewBox="0 0 24 24"
+               stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+        <div
+          id="bookingSubmenu"
+          class="ml-4 mt-2 space-y-1 overflow-hidden transition-all duration-300"
+          style="max-height: 0px"
+        >
+          <a href="/src/admin/features/booking/refund-Booking.html"
+             class="block px-3 py-2 hover:bg-[#2E1B8C] rounded-md transition-colors font-semibold">Refund Bookings</a>
+          <a href="/src/admin/features/booking/bookingRecords.html"
+             class="block px-3 py-2 hover:bg-[#2E1B8C] rounded-md transition-colors font-semibold">Booking Records</a>
         </div>
+      </div>
 
-      <a href="/src/admin/features/rooms/rooms.html" id="rooms" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Rooms</a>
-      <a href="/src/admin/features/ratings-reviews/reviews-ratings.html" id="ratingsReviews" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Ratings and Reviews</a>
-      <a href="/src/admin/features/user-queries/queries.html" id="userQueries" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">User Queries</a>
-      <a href="/src/admin/features/feature-facilities/feature-facilities.html" id="featuresFacilities" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Features & Facilities</a>
-      <a href="#" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Backup & Restore</a>
-      <a href="/src/admin/features/content-management/content-management.html" id="settings" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Settings</a>
+      <a href="/src/admin/features/rooms/rooms.html" id="rooms"
+         class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Rooms</a>
+      <a href="/src/admin/features/ratings-reviews/reviews-ratings.html" id="ratingsReviews"
+         class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Ratings and Reviews</a>
+      <a href="/src/admin/features/user-queries/queries.html" id="userQueries"
+         class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">User Queries</a>
+      <a href="/src/admin/features/feature-facilities/feature-facilities.html" id="featuresFacilities"
+         class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Features & Facilities</a>
+      <a href="/src/admin/features/backup-recovery/backup-recovery.html"
+         class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Backup & Restore</a>
+      <a href="/src/admin/features/content-management/content-management.html" id="settings"
+         class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Content Management</a>
     </nav>
 
-       <!-- Profile Section -->
+    <!-- Profile / Logout -->
     <div class="p-4 border-t border-[#2E1B8C] relative">
-  <div class="flex items-center space-x-3 cursor-pointer hover:bg-[#2E1B8C] rounded-lg p-2 transition-colors duration-200" onclick="toggleProfileDropdown()">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#C2C6CC" class="w-8 h-8">
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
-    </svg>
-    <div class="flex-1">
-      <p class="font-medium text-sm text-white">Admin User</p>
-      <p class="text-xs text-gray-300">Online</p>
+      <a
+        href="#"
+        onclick="logout()"
+        class="flex items-center px-4 py-2 rounded-lg hover:bg-[#2E1B8C] transition-colors"
+      >
+        <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
+          />
+        </svg>
+        <span class="font-medium text-base">Logout</span>
+      </a>
     </div>
-    <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" id="dropdownArrow" fill="currentColor" viewBox="0 0 20 20">
-      <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-    </svg>
-  </div>
+  </aside>
 
-  <!-- Profile Dropdown Menu -->
-  <div id="profileDropdown" class="hidden absolute bottom-full left-4 right-4 mb-2 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-    <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200">
-      <svg class="w-4 h-4 mr-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-      </svg>
-      View Profile
-    </a>
-   
-    <hr class="my-1 border-gray-100">
-    <a href="#" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200">
-      <svg class="w-4 h-4 mr-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path>
-      </svg>
-      Logout
-    </a>
-  </div>
-</div>
-</aside>
+  <!-- Main Content -->
+  <div id="mainContent" class="min-h-screen transition-all duration-300 lg:ml-80">
+    <main id="mainContentArea" class="p-4 sm:p-4 lg:p-8 mt-4 sm:mt-6 lg:mt-0">
 
-    <!-- Main Content -->
-    <div id="mainContent" class="min-h-screen transition-all duration-300 lg:ml-80">
-      <main id="mainContentArea" class="p-4 sm:p-4 lg:p-8 mt-4 sm:mt-6 lg:mt-0">
-        <!-- Page Header -->
-        <div class="mb-8">
-          <div class="transition-all duration-300" id="headerContent">
-            <h1 class="text-3xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-2 transition-all duration-300" id="dashboardTitle">
-              Dashboard
-            </h1>
-            <p class="text-gray-600">Welcome to admin dashboard</p>
-          </div>
-        </div>
+      <!-- Admin Analytics Dashboard (replaces original dashboard) -->
+      <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <!-- Header -->
+        <header class="mb-6">
+          <h1 class="text-2xl sm:text-3xl font-bold">Admin Analytics Dashboard</h1>
+        </header>
 
-        <!-- Dashboard Grid -->
-        <div id="dashboardGrid" class="grid grid-cols-1 xl:grid-cols-3 gap-8">
-          <!-- Stats Cards Section -->
-          <div class="xl:col-span-2">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-2 gap-4 lg:gap-6">
-              <!-- New Bookings Card -->
-              <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-gray-600 text-sm font-medium mb-1">New Bookings</p>
-                    <p class="text-3xl font-bold text-green-600" data-stat="bookings">0</p>
-                    <p class="text-xs text-gray-500 mt-1">↑ 12% from last month</p>
-                  </div>
-                  <div class="bg-green-100 p-3 rounded-full">
-                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Refund Requests Card -->
-              <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-gray-600 text-sm font-medium mb-1">Refund Requests</p>
-                    <p class="text-3xl font-bold text-orange-600" data-stat="refunds">0</p>
-                    <p class="text-xs text-gray-500 mt-1">↓ 5% from last month</p>
-                  </div>
-                  <div class="bg-orange-100 p-3 rounded-full">
-                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <!-- User Queries Card -->
-              <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-gray-600 text-sm font-medium mb-1">User Queries</p>
-                    <p class="text-3xl font-bold text-blue-600" data-stat="queries">0</p>
-                    <p class="text-xs text-gray-500 mt-1">↑ 8% from last month</p>
-                  </div>
-                  <div class="bg-blue-100 p-3 rounded-full">
-                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Cancelled Card -->
-              <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-gray-600 text-sm font-medium mb-1">Cancelled</p>
-                    <p class="text-3xl font-bold text-red-600" data-stat="cancelled">0</p>
-                    <p class="text-xs text-gray-500 mt-1">↓ 15% from last month</p>
-                  </div>
-                  <div class="bg-red-100 p-3 rounded-full">
-                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Recent Activity Section -->
-          <div id = "recentActivity" class="xl:col-span-1">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 h-fit sticky top-8">
-              <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-bold text-gray-800">Recent Activity</h2>
-                <div class="bg-red-100 text-red-600 text-xs font-medium px-2 py-1 rounded-full" id="activityBadge">
-                  0 new
-                </div>
-              </div>
-              <div class="space-y-3">
-                <!-- Activity items will be populated by JavaScript -->
-              </div>
-              <button class="w-full mt-3 text-sm text-blue-600 hover:text-blue-700 font-medium">
-                View all activities →
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Charts Section -->
-        <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <!-- User Analytics Chart -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-xl font-bold text-gray-800">User Analytics</h3>
-              <select id="userYearSelect" class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer">
+        <!-- Controls -->
+        <section class="mb-6 bg-white rounded-xl shadow border border-gray-100 p-4">
+          <div class="flex flex-col sm:flex-row gap-3 sm:items-end">
+            <div>
+              <label class="block text-xs font-medium text-gray-600">Year</label>
+              <select id="yearSelect" class="mt-1 border rounded-md px-3 py-2 text-sm">
                 <option value="2023">2023</option>
                 <option value="2024">2024</option>
                 <option value="2025" selected>2025</option>
+                <option value="2026">2026</option>
               </select>
             </div>
-            <div class="h-64 relative">
-              <canvas id="userTrendsChart"></canvas>
+            <div>
+              <label class="block text-xs font-medium text-gray-600">From Month</label>
+              <select id="fromMonth" class="mt-1 border rounded-md px-3 py-2 text-sm">
+                <option value="1">Jan</option>
+                <option value="2">Feb</option>
+                <option value="3">Mar</option>
+                <option value="4">Apr</option>
+                <option value="5">May</option>
+                <option value="6">Jun</option>
+                <option value="7">Jul</option>
+                <option value="8" selected>Aug</option>
+                <option value="9">Sep</option>
+                <option value="10">Oct</option>
+                <option value="11">Nov</option>
+                <option value="12">Dec</option>
+              </select>
             </div>
-            <div class="mt-4 flex items-center justify-center space-x-6 text-sm">
-              <div class="flex items-center cursor-pointer hover:opacity-75 transition-opacity" id="totalUsersLegend">
-                <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
-                <span class="text-gray-600">Total Users</span>
-              </div>
-              <div class="flex items-center cursor-pointer hover:opacity-75 transition-opacity" id="activeUsersLegend">
-                <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-                <span class="text-gray-600">Active Users</span>
-              </div>
-              <div class="flex items-center cursor-pointer hover:opacity-75 transition-opacity" id="inactiveUsersLegend">
-                <div class="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
-                <span class="text-gray-600">Inactive Users</span>
-              </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-600">To Month</label>
+              <select id="toMonth" class="mt-1 border rounded-md px-3 py-2 text-sm">
+                <option value="1">Jan</option>
+                <option value="2">Feb</option>
+                <option value="3">Mar</option>
+                <option value="4">Apr</option>
+                <option value="5">May</option>
+                <option value="6">Jun</option>
+                <option value="7">Jul</option>
+                <option value="8">Aug</option>
+                <option value="9" selected>Sep</option>
+                <option value="10">Oct</option>
+                <option value="11">Nov</option>
+                <option value="12">Dec</option>
+              </select>
             </div>
+            <button id="refreshBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm">
+              Refresh
+            </button>
+            <div class="sm:ml-auto text-xs text-gray-500">Auto-refresh every 30s</div>
+          </div>
+        </section>
+
+        <!-- KPI Cards -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+          <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+            <div class="text-sm text-gray-600">Bookings</div>
+            <div id="kpiBookings" class="text-3xl font-bold text-emerald-600">0</div>
+            <div id="kpiBookingsSub" class="text-xs text-gray-500 mt-1">—</div>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+            <div class="text-sm text-gray-600">Cancellations</div>
+            <div id="kpiCancelled" class="text-3xl font-bold text-rose-600">0</div>
+            <div id="kpiCancelledSub" class="text-xs text-gray-500 mt-1">—</div>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+            <div class="text-sm text-gray-600">Queries</div>
+            <div id="kpiQueries" class="text-3xl font-bold text-blue-600">0</div>
+            <div id="kpiQueriesSub" class="text-xs text-gray-500 mt-1">—</div>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+            <div class="text-sm text-gray-600">Refunds</div>
+            <div id="kpiRefunds" class="text-3xl font-bold text-orange-600">0</div>
+            <div id="kpiRefundsSub" class="text-xs text-gray-500 mt-1">—</div>
+          </div>
+        </section>
+
+        <!-- Charts Grid A -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-semibold">Bookings vs Cancellations (Monthly)</h3>
+            </div>
+            <canvas id="bookingsVsCxl"></canvas>
           </div>
 
-          <!-- Room Occupancy -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">Room Occupancy</h3>
+          <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-semibold">Queries & Refunds Trend</h3>
+            </div>
+            <canvas id="queriesRefundsTrend"></canvas>
+          </div>
+        </section>
+
+        <!-- Analytics: Users & Funnel -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-semibold">User Growth & Activity</h3>
+            </div>
+            <canvas id="userGrowth"></canvas>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-semibold">Onboarding Funnel</h3>
+            </div>
             <div class="space-y-3">
-              <div class="flex items-center justify-between" data-room="deluxe">
-                <span class="text-sm font-semibold text-gray-600">Deluxe Rooms</span>
-                <div class="flex items-center space-x-2">
-                  <div class="w-32 bg-gray-200 rounded-full h-2">
-                    <div class="bg-green-500 h-2 rounded-full" style="width: 0%"></div>
-                  </div>
-                  <span class="text-sm font-medium text-gray-700"></span>
+              <div class="flex items-center">
+                <div class="w-28 text-xs text-gray-600">Signups</div>
+                <div class="flex-1 bg-gray-100 rounded h-3">
+                  <div id="funnelSignups" class="bg-indigo-500 h-3 rounded" style="width:0%"></div>
                 </div>
+                <div id="funnelSignupsVal" class="w-14 text-right text-xs ml-2">0</div>
               </div>
-              <div class="flex items-center justify-between" data-room="standard">
-                <span class="text-sm font-semibold text-gray-600">Standard Rooms</span>
-                <div class="flex items-center space-x-2">
-                  <div class="w-32 bg-gray-200 rounded-full h-2">
-                    <div class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
-                  </div>
-                  <span class="text-sm font-medium text-gray-700"></span>
+              <div class="flex items-center">
+                <div class="w-28 text-xs text-gray-600">Bookings</div>
+                <div class="flex-1 bg-gray-100 rounded h-3">
+                  <div id="funnelBookings" class="bg-emerald-500 h-3 rounded" style="width:0%"></div>
                 </div>
+                <div id="funnelBookingsVal" class="w-14 text-right text-xs ml-2">0</div>
               </div>
-              <div class="flex items-center justify-between" data-room="suite">
-                <span class="text-sm font-semibold text-gray-600">Suite Rooms</span>
-                <div class="flex items-center space-x-2">
-                  <div class="w-32 bg-gray-200 rounded-full h-2">
-                    <div class="bg-orange-500 h-2 rounded-full" style="width: 0%"></div>
-                  </div>
-                  <span class="text-sm font-medium text-gray-700"></span>
+              <div class="flex items-center">
+                <div class="w-28 text-xs text-gray-600">Repeat</div>
+                <div class="flex-1 bg-gray-100 rounded h-3">
+                  <div id="funnelRepeat" class="bg-amber-500 h-3 rounded" style="width:0%"></div>
                 </div>
+                <div id="funnelRepeatVal" class="w-14 text-right text-xs ml-2">0</div>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        <!-- Booking Analytics Section -->
-        <div class="py-8">
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <div class="mb-6">
-              <h3 class="text-xl font-bold text-gray-800 mb-2">Booking Analytics</h3>
+        <!-- Occupancy -->
+        <section class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
+          <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm xl:col-span-2">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-semibold">Occupancy by Room Type</h3>
             </div>
-
-            <!-- Filter Controls -->
-            <div class="bg-gray-50 rounded-lg p-4 mb-6">
-              <div class="flex items-center justify-between mb-3">
-                <h4 class="text-sm font-semibold text-gray-700">Filter & Search Options</h4>
-              </div>
-              <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
-                <div class="flex items-center space-x-2">
-                  <label class="text-sm font-medium text-gray-600 min-w-0 whitespace-nowrap">Year:</label>
-                  <select id="analyticsYear" class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer min-w-0 flex-shrink-0">
-                    <option value="2023">2023</option>
-                    <option value="2024">2024</option>
-                    <option value="2025" selected>2025</option>
-                  </select>
-                </div>
-                <div class="flex items-center space-x-2">
-                  <label class="text-sm font-medium text-gray-600 min-w-0 whitespace-nowrap">From:</label>
-                  <select id="analyticsStartMonth" class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer min-w-0 flex-shrink-0">
-                    <option value="1">January</option>
-                    <option value="2">February</option>
-                    <option value="3">March</option>
-                    <option value="4">April</option>
-                    <option value="5">May</option>
-                    <option value="6" selected>June</option>
-                    <option value="7">July</option>
-                    <option value="8">August</option>
-                    <option value="9">September</option>
-                    <option value="10">October</option>
-                    <option value="11">November</option>
-                    <option value="12">December</option>
-                  </select>
-                </div>
-                <div class="flex items-center space-x-2">
-                  <label class="text-sm font-medium text-gray-600 min-w-0 whitespace-nowrap">To:</label>
-                  <select id="analyticsEndMonth" class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer min-w-0 flex-shrink-0">
-                    <option value="1">January</option>
-                    <option value="2">February</option>
-                    <option value="3">March</option>
-                    <option value="4">April</option>
-                    <option value="5">May</option>
-                    <option value="6">June</option>
-                    <option value="7">July</option>
-                    <option value="8">August</option>
-                    <option value="9">September</option>
-                    <option value="10">October</option>
-                    <option value="11">November</option>
-                    <option value="12" selected>December</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <!-- Analytics Chart -->
-            <div class="h-64 relative mb-4">
-              <canvas id="userAnalyticsChart"></canvas>
-            </div>
-
-            <!-- Interactive Legend -->
-            <div class="flex items-center justify-center space-x-6 text-sm mb-2">
-              <div class="flex items-center cursor-pointer hover:opacity-75 transition-opacity" id="totalBookingsLegend">
-                <div class="w-4 h-4 bg-blue-500 rounded mr-2"></div>
-                <span class="text-gray-600">Total Bookings</span>
-              </div>
-              <div class="flex items-center cursor-pointer hover:opacity-75 transition-opacity" id="cancelledBookingsLegend">
-                <div class="w-4 h-4 bg-red-500 rounded mr-2"></div>
-                <span class="text-gray-600">Cancelled Bookings</span>
-              </div>
+            <div class="h-[420px]">
+              <canvas id="occupancyStacked" class="h-full w-full"></canvas>
             </div>
           </div>
-        </div>
-      </main>
-    </div>
 
-    <script src="/src/admin/features/dashboard/dashboard.js"></script>
-  
-  </body>
+          <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm xl:col-span-1">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-semibold">Revenue Share by Room Type</h3>
+            </div>
+            <canvas id="revenuePie"></canvas>
+          </div>
+        </section>
+
+        <!-- Booking Trends -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-semibold">Bookings vs Cancellations (Dual)</h3>
+            </div>
+            <canvas id="dualLine"></canvas>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-semibold">Bookings by Room Type</h3>
+            </div>
+            <canvas id="bookingsByType"></canvas>
+          </div>
+        </section>
+      </div>
+      <!-- End analytics container -->
+
+    </main>
+  </div>
+
+  <!-- Sidebar & UI scripts -->
+  <script>
+    // Sidebar open/close (mobile)
+    const sidebarEl = document.getElementById('sidebar');
+    const overlayEl = document.getElementById('overlay');
+    const externalToggleEl = document.getElementById('externalToggle');
+    const sidebarToggleEl = document.getElementById('sidebarToggle');
+
+    function openSidebar() {
+      sidebarEl.classList.remove('-translate-x-full');
+      overlayEl.classList.remove('hidden');
+    }
+    function closeSidebar() {
+      sidebarEl.classList.add('-translate-x-full');
+      overlayEl.classList.add('hidden');
+    }
+
+    externalToggleEl?.addEventListener('click', openSidebar);
+    sidebarToggleEl?.addEventListener('click', closeSidebar);
+    overlayEl?.addEventListener('click', closeSidebar);
+
+    // Ensure correct state across breakpoints
+    const mq = window.matchMedia('(min-width: 1024px)');
+    function handleMQ(e) {
+      if (e.matches) {
+        sidebarEl.classList.remove('-translate-x-full');
+        overlayEl.classList.add('hidden');
+      } else {
+        closeSidebar();
+      }
+    }
+    mq.addEventListener('change', handleMQ);
+    handleMQ(mq);
+
+    // Booking submenu toggle
+    const bookingToggle = document.getElementById('bookingToggle');
+    const bookingSubmenu = document.getElementById('bookingSubmenu');
+    const bookingArrow = document.getElementById('bookingArrow');
+    let bookingOpen = false;
+
+    bookingToggle?.addEventListener('click', () => {
+      bookingOpen = !bookingOpen;
+      bookingSubmenu.style.maxHeight = bookingOpen ? (bookingSubmenu.scrollHeight + 'px') : '0px';
+      bookingArrow.style.transform = bookingOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+      bookingToggle.setAttribute('aria-expanded', bookingOpen ? 'true' : 'false');
+    });
+
+    // Logout aligned with stored currentUser
+    function logout() {
+      try {
+        localStorage.removeItem('currentUser');
+      } catch (e) {}
+      // Redirect to login (adjust if your route differs)
+      window.location.href = '/login';
+    }
+    window.logout = logout;
+  </script>
+
+  <!-- Analytics logic -->
+  <script>
+    // ---------- CONFIG ----------
+    const API_BASE = 'https://68c8b85aceef5a150f622643.mockapi.io';
+    const ENDPOINTS = {
+      bookings: '/admin/3',
+      rooms: '/admin/5',
+      features: '/admin/6',
+      facilities: '/admin/7',
+      ratings: '/admin/8',
+      queries: '/admin/9',
+      // Optional, only if such resource exists:
+      refunds: '/admin/4'
+    };
+
+    // ---------- HELPERS ----------
+    const fmtCurrency = (n) =>
+      new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        maximumFractionDigits: 0
+      }).format(n || 0);
+
+    const parseDate = (s) => {
+      if (!s) return null;
+      const d = new Date(s);
+      if (!isNaN(d)) return d;
+      const parts = String(s).split('-').map(Number);
+      if (parts.length >= 3) return new Date(parts[0], (parts[1] - 1), parts[2]);
+      return null;
+    };
+
+    const monthKey = (d) => d ? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}` : '';
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const sum = (arr) => arr.reduce((a,b)=>a+(b||0), 0);
+    const uniq = (arr) => Array.from(new Set(arr.filter(Boolean)));
+
+    const coerceNumber = (val) => {
+      if (typeof val === 'number') return val;
+      if (typeof val === 'string') {
+        const cleaned = val.replace(/[^\d.-]/g, '');
+        const num = parseFloat(cleaned);
+        return isNaN(num) ? 0 : num;
+      }
+      return 0;
+    };
+
+    const nightsBetween = (checkin, checkout) => {
+      const a = parseDate(checkin);
+      const b = parseDate(checkout);
+      if (!a || !b) return 0;
+      return Math.max(0, Math.round((b - a) / (1000*60*60*24)));
+    };
+
+    const daterangeMonths = (year, fromM, toM) => {
+      const months = [];
+      for (let m = fromM; m <= toM; m++) {
+        months.push(`${year}-${String(m).padStart(2,'0')}`);
+      }
+      return months;
+    };
+
+    // ---------- FETCH ----------
+    async function fetchJson(url) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      } catch (e) {
+        console.warn('Fetch failed:', url, e);
+        return null;
+      }
+    }
+
+    async function loadAll() {
+      const [
+        bookingsRes, roomsRes, featuresRes, facilitiesRes, ratingsRes, queriesRes, refundsRes
+      ] = await Promise.all([
+        fetchJson(API_BASE + ENDPOINTS.bookings),
+        fetchJson(API_BASE + ENDPOINTS.rooms),
+        fetchJson(API_BASE + ENDPOINTS.features),
+        fetchJson(API_BASE + ENDPOINTS.facilities),
+        fetchJson(API_BASE + ENDPOINTS.ratings),
+        fetchJson(API_BASE + ENDPOINTS.queries),
+        fetchJson(API_BASE + ENDPOINTS.refunds) // may be null
+      ]);
+
+      const bookings   = (bookingsRes && bookingsRes.bookings) ? bookingsRes.bookings
+                           : Array.isArray(bookingsRes) ? bookingsRes : [];
+      const rooms      = (roomsRes && roomsRes.rooms) ? roomsRes.rooms
+                           : Array.isArray(roomsRes) ? roomsRes : [];
+      const features   = (featuresRes && featuresRes.features) ? featuresRes.features
+                           : Array.isArray(featuresRes) ? featuresRes : [];
+      const facilities = (facilitiesRes && facilitiesRes.facilities) ? facilitiesRes.facilities
+                           : Array.isArray(facilitiesRes) ? facilitiesRes : [];
+      const ratings    = (ratingsRes && (ratingsRes['ratings-reviews'] || ratingsRes.ratings))
+                           ? (ratingsRes['ratings-reviews'] || ratingsRes.ratings)
+                           : (Array.isArray(ratingsRes) ? ratingsRes : []);
+      const queries    = (queriesRes && (queriesRes.userQueries || queriesRes.queries))
+                           ? (queriesRes.userQueries || queriesRes.queries)
+                           : (Array.isArray(queriesRes) ? queriesRes : []);
+      const refundBookings = (refundsRes && (refundsRes.refundBookings || refundsRes.refunds))
+                           ? (refundsRes.refundBookings || refundsRes.refunds)
+                           : (Array.isArray(refundsRes) ? refundsRes : []);
+
+      return { bookings, rooms, features, facilities, ratings, queries, refundBookings };
+    }
+
+    // ---------- TRANSFORM ----------
+    function computeMetrics(data, year, fromM, toM) {
+      const months = daterangeMonths(year, fromM, toM);
+
+      const normBookings = data.bookings.map(b => {
+        const bDate = parseDate(b.bookingDate) || parseDate(b.bookedDate) || parseDate(b.createdAt) || parseDate(b.checkin) || null;
+        const chkIn = b.checkIn || b.checkin;
+        const chkOut = b.checkOut || b.checkout;
+        const nights = b.nights || nightsBetween(chkIn, chkOut);
+        const ppn = coerceNumber(b.pricePerNight);
+        const amount = coerceNumber(b.totalAmount) || (ppn * nights);
+        const status = (b.status || '').toLowerCase();
+        const roomType = b.roomType || b.categoryType || 'Unknown';
+        const userKey = b.email || b.mobile || b.userId || (b.firstName && b.lastName ? (b.firstName + ' ' + b.lastName) : '') || '';
+        return { ...b, bDate, chkIn, chkOut, nights, amount, status, roomType, userKey };
+      });
+
+      const inRange = (d) => {
+        if (!d) return false;
+        const y = d.getFullYear();
+        const m = d.getMonth()+1;
+        return y === year && m >= fromM && m <= toM;
+      };
+      const inYear = (d, y) => d && d.getFullYear() === y;
+
+      const bookingsInRange = normBookings.filter(b => inRange(b.bDate));
+      const cancellationsInRange = bookingsInRange.filter(b => b.status === 'cancelled');
+
+      const normQueries = data.queries.map(q => {
+        const qDate = parseDate(q.createdAt) || parseDate(q.date);
+        return { ...q, qDate };
+      }).filter(q => inRange(q.qDate));
+
+      const normRefunds = (data.refundBookings.length ? data.refundBookings : cancellationsInRange).map(r => {
+        const rDate = parseDate(r.refundRequestDate) || parseDate(r.date) || parseDate(r.bookingDate) || parseDate(r.createdAt);
+        const status = (r.refundStatus || r.status || '').toLowerCase();
+        return { ...r, rDate, status };
+      }).filter(r => inRange(r.rDate));
+
+      const monthIndex = {};
+      months.forEach((mk, i) => monthIndex[mk] = i);
+      const zeros = () => Array(months.length).fill(0);
+
+      const bookingsMonthly = zeros();
+      const cancelsMonthly = zeros();
+      const queriesMonthly = zeros();
+      const refundsMonthly = zeros();
+      const revenueMonthly = zeros();
+
+      bookingsInRange.forEach(b => {
+        const k = monthKey(b.bDate);
+        const i = monthIndex[k];
+        if (i !== undefined) {
+          bookingsMonthly[i] += 1;
+          revenueMonthly[i] += b.amount || 0;
+        }
+      });
+      cancellationsInRange.forEach(b => {
+        const k = monthKey(b.bDate);
+        const i = monthIndex[k];
+        if (i !== undefined) cancelsMonthly[i] += 1;
+      });
+      normQueries.forEach(q => {
+        const k = monthKey(q.qDate);
+        const i = monthIndex[k];
+        if (i !== undefined) queriesMonthly[i] += 1;
+      });
+      normRefunds.forEach(r => {
+        const k = monthKey(r.rDate);
+        const i = monthIndex[k];
+        if (i !== undefined) refundsMonthly[i] += 1;
+      });
+
+      const userFirstSeen = {};
+      normBookings.forEach(b => {
+        if (!userFirstSeen[b.userKey]) userFirstSeen[b.userKey] = b.bDate;
+        else if (b.bDate && userFirstSeen[b.userKey] && b.bDate < userFirstSeen[b.userKey]) userFirstSeen[b.userKey] = b.bDate;
+      });
+
+      const uniqueUsersInRange = uniq(bookingsInRange.map(b => b.userKey));
+      const newUsers = uniqueUsersInRange.filter(u => inRange(userFirstSeen[u]));
+      const returningUsers = uniqueUsersInRange.length - newUsers.length;
+
+      const ratingsNorm = data.ratings.map(r => ({ ...r, rDate: parseDate(r.createdAt) || parseDate(r.date) })).filter(r => inRange(r.rDate));
+      const activityMonthly = zeros();
+      const activityByMonthUsers = months.map(() => new Set());
+      bookingsInRange.forEach(b => {
+        const k = monthKey(b.bDate);
+        const i = monthIndex[k];
+        if (i !== undefined) activityByMonthUsers[i].add(b.userKey);
+      });
+      normQueries.forEach(q => {
+        const k = monthKey(q.qDate);
+        const i = monthIndex[k];
+        if (i !== undefined) activityByMonthUsers[i].add(q.email || q.userId || q.userName || '');
+      });
+      ratingsNorm.forEach(r => {
+        const k = monthKey(r.rDate);
+        const i = monthIndex[k];
+        if (i !== undefined) activityByMonthUsers[i].add(r.userId || r.userName || '');
+      });
+      activityByMonthUsers.forEach((s, i) => activityMonthly[i] = s.size);
+
+      const occByType = {};
+      const revByType = {};
+      bookingsInRange.forEach(b => {
+        occByType[b.roomType] = (occByType[b.roomType] || 0) + (b.nights || 0);
+        revByType[b.roomType] = (revByType[b.roomType] || 0) + (b.amount || 0);
+      });
+      const roomTypes = Object.keys(occByType).length ? Object.keys(occByType) : uniq(normBookings.map(b => b.roomType));
+      const occValues = roomTypes.map(rt => occByType[rt] || 0);
+      const revValues = roomTypes.map(rt => revByType[rt] || 0);
+
+      const yearsForYOY = [year - 1, year];
+      const yoyMonthly = yearsForYOY.map(y => {
+        const arr = Array(12).fill(0);
+        normBookings.forEach(b => {
+          if (inYear(b.bDate, y)) {
+            const m = b.bDate.getMonth();
+            arr[m] += b.amount || 0;
+          }
+        });
+        return arr;
+      });
+
+      const ratingsForPeriod = ratingsNorm.length
+        ? ratingsNorm
+        : data.ratings.map(r => ({...r, rDate: parseDate(r.createdAt) || parseDate(r.date)})).filter(r => inYear(r.rDate, year));
+      const avgRating = ratingsForPeriod.length ? (sum(ratingsForPeriod.map(r => Number(r.rating) || 0)) / ratingsForPeriod.length) : 0;
+
+      const stayDurations = bookingsInRange.map(b => b.nights || 0).filter(n => n > 0);
+      const histBuckets = [1,2,3,4,5,6,7,10,14,21,30];
+      const histCounts = histBuckets.map(() => 0);
+      stayDurations.forEach(n => {
+        let idx = histBuckets.findIndex(bk => n <= bk);
+        if (idx === -1) idx = histBuckets.length - 1;
+        histCounts[idx] += 1;
+      });
+
+      const now = new Date();
+      const cutoff = new Date(now.getTime() - 24*60*60*1000);
+      const recent = [];
+      normBookings.forEach(b => { if (b.bDate && b.bDate >= cutoff) recent.push({ type:'Booking', ts:b.bDate, text:`${b.roomType} • ${b.status}` }); });
+      ratingsForPeriod.forEach(r => { if (r.rDate && r.rDate >= cutoff) recent.push({ type:'Review', ts:r.rDate, text:`${r.roomType || ''} • ${r.rating}/5` }); });
+      normQueries.forEach(q => { if (q.qDate && q.qDate >= cutoff) recent.push({ type:'Query', ts:q.qDate, text:`${q.subject || 'Query'}` }); });
+      normRefunds.forEach(r => { if (r.rDate && r.rDate >= cutoff) recent.push({ type:'Refund', ts:r.rDate, text:`${r.status || 'refund'}` }); });
+      recent.sort((a,b)=>b.ts - a.ts);
+
+      const countByType = {};
+      bookingsInRange.forEach(b => { countByType[b.roomType] = (countByType[b.roomType]||0)+1; });
+
+      const refundStatusCount = {};
+      normRefunds.forEach(r => { const s = r.status || 'pending'; refundStatusCount[s] = (refundStatusCount[s]||0)+1; });
+
+      const occByRoomNo = {};
+      normBookings.forEach(b => {
+        const k = b.roomno || b.roomNo || '';
+        occByRoomNo[k] = (occByRoomNo[k] || 0) + (b.nights || 0);
+      });
+      const bubble = [];
+      data.rooms.forEach(rm => {
+        const area = coerceNumber(rm.area);
+        const price = coerceNumber(rm.price);
+        const occ = occByRoomNo[rm.roomno] || 0;
+        bubble.push({ label: `${rm.categoryType} ${rm.roomno}`, x: area || 0, y: price || 0, r: Math.max(3, Math.sqrt(occ)*3) });
+      });
+
+      const allFeatureNames = uniq([
+        ...data.features.map(f => f.name),
+        ...data.rooms.flatMap(r => (r.selectedFeatures || []).map(f => f.name))
+      ]).filter(Boolean);
+
+      const featureCoverage = allFeatureNames.map(fname => {
+        let count = 0;
+        data.rooms.forEach(r => {
+          const has = (r.selectedFeatures || []).some(f => f.name === fname);
+          if (has) count += 1;
+        });
+        return count;
+      });
+
+      return {
+        months,
+        bookingsMonthly, cancelsMonthly, queriesMonthly, refundsMonthly, revenueMonthly,
+        newUsers: newUsers.length, returningUsers, activityMonthly,
+        roomTypes, occValues, revValues,
+        yoy: { years: yearsForYOY, data: yoyMonthly },
+        avgRating, histBuckets, histCounts,
+        recent,
+        bookingsByType: { labels: Object.keys(countByType), values: Object.values(countByType) },
+        refundStatus: refundStatusCount,
+        bubble,
+        featureRadar: { labels: allFeatureNames, values: featureCoverage },
+        totals: {
+          bookings: sum(bookingsMonthly),
+          cancelled: sum(cancelsMonthly),
+          queries: sum(queriesMonthly),
+          refunds: sum(refundsMonthly),
+          revenue: sum(revenueMonthly)
+        }
+      };
+    }
+
+    // ---------- RENDER ----------
+    let charts = {};
+    function upsertChart(id, cfg) {
+      const ctx = document.getElementById(id).getContext('2d');
+      if (charts[id]) charts[id].destroy();
+      charts[id] = new Chart(ctx, cfg);
+      return charts[id];
+    }
+
+    function renderKPIs(t, monthsCount) {
+      document.getElementById('kpiBookings').textContent = t.bookings.toString();
+      document.getElementById('kpiCancelled').textContent = t.cancelled.toString();
+      document.getElementById('kpiQueries').textContent = t.queries.toString();
+      document.getElementById('kpiRefunds').textContent = t.refunds.toString();
+
+      document.getElementById('kpiBookingsSub').textContent = `Revenue ${fmtCurrency(t.revenue)}`;
+      const cancelRate = t.bookings ? Math.round((t.cancelled / t.bookings) * 100) : 0;
+      document.getElementById('kpiCancelledSub').textContent = `Rate ${cancelRate}%`;
+
+      const monthsSafe = Math.max(1, monthsCount || 1);
+      document.getElementById('kpiQueriesSub').textContent = `Per month avg ${Math.round(t.queries / monthsSafe)}`;
+            document.getElementById('kpiRefundsSub').textContent = `Per month avg ${Math.round(t.refunds / monthsSafe)}`;
+    }
+
+    function renderAll(v) {
+      const monthLabels = v.months.map(m => new Date(m + '-01').toLocaleString('en', { month: 'short' }));
+
+      // Bookings vs Cancellations (Bar)
+      upsertChart('bookingsVsCxl', {
+        type: 'bar',
+        data: {
+          labels: monthLabels,
+          datasets: [
+            { label: 'Bookings', data: v.bookingsMonthly, backgroundColor: '#10b981' },
+            { label: 'Cancellations', data: v.cancelsMonthly, backgroundColor: '#ef4444' }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'bottom' } },
+          scales: { x: { stacked: false }, y: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+      });
+
+      // Queries & Refunds (Line)
+      upsertChart('queriesRefundsTrend', {
+        type: 'line',
+        data: {
+          labels: monthLabels,
+          datasets: [
+            { label: 'Queries', data: v.queriesMonthly, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.2)', tension: 0.3 },
+            { label: 'Refunds', data: v.refundsMonthly, borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.2)', tension: 0.3 }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'bottom' } },
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+      });
+
+      // User Growth & Activity (Active users)
+      upsertChart('userGrowth', {
+        type: 'line',
+        data: {
+          labels: monthLabels,
+          datasets: [
+            { label: 'Active Users', data: v.activityMonthly, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.2)', tension: 0.3, yAxisID: 'y' }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'bottom' } },
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+      });
+
+      // Onboarding Funnel
+      const signups = Math.max(v.newUsers + v.returningUsers, v.activityMonthly.reduce((a, b) => Math.max(a, b), 0));
+      const bookings = v.totals.bookings;
+      const repeat = Math.round((bookings * (v.returningUsers / Math.max(1, (v.newUsers + v.returningUsers)))) || 0);
+      const pct = (num, den) => clamp(Math.round((num / Math.max(1, den)) * 100), 0, 100);
+      document.getElementById('funnelSignups').style.width = pct(signups, signups) + '%';
+      document.getElementById('funnelBookings').style.width = pct(bookings, signups) + '%';
+      document.getElementById('funnelRepeat').style.width = pct(repeat, signups) + '%';
+      document.getElementById('funnelSignupsVal').textContent = signups;
+      document.getElementById('funnelBookingsVal').textContent = bookings;
+      document.getElementById('funnelRepeatVal').textContent = repeat;
+
+      // Occupancy (by room type => nights)
+      upsertChart('occupancyStacked', {
+        type: 'bar',
+        data: {
+          labels: v.roomTypes,
+          datasets: [{ label: 'Nights', data: v.occValues, backgroundColor: '#6366f1' }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'bottom' } },
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+      });
+
+      // Revenue share (Pie)
+      upsertChart('revenuePie', {
+        type: 'pie',
+        data: {
+          labels: v.roomTypes,
+          datasets: [{ data: v.revValues, backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#6366f1', '#14b8a6'] }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+      });
+
+      // Dual Line (Bookings vs Cancellations)
+      upsertChart('dualLine', {
+        type: 'line',
+        data: {
+          labels: monthLabels,
+          datasets: [
+            { label: 'Bookings', data: v.bookingsMonthly, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.2)', tension: 0.3 },
+            { label: 'Cancellations', data: v.cancelsMonthly, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.2)', tension: 0.3 }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'bottom' } },
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+      });
+
+      // Bookings by room type
+      upsertChart('bookingsByType', {
+        type: 'bar',
+        data: {
+          labels: v.bookingsByType.labels,
+          datasets: [{ label: 'Bookings', data: v.bookingsByType.values, backgroundColor: '#8b5cf6' }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'bottom' } },
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+      });
+    }
+
+    // ---------- BOOTSTRAP ----------
+    async function boot() {
+      const year = Number(document.getElementById('yearSelect').value);
+      const fromM = Number(document.getElementById('fromMonth').value);
+      const toM = Number(document.getElementById('toMonth').value);
+
+      const data = await loadAll();
+      const view = computeMetrics(data, year, fromM, toM);
+      renderKPIs(view.totals, view.months.length);
+      renderAll(view);
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', boot);
+    document.getElementById('yearSelect').addEventListener('change', boot);
+    document.getElementById('fromMonth').addEventListener('change', boot);
+    document.getElementById('toMonth').addEventListener('change', boot);
+
+    // Auto-refresh every 30 seconds
+    setInterval(boot, 30000);
+
+    // First load
+    document.addEventListener('DOMContentLoaded', boot);
+  </script>
+</body>
 </html>

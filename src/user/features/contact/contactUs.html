@@ -17,48 +17,57 @@
     .gradient-bg {
       background: linear-gradient(135deg, #EFB85A 0%, #F26538 50%, #E11162 100%);
     }
+    .input-error {
+      font-size: 0.875rem;
+      color: #E11162;
+      margin-top: 0.25rem;
+    }
+     .links:hover {
+    color: #EFB85A;
    
+  }
+  .links{
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
   </style>
 </head>
 <body class="m-0 p-0">
   <!-- Header -->
   <header class="fixed top-0 w-full z-50 shadow-md bg-white">
     <nav class="flex h-16 items-center justify-between px-6">
-      <!-- Logo -->
       <div>
         <img src="/src/assets/logo.png" alt="Zyra Hotel Logo" class="h-10 w-auto" />
       </div>
-      
       <div class="flex items-center space-x-4">
-        <!-- Menu + Book Now -->
         <div class="flex items-center space-x-4">
           <ul class="hidden md:flex space-x-6 font-semibold text-[#413030]">
             <li>
-              <span class="cursor-pointer relative inline-block group">
-                <a href="#home" class="hover:text-yellow-400 transition">Home</a>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="/src/index.html" class="hover:text-yellow-400 transition">Home</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
               </span>
             </li>
             <li>
               <span class="cursor-pointer relative inline-block group">
-                <a href="#rooms" class="hover:text-yellow-400 transition">Rooms</a>
+                <a href="/src/user/features/rooms/allRooms.html" class="hover:text-yellow-400 transition">Rooms</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
               </span>
             </li>
             <li>
-              <span class="cursor-pointer relative inline-block group">
-                <a href="#amenities" class="hover:text-yellow-400 transition">Facilities</a>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="/src/user/features/facilities/facilities.html" class="hover:text-yellow-400 transition">Facilities</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
               </span>
             </li>
             <li>
-              <span class="cursor-pointer relative inline-block group">
-                <a href="#contact" class="hover:text-yellow-400 transition">Contact Us</a>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="/src/user/features/contact/contactUs.html" class="hover:text-yellow-400 transition">Contact Us</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
               </span>
             </li>
           </ul>
-          <button class="rounded-full px-4 py-3 text-white text-sm font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
+          <button id="homeBookNow-btn" onclick="redirectRoom()" class="rounded-full px-4 py-3 text-white text-sm font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
             Book Now
           </button>
         </div>
@@ -83,10 +92,9 @@
   <!-- Main Content with Gradient Background -->
   <div id="mainContent" class="min-h-screen pt-16">
     <main id="mainContentArea" class="w-full p-4 sm:p-6 lg:p-8 mt-4 sm:mt-6 lg:mt-0">
-      <!-- Contact Section -->
       <div class="max-w-7xl mx-auto">
         <div class="flex flex-col lg:flex-row gap-0 lg:min-h-[600px]">
-          <!-- Left Side - Map -->
+          <!-- Left Map -->
           <div class="lg:w-1/2 h-64 lg:h-auto">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15692.29028264205!2d76.95708832279107!3d11.017583907160297!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba85855910aed83%3A0x80875de5cd370a9d!2sGandhipuram%2C%20Tamil%20Nadu%20641012!5e0!3m2!1sen!2sin!4v1757909444353!5m2!1sen!2sin"
@@ -95,48 +103,38 @@
               allowfullscreen=""
               loading="lazy"
               referrerpolicy="no-referrer-when-downgrade"
-              title="Hotel location map">
-            </iframe>
+              title="Hotel location map"></iframe>
           </div>
-
-          <!-- Right Side - Contact Form and Info -->
+          <!-- Right Form -->
           <div class="lg:w-1/2 glass-effect rounded-r-2xl lg:rounded-r-2xl lg:rounded-l-none shadow-2xl">
             <div class="p-8 lg:p-12 h-full flex flex-col">
-              <!-- Contact Info Section -->
               <div class="mb-8">
                 <div class="mb-8">
-                  <h2 class="text-lg lg:text-xl font-bold bg-[#E11162] bg-clip-text text-transparent mb-2">
-                    Call us
-                  </h2>
+                  <h2 class="text-lg lg:text-xl font-bold bg-[#E11162] bg-clip-text text-transparent mb-2">Call us</h2>
                   <div class="space-y-2">
                     <p class="text-gray-800 text-lg font-semibold">+91 -9532476374</p>
                     <p class="text-gray-800 text-lg font-semibold">+91 -9432476374</p>
                   </div>
                 </div>
-
                 <div class="mb-8">
-  <h3 class="text-lg lg :text-xl font-bold bg-[#E11162] bg-clip-text text-transparent mb-4">
-    Follow us
-  </h3>
-  <div class="flex space-x-4">
-    <a href="#" class="w-10 h-10  rounded-lg flex items-center justify-center hover:from-[#F26538] hover:to-[#E11162] transition-all duration-300 transform hover:scale-110">
-      <i class="fab fa-facebook-f text-[#1877F2] text-base"></i>
-    </a>
-    <a href="#" class="w-10 h-10 rounded-lg flex items-center justify-center hover:from-[#F26538] hover:to-[#E11162] transition-all duration-300 transform hover:scale-110">
-      <i class="fab fa-twitter text-[#1DA1F2] text-base"></i>
-    </a>
-    <a href="#" class="w-10 h-10 rounded-lg flex items-center justify-center hover:from-[#F26538] hover:to-[#E11162] transition-all duration-300 transform hover:scale-110">
-      <i class="fab fa-instagram text-[#E4405F] text-base"></i>
-    </a>
-    <a href="#" class="w-10 h-10  rounded-lg flex items-center justify-center hover:from-[#F26538] hover:to-[#E11162] transition-all duration-300 transform hover:scale-110">
-      <i class="fab fa-linkedin-in text-[#0A66C2] text-base"></i>
-    </a>
-  </div>
-</div>
-
+                  <h3 class="text-lg lg:text-xl font-bold bg-[#E11162] bg-clip-text text-transparent mb-4">Follow us</h3>
+                  <div class="flex space-x-4">
+                    <a href="#" class="w-10 h-10 rounded-lg flex items-center justify-center hover:from-[#F26538] hover:to-[#E11162] transition-all duration-300 transform hover:scale-110">
+                      <i class="fab fa-facebook-f text-[#1877F2] text-base"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-lg flex items-center justify-center hover:from-[#F26538] hover:to-[#E11162] transition-all duration-300 transform hover:scale-110">
+                      <i class="fab fa-twitter text-[#1DA1F2] text-base"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-lg flex items-center justify-center hover:from-[#F26538] hover:to-[#E11162] transition-all duration-300 transform hover:scale-110">
+                      <i class="fab fa-instagram text-[#E4405F] text-base"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-lg flex items-center justify-center hover:from-[#F26538] hover:to-[#E11162] transition-all duration-300 transform hover:scale-110">
+                      <i class="fab fa-linkedin-in text-[#0A66C2] text-base"></i>
+                    </a>
+                  </div>
+                </div>
               </div>
 
-              <!-- Contact Form -->
               <form id="contactForm" class="flex-1 space-y-6">
                 <div>
                   <label class="block text-sm font-semibold text-[#E11162] mb-2">Name</label>
@@ -145,10 +143,8 @@
                     id="name" 
                     placeholder="Enter your Name"
                     class="w-full px-4 py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent bg-white/80 font-medium placeholder-gray-400"
-                    required
-                  >
+                    required>
                 </div>
-
                 <div>
                   <label class="block text-sm font-semibold text-[#E11162] mb-2">Email</label>
                   <input 
@@ -156,10 +152,8 @@
                     id="email" 
                     placeholder="Enter your Email"
                     class="w-full px-4 py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent bg-white/80 font-medium placeholder-gray-400"
-                    required
-                  >
+                    required>
                 </div>
-
                 <div>
                   <label class="block text-sm font-semibold text-[#E11162] mb-2">Subject</label>
                   <input 
@@ -167,10 +161,8 @@
                     id="subject" 
                     placeholder="Enter Subject"
                     class="w-full px-4 py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent bg-white/80 font-medium placeholder-gray-400"
-                    required
-                  >
+                    required>
                 </div>
-
                 <div>
                   <label class="block text-sm font-semibold text-[#E11162] mb-2">Messages</label>
                   <textarea 
@@ -178,14 +170,11 @@
                     rows="4" 
                     placeholder="Enter your message here..."
                     class="w-full px-4 py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent bg-white/80 font-medium placeholder-gray-400 resize-none"
-                    required
-                  ></textarea>
+                    required></textarea>
                 </div>
-
                 <button 
                   type="submit" 
-                  class="w-full py-4 bg-gradient-to-br from-[#EFB85A] via-[#F26538] to-[#E11162] text-white rounded-lg font-bold text-lg transition-all duration-300 shadow-lg transform hover:scale-105"
-                >
+                  class="w-full py-4 bg-gradient-to-br from-[#EFB85A] via-[#F26538] to-[#E11162] text-white rounded-lg font-bold text-lg transition-all duration-300 shadow-lg transform hover:scale-105">
                   Send
                 </button>
               </form>
@@ -196,132 +185,236 @@
     </main>
   </div>
 
-  <!-- Footer -->
-  <footer class="bg-gray-100 text-gray-700 pt-2">
-    <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-      
-      <!-- Logo & About -->
-      <div class="text-left">
-        <h2 class="text-4xl font-extrabold mb-4 bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent">
-          Zyra
-        </h2>
-        <p class="text-gray-600 mb-6">
-          Experience luxury and comfort at Zyra Hotel. We provide exceptional hospitality with world-class amenities for an unforgettable stay.
-        </p>
-        <h3 class="font-semibold mb-2">Customer Support</h3>
-        <p class="text-gray-600">feedback@gmail.com</p>
-      </div>
-      
-      <!-- Quick Links -->
+    <!-- Footer -->
+<footer class="bg-gray-100 text-gray-700 pt-2">
+  <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+    
+    <!-- Logo & About -->
+    <div class="text-left">
+      <h2 class="text-4xl font-extrabold mb-4 bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent">
+        Zyra
+      </h2>
+      <p class="text-gray-600 mb-6">
+        Experience luxury and comfort at Zyra Hotel. We provide exceptional hospitality with world-class amenities for an unforgettable stay.
+      </p>
+      <h3 class="font-semibold mb-2">Customer Support</h3>
+      <p class="text-gray-600">feedback@gmail.com</p>
+    </div>
+
+        <!-- Quick Links -->
       <div class="grid grid-cols-2 gap-6">
         <div>
           <h3 class="font-semibold mb-4">Quick Links</h3>
           <ul class="space-y-2">
-            <li><a href="#home" class="hover:text-[#413030] transition">Home</a></li>
-            <li><a href="#rooms" class="hover:text-[#413030] transition">Rooms</a></li>
-            <li><a href="#amenities" class="hover:text-[#413030] transition">Facilities</a></li>
-            <li><a href="#testimonials" class="hover:text-[#413030] transition">Reviews</a></li>
-            <li><a href="#contact" class="hover:text-[#413030] transition">About us</a></li>
+           <li><a href="/src/index.html" class="links">Home</a></li>
+          <li><a href="/src/user/features/rooms/allRooms.html" class="links">Rooms</a></li>
+          <li><a href="/src/user/features/facilities/facilities.html" class="links">Facilities</a></li>
+          <li><a href="#testimonials" class="links">Reviews</a></li>
+          <li><a href="/src/user/features/contact/contactUs.html" class="links">About us</a></li>
           </ul>
         </div>
         <div class="pt-8 md:pt-0">
           <ul class="space-y-2">
-            <li><a href="#" class="hover:text-[#413030] transition">FAQs</a></li>
-            <li><a href="#" class="hover:text-[#413030] transition">Privacy Policy</a></li>
-            <li><a href="#" class="hover:text-[#413030] transition">Terms and Condition</a></li>
+            <li><a href="#" class="links">FAQs</a></li>
+            <li><a href="#" class="links">Privacy Policy</a></li>
+            <li><a href="#" class="links">Terms and Condition</a></li>
           </ul>
         </div>
       </div>
-      
-      <!-- Social Media -->
-      <div class="flex flex-col items-center md:items-start">
-        <h3 class="font-semibold mb-4">Follow us</h3>
-        <div class="flex space-x-6 text-2xl">
-          <a href="#" class="text-[#1877F2] hover:opacity-80 transition" aria-label="Facebook">
-            <i class="fab fa-facebook"></i>
-          </a>
-          <a href="#" class="text-[#1DA1F2] hover:opacity-80 transition" aria-label="Twitter">
-            <i class="fab fa-twitter"></i>
-          </a>
-          <a href="#" class="text-[#0A66C2] hover:opacity-80 transition" aria-label="LinkedIn">
-            <i class="fab fa-linkedin"></i>
-          </a>
-          <a href="#" class="text-[#E4405F] hover:opacity-80 transition" aria-label="Instagram">
-            <i class="fab fa-instagram"></i>
-          </a>
-        </div>
+
+
+    <!-- Social Media -->
+    <div class="flex flex-col items-center md:items-start">
+      <h3 class="font-semibold mb-4">Follow us</h3>
+      <div class="flex space-x-6 text-2xl">
+        <a href="#" class="text-[#1877F2] hover:opacity-80 transition" aria-label="Facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+        <a href="#" class="text-[#1DA1F2] hover:opacity-80 transition" aria-label="Twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#" class="text-[#0A66C2] hover:opacity-80 transition" aria-label="LinkedIn">
+          <i class="fab fa-linkedin"></i>
+        </a>
+        <a href="#" class="text-[#E4405F] hover:opacity-80 transition" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
       </div>
     </div>
-    <div class="bg-gray-200 text-center py-4">
-      <p class="text-sm text-gray-600">&copy; 2024 Zyra Hotel. All rights reserved.</p>
-    </div>
-  </footer>
+  </div>
 
+  <!-- Copyright -->
+  <div class="border-t border-gray-300 py-4 text-center text-sm text-gray-500">
+    © 2025 Zyra Hotel | All rights reserved
+  </div>
+</footer>
+  
   <script>
-    // Contact Form Handler
+    function redirectRoom(){
+      window.location.href = '/src/user/features/rooms/room.html';
+    }
+
     class ContactFormManager {
       constructor() {
         this.contactForm = document.getElementById('contactForm');
         this.initEventListeners();
       }
-      
+
       initEventListeners() {
         this.contactForm.addEventListener('submit', (e) => {
           e.preventDefault();
           this.handleFormSubmission();
         });
+
+        // Attach real-time validation listeners
+        this.fields = [
+          { id: 'name', label: 'Name' },
+          { id: 'email', label: 'Email' },
+          { id: 'subject', label: 'Subject' },
+          { id: 'message', label: 'Message' }
+        ];
+
+        this.fields.forEach(fieldObj => {
+          const field = document.getElementById(fieldObj.id);
+          field.addEventListener('input', () => this.validateField(field, fieldObj.label));
+        });
       }
-      
-      handleFormSubmission() {
-        // Get form data
-        const formData = {
-          name: document.getElementById('name').value,
-          email: document.getElementById('email').value,
-          subject: document.getElementById('subject').value,
-          message: document.getElementById('message').value
-        };
-        
-        // Validate form
-        if (!this.validateForm(formData)) {
-          this.showErrorMessage('Please fill in all required fields.');
-          return;
+
+      validateField(field, label) {
+        let error = '';
+        const value = field.value.trim();
+        if (!value) {
+          error = `${label} is required.`;
+        } else if (field.id === 'email') {
+          const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailPattern.test(value)) {
+            error = 'Please enter a valid email address.';
+          }
         }
-        
-        // Simulate form submission
-        this.showSuccessMessage('Thank you for your message! We will get back to you soon.');
-        this.resetForm();
-        
-        // Here you would typically send the data to your backend
-        console.log('Contact form submitted:', formData);
+        this.showFieldError(field, error);
+        return !error;
       }
-      
-      validateForm(data) {
-        return data.name && data.email && data.subject && data.message;
+
+      showFieldError(field, error) {
+        let errorElem = field.nextElementSibling;
+        if (!errorElem || !errorElem.classList.contains('input-error')) {
+          errorElem = document.createElement('div');
+          errorElem.className = 'input-error text-sm text-[#E11162] mt-1';
+          field.parentNode.insertBefore(errorElem, field.nextSibling);
+        }
+        errorElem.textContent = error;
       }
-      
+
+      validateForm(formData) {
+        let isValid = true;
+        // Validate each field
+        if (!formData.name) {
+          this.showFieldError(document.getElementById('name'), 'Name is required.');
+          isValid = false;
+        }
+        if (!formData.email) {
+          this.showFieldError(document.getElementById('email'), 'Email is required.');
+          isValid = false;
+        } else {
+          const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailPattern.test(formData.email)) {
+            this.showFieldError(document.getElementById('email'), 'Please enter a valid email address.');
+            isValid = false;
+          }
+        }
+        if (!formData.subject) {
+          this.showFieldError(document.getElementById('subject'), 'Subject is required.');
+          isValid = false;
+        }
+        if (!formData.message) {
+          this.showFieldError(document.getElementById('message'), 'Message is required.');
+          isValid = false;
+        }
+        return isValid;
+      }
+
+      async handleFormSubmission() {
+  const currentUserJSON = localStorage.getItem('currentUser');
+  let userId = null;
+  if (currentUserJSON) {
+    try {
+      const currentUser = JSON.parse(currentUserJSON);
+      userId = currentUser.id || null;
+    } catch {
+      // ignore parse errors
+    }
+  }
+
+  const formData = {
+    userId: userId ? userId.toString() : "",              // store as string if available
+    userName: document.getElementById('name').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    date: new Date().toISOString().split('T')[0],         // current date in YYYY-MM-DD
+    subject: document.getElementById('subject').value.trim(),
+    description: document.getElementById('message').value.trim(),
+    createdAt: new Date().toISOString(),                   // ISO timestamp with time
+    read: false                                            // default unread status
+  };
+
+  // Validate: you can update validateForm to validate these keys or just subject/message as before
+  if (!this.validateForm({
+    name: formData.userName,
+    email: formData.email,
+    subject: formData.subject,
+    message: formData.description
+  })) {
+    this.showErrorMessage('Please fix the errors above before submitting.');
+    return;
+  }
+
+  // Proceed to fetch current data and update as before, pushing formData as user query
+  try {
+    const apiUrl = 'https://68c8b85aceef5a150f622643.mockapi.io/admin/9';
+    const resp = await fetch(apiUrl);
+    if (!resp.ok) throw new Error('Failed to fetch existing queries');
+    const existingData = await resp.json();
+    const userQueries = existingData.userQueries || [];
+    userQueries.push(formData);
+    const putResp = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...existingData, userQueries })
+    });
+    if (!putResp.ok) throw new Error('Failed to save data to server');
+    this.showSuccessMessage('Thank you for your message! We will get back to you soon.');
+    this.resetForm();
+  } catch (err) {
+    this.showErrorMessage('There was an error saving your query. Please try again later.');
+    console.error(err);
+  }
+}
+
       resetForm() {
         this.contactForm.reset();
+        // Remove error messages after reset
+        this.fields.forEach(fieldObj => {
+          this.showFieldError(document.getElementById(fieldObj.id), '');
+        });
       }
-      
+
       showSuccessMessage(message) {
         this.showNotification(message, 'success');
       }
-      
+
       showErrorMessage(message) {
         this.showNotification(message, 'error');
       }
-      
+
       showNotification(message, type) {
         const notification = document.createElement('div');
-        const bgColor = type === 'success' 
-          ? 'bg-gradient-to-r from-green-500 to-green-600' 
+        const bgColor = type === 'success'
+          ? 'bg-gradient-to-r from-green-500 to-green-600'
           : 'bg-gradient-to-r from-[#E11162] to-[#F26538]';
-        
         notification.className = `fixed top-20 right-4 ${bgColor} text-white px-6 py-4 rounded-xl shadow-2xl z-50 transition-all transform translate-x-full border`;
         notification.innerHTML = `
           <div class="flex items-center">
             <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              ${type === 'success' 
+              ${type === 'success'
                 ? '<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />'
                 : '<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />'
               }
@@ -329,15 +422,10 @@
             ${message}
           </div>
         `;
-        
         document.body.appendChild(notification);
-        
-        // Animate in
         setTimeout(() => {
           notification.classList.remove('translate-x-full');
         }, 100);
-        
-        // Remove notification after 4 seconds
         setTimeout(() => {
           notification.classList.add('translate-x-full');
           setTimeout(() => {
@@ -346,11 +434,41 @@
         }, 4000);
       }
     }
-    
-    // Initialize Contact Form Manager when DOM is loaded
+
     document.addEventListener('DOMContentLoaded', () => {
-      new ContactFormManager();
-    });
+  // Retrieve currentUser JSON string from localStorage and parse
+  const currentUserJSON = localStorage.getItem('currentUser');
+  if (currentUserJSON) {
+    try {
+      const currentUser = JSON.parse(currentUserJSON);
+      if (currentUser && currentUser.name && currentUser.email) {
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+
+        // Set values
+        nameInput.value = currentUser.name;
+        emailInput.value = currentUser.email;
+
+        // Make fields readonly to prevent editing
+        nameInput.readOnly = true;
+        emailInput.readOnly = true;
+
+        // Optional: Style readonly inputs differently to indicate non-editable
+        nameInput.classList.add('bg-gray-200', 'cursor-not-allowed');
+        emailInput.classList.add('bg-gray-200', 'cursor-not-allowed');
+      }
+    } catch (err) {
+      console.error('Failed to parse currentUser from localStorage', err);
+    }
+  }
+
+  // Initialize ContactFormManager after updating inputs
+  new ContactFormManager();
+});
+
+
   </script>
+
+  <script src = "/src/auth.js"></script>
 </body>
 </html>

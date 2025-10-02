@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Bookings - Zyra Hotel</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+     .links:hover {
+    color: #EFB85A;
+   
+  }
+  .links{
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  </style>
+</head>
+
+<body class="m-0 p-0">
+  <!-- Enhanced Header -->
+<!-- Header -->
+  <header class="fixed top-0 w-full z-50 shadow-md bg-white">
+    <nav class="flex h-16 items-center justify-between px-6">
+      <!-- Logo -->
+      <div>
+        <img src="/src/assets/logo.png" alt="Zyra Hotel Booking" class="h-10 w-auto" />
+      </div>
+      
+      <div class="flex items-center space-x-4">
+        <!-- Menu + Book Now -->
+        <div class="flex items-center space-x-4">
+                    <ul class="hidden md:flex space-x-6 font-semibold text-[#413030]">
+            <li>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="/src/index.html" class="hover:text-yellow-400 transition">Home</a>
+                <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
+              </span>
+            </li>
+            <li>
+              <span class="cursor-pointer relative inline-block group">
+                <a href="/src/user/features/rooms/allRooms.html" class="hover:text-yellow-400 transition">Rooms</a>
+                <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
+              </span>
+            </li>
+            <li>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="/src/user/features/facilities/facilities.html" class="hover:text-yellow-400 transition">Facilities</a>
+                <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
+              </span>
+            </li>
+            <li>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="/src/user/features/contact/contactUs.html" class="hover:text-yellow-400 transition">Contact Us</a>
+                <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
+              </span>
+            </li>
+          </ul>
+
+          <button id = "homeBookNow-btn" onclick = "redirectRoom()" class="rounded-full px-4 py-3 text-white text-sm font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
+            Book Now
+          </button>
+        </div>
+
+        <!-- Mobile Icons -->
+        <div id="mobileIcons" class="flex relative h-full items-center cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
+              stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" 
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+              fill="#C2C6CC" class="w-8 h-8">
+            <path fill-rule="evenodd"
+                  d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" 
+                  clip-rule="evenodd"/>
+          </svg>
+        </div>
+
+      </div>
+    </nav>
+  </header>
+
+
+  <!-- Main Content -->
+  <main class="pt-20">
+
+      <!-- Facilities Section -->
+<section class="py-16">
+  <div class="max-w-7xl mx-auto px-6">
+    <!-- Section Header -->
+    <div class="text-center mb-12">
+      <h2 class="text-4xl font-bold text-gray-800 mb-4">
+        Our Premium <span class="text-[#F26538]">Facilities</span>
+      </h2>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+        Experience comfort and convenience with our carefully selected amenities designed to make your stay memorable
+      </p>
+    </div>
+
+    <!-- Facilities Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- TV Facility Card -->
+      <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+        <div class="relative overflow-hidden rounded-t-2xl h-48 bg-gray-100">
+          <img 
+            src="https://res.cloudinary.com/dbbzquvdk/image/upload/v1758649920/TV_d3srdt.jpg" 
+            alt="TV Facility" 
+            class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        </div>
+        <div class="p-6">
+          <div class="flex items-center mb-3">
+            <div class="w-3 h-3 bg-[#F26538] rounded-full mr-3"></div>
+            <h3 class="text-xl font-semibold text-gray-800 group-hover:text-[#F26538] transition-colors">
+              TV Entertainment
+            </h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed">
+            Our hostel offers a common TV lounge for relaxation and entertainment.
+          </p>
+        </div>
+      </div>
+
+      <!-- WiFi Facility Card -->
+      <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+        <div class="relative overflow-hidden rounded-t-2xl h-48 bg-gray-100">
+          <img 
+            src="https://res.cloudinary.com/dbbzquvdk/image/upload/v1758650095/WiFi_eh8lrg.png" 
+            alt="WiFi Facility" 
+            class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        </div>
+        <div class="p-6">
+          <div class="flex items-center mb-3">
+            <div class="w-3 h-3 bg-[#F26538] rounded-full mr-3"></div>
+            <h3 class="text-xl font-semibold text-gray-800 group-hover:text-[#F26538] transition-colors">
+              High-Speed WiFi
+            </h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed">
+            High-speed Wi-Fi is available throughout the hostel for seamless connectivity.
+          </p>
+        </div>
+      </div>
+
+      <!-- Refrigerator Facility Card -->
+      <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+        <div class="relative overflow-hidden rounded-t-2xl h-48 bg-gray-100">
+          <img 
+            src="https://res.cloudinary.com/dbbzquvdk/image/upload/v1758650174/refrigerator_n3i3kb.png" 
+            alt="Refrigerator Facility" 
+            class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        </div>
+        <div class="p-6">
+          <div class="flex items-center mb-3">
+            <div class="w-3 h-3 bg-[#F26538] rounded-full mr-3"></div>
+            <h3 class="text-xl font-semibold text-gray-800 group-hover:text-[#F26538] transition-colors">
+              Personal Refrigerator
+            </h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed">
+            Room is equipped with a personal refrigerator for your convenience.
+          </p>
+        </div>
+      </div>
+
+      <!-- Air Conditioner Facility Card -->
+      <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+        <div class="relative overflow-hidden rounded-t-2xl h-48 bg-gray-100">
+          <img 
+            src="https://res.cloudinary.com/dbbzquvdk/image/upload/v1758650348/AC_f6rgtk.avif" 
+            alt="Air Conditioner Facility" 
+            class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        </div>
+        <div class="p-6">
+          <div class="flex items-center mb-3">
+            <div class="w-3 h-3 bg-[#F26538] rounded-full mr-3"></div>
+            <h3 class="text-xl font-semibold text-gray-800 group-hover:text-[#F26538] transition-colors">
+              Climate Control
+            </h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed">
+            Enjoy a cool and refreshing environment with in-room air conditioning.
+          </p>
+        </div>
+      </div>
+
+      <!-- Washing Machine Facility Card -->
+      <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 lg:col-span-1">
+        <div class="relative overflow-hidden rounded-t-2xl h-48 bg-gray-100">
+          <img 
+            src="https://res.cloudinary.com/dbbzquvdk/image/upload/v1758650403/washing-machine_ugekbf.jpg" 
+            alt="Washing Machine Facility" 
+            class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        </div>
+        <div class="p-6">
+          <div class="flex items-center mb-3">
+            <div class="w-3 h-3 bg-[#F26538] rounded-full mr-3"></div>
+            <h3 class="text-xl font-semibold text-gray-800 group-hover:text-[#F26538] transition-colors">
+              Laundry Service
+            </h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed">
+            Washing machine facility available for hassle-free laundry.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Info Section -->
+    <div class="mt-16 text-center">
+      <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+        <div class="flex items-center justify-center mb-4">
+          <div class="w-16 h-16 bg-gradient-to-r from-[#EFB85A] to-[#F26538] rounded-full flex items-center justify-center">
+            <i class="fas fa-star text-white text-xl"></i>
+          </div>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">
+          Premium Comfort Experience
+        </h3>
+        <p class="text-gray-600 text-lg max-w-3xl mx-auto">
+          All our facilities are carefully maintained and regularly updated to ensure the highest standards of comfort and convenience for our guests.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+  </main>
+
+
+
+    <!-- Footer -->
+<footer class="bg-gray-100 text-gray-700 pt-2">
+  <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+    
+    <!-- Logo & About -->
+    <div class="text-left">
+      <h2 class="text-4xl font-extrabold mb-4 bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent">
+        Zyra
+      </h2>
+      <p class="text-gray-600 mb-6">
+        Experience luxury and comfort at Zyra Hotel. We provide exceptional hospitality with world-class amenities for an unforgettable stay.
+      </p>
+      <h3 class="font-semibold mb-2">Customer Support</h3>
+      <p class="text-gray-600">feedback@gmail.com</p>
+    </div>
+
+        <!-- Quick Links -->
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <h3 class="font-semibold mb-4">Quick Links</h3>
+          <ul class="space-y-2">
+           <li><a href="/src/index.html" class="links">Home</a></li>
+          <li><a href="/src/user/features/rooms/allRooms.html" class="links">Rooms</a></li>
+          <li><a href="/src/user/features/facilities/facilities.html" class="links">Facilities</a></li>
+          <li><a href="#testimonials" class="links">Reviews</a></li>
+          <li><a href="/src/user/features/contact/contactUs.html" class="links">About us</a></li>
+          </ul>
+        </div>
+        <div class="pt-8 md:pt-0">
+          <ul class="space-y-2">
+            <li><a href="#" class="links">FAQs</a></li>
+            <li><a href="#" class="links">Privacy Policy</a></li>
+            <li><a href="#" class="links">Terms and Condition</a></li>
+          </ul>
+        </div>
+      </div>
+
+
+    <!-- Social Media -->
+    <div class="flex flex-col items-center md:items-start">
+      <h3 class="font-semibold mb-4">Follow us</h3>
+      <div class="flex space-x-6 text-2xl">
+        <a href="#" class="text-[#1877F2] hover:opacity-80 transition" aria-label="Facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+        <a href="#" class="text-[#1DA1F2] hover:opacity-80 transition" aria-label="Twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#" class="text-[#0A66C2] hover:opacity-80 transition" aria-label="LinkedIn">
+          <i class="fab fa-linkedin"></i>
+        </a>
+        <a href="#" class="text-[#E4405F] hover:opacity-80 transition" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Copyright -->
+  <div class="border-t border-gray-300 py-4 text-center text-sm text-gray-500">
+    © 2025 Zyra Hotel | All rights reserved
+  </div>
+</footer>
+  
+
+
+  <script>
+    function redirectRoom(){
+    window.location.href = '/src/user/features/rooms/room.html';
+  }
+  </script>
+  <script src = "facilities.js"></script>
+  <script src = "/src/auth.js"></script>
+</body>
+</html>

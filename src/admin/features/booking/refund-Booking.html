@@ -1,221 +1,1021 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Refund-Booking</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-  <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/dotSpinner.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Refund-Booking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/dotSpinner.js"
+    ></script>
 
-  <style>
-    .relative {
-      position: relative;
-    }
-    #filtersDropdown {
-      animation: slideDown 0.2s ease-out;
-    }
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
+    <style>
+      .relative {
+        position: relative;
       }
-      to {
-        opacity: 1;
-        transform: translateY(0);
+      #filtersDropdown {
+        animation: slideDown 0.2s ease-out;
       }
-    }
-  </style>
-</head>
-  
-<body class="m-0 p-0 bg-gray-100">
-   <!-- Mobile Overlay -->
-    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      /* Professional color scheme */
+      .border-primary {
+        border-color: #2563eb;
+      } /* Professional Blue */
+      .border-secondary {
+        border-color: #64748b;
+      } /* Slate Gray */
+      .border-accent {
+        border-color: #059669;
+      } /* Professional Green */
+      .bg-primary {
+        background-color: #2563eb;
+      }
+      .bg-secondary {
+        background-color: #64748b;
+      }
+      .bg-accent {
+        background-color: #059669;
+      }
+      .text-primary {
+        color: #2563eb;
+      }
+      .text-secondary {
+        color: #64748b;
+      }
+      .text-accent {
+        color: #059669;
+      }
+      .hover\:bg-primary:hover {
+        background-color: #1d4ed8;
+      }
+      .hover\:bg-secondary:hover {
+        background-color: #475569;
+      }
+      .hover\:bg-accent:hover {
+        background-color: #047857;
+      }
+      .hover\:border-primary:hover {
+        border-color: #2563eb;
+      }
+      .hover\:border-secondary:hover {
+        border-color: #64748b;
+      }
+      .focus\:ring-primary:focus {
+        --tw-ring-color: #2563eb;
+      }
+      .focus\:border-primary:focus {
+        border-color: #2563eb;
+      }
+
+      /* Professional gradient */
+      .bg-professional-gradient {
+        background: linear-gradient(
+          135deg,
+          #1e40af 0%,
+          #3730a3 50%,
+          #5b21b6 100%
+        );
+      }
+
+      /* Simplified pagination styles */
+      .pagination-button {
+        transition: all 0.2s ease;
+      }
+      .pagination-button:hover:not(:disabled) {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+      }
+      .pagination-button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      /* Professional shadows */
+      .professional-shadow {
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+          0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      }
+      .professional-shadow-lg {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+    </style>
+  </head>
+
+  <body class="m-0 p-0 bg-gray-50">
+    <!-- Mobile Overlay -->
+    <div
+      id="overlay"
+      class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"
+    ></div>
 
     <!-- External Toggle Button -->
-    <button id="externalToggle" class="fixed top-4 left-4 z-50 p-2 bg-white text-gray-700 rounded-lg shadow-lg hover:shadow-xl hover:bg-gray-50 transition-all duration-300 hidden border border-gray-200">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+    <button
+      id="externalToggle"
+      class="fixed top-4 left-4 z-50 p-2 bg-white text-gray-600 rounded-lg professional-shadow-lg hover:shadow-xl hover:bg-gray-50 transition-all duration-300 hidden border border-gray-200"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-5 h-5"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+        />
       </svg>
     </button>
 
-    <!-- Sidebar -->
-    <aside id="sidebar" class="fixed top-0 left-0 w-80 h-full bg-[#1D1354] text-white flex flex-col transform transition-transform duration-300 z-50 overflow-hidden">
+    <!-- Sidebar (keeping original colors) -->
+    <aside
+      id="sidebar"
+      class="fixed top-0 left-0 w-80 h-full bg-[#1D1354] text-white flex flex-col transform transition-transform duration-300 z-50 overflow-hidden"
+    >
       <!-- Sidebar Header -->
-      <div class="flex items-center justify-between p-4 h-16 border-b border-[#2E1B8C] relative">
-        <h2 class="text-2xl lg:text-3xl font-extrabold bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent">
+      <div
+        class="flex items-center justify-between p-4 h-16 border-b border-[#2E1B8C] relative"
+      >
+        <h2
+          class="text-2xl lg:text-3xl font-extrabold bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent"
+        >
           Zyra
         </h2>
-        <button id="sidebarToggle" class="hover:bg-[#2E1B8C] p-2 rounded transition-all duration-300 relative z-10">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        <button
+          id="sidebarToggle"
+          class="hover:bg-[#2E1B8C] p-2 rounded transition-all duration-300 relative z-10"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+            />
           </svg>
         </button>
       </div>
 
       <!-- Navigation -->
-    <nav class="flex-1 px-4 py-6 space-y-2 text-sm overflow-y-hidden">
-      <a href="/src/admin/features/dashboard/dashboard.html" class="block px-3 py-3 rounded-md hover:bg-[#2E1B8C] font-semibold text-lg">Dashboard</a>
+      <nav class="flex-1 px-4 py-6 space-y-2 text-sm overflow-y-hidden">
+        <a
+          href="/src/admin/features/dashboard/dashboard.html"
+          class="block px-3 py-3 rounded-md hover:bg-[#2E1B8C] font-semibold text-lg"
+          >Dashboard</a
+        >
 
         <!-- Booking Dropdown -->
         <div>
-          <button id="bookingToggle" class="flex items-center justify-between w-full px-3 py-3 rounded-md hover:bg-[#2E1B8C] transition-colors">
+          <button
+            id="bookingToggle"
+            class="flex items-center justify-between w-full px-3 py-3 rounded-md hover:bg-[#2E1B8C] transition-colors"
+          >
             <span class="font-semibold text-lg">Booking</span>
-            <svg id="bookingArrow" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            <svg
+              id="bookingArrow"
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-4 h-4 transition-transform"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
             </svg>
           </button>
-          <div id="bookingSubmenu" class="ml-4 mt-2 space-y-1 overflow-hidden transition-all duration-300" style="max-height: 0px">
-            <a href="#" class="block px-3 py-2 bg-[#2E1B8C] rounded-md transition-colors font-semibold">Refund Bookings</a>
-            <a href="/src/admin/features/booking/bookingRecords.html" class="block px-3 py-2 hover:bg-[#2E1B8C] rounded-md transition-colors font-semibold">Booking Records</a>
+          <div
+            id="bookingSubmenu"
+            class="ml-4 mt-2 space-y-1 overflow-hidden transition-all duration-300"
+            style="max-height: 0px"
+          >
+            <a
+              href="#"
+              class="block px-3 py-2 bg-[#2E1B8C] rounded-md transition-colors font-semibold"
+              >Refund Bookings</a
+            >
+            <a
+              href="/src/admin/features/booking/bookingRecords.html"
+              class="block px-3 py-2 hover:bg-[#2E1B8C] rounded-md transition-colors font-semibold"
+              >Booking Records</a
+            >
           </div>
         </div>
 
-      <a href="/src/admin/features/rooms/rooms.html" id="rooms" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Rooms</a>
-      <a href="/src/admin/features/ratings-reviews/reviews-ratings.html" id="ratingsReviews" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Ratings and Reviews</a>
-      <a href="/src/admin/features/user-queries/queries.html" id="userQueries" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">User Queries</a>
-      <a href="/src/admin/features/feature-facilities/feature-facilities.html" id="featuresFacilities" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Features & Facilities</a>
-      <a href="#" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Backup & Restore</a>
-      <a href="/src/admin/features/content-management/content-management.html" id="settings" class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors">Settings</a>
-    </nav>
+        <a
+          href="/src/admin/features/rooms/rooms.html"
+          id="rooms"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Rooms</a
+        >
+        <a
+          href="/src/admin/features/ratings-reviews/reviews-ratings.html"
+          id="ratingsReviews"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Ratings and Reviews</a
+        >
+        <a
+          href="/src/admin/features/user-queries/queries.html"
+          id="userQueries"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >User Queries</a
+        >
+        <a
+          href="/src/admin/features/feature-facilities/feature-facilities.html"
+          id="featuresFacilities"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Features & Facilities</a
+        >
+        <a
+          href="/src/admin/features/backup-recovery/backup-recovery.html"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Backup & Restore</a
+        >
+        <a
+          href="/src/admin/features/content-management/content-management.html"
+          id="settings"
+          class="block px-3 py-3 hover:bg-[#2E1B8C] rounded-md font-semibold text-lg transition-colors"
+          >Content Management</a
+        >
+      </nav>
 
-       <!-- Profile Section -->
-    <div class="p-4 border-t border-[#2E1B8C] relative">
-  <div class="flex items-center space-x-3 cursor-pointer hover:bg-[#2E1B8C] rounded-lg p-2 transition-colors duration-200" onclick="toggleProfileDropdown()">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#C2C6CC" class="w-8 h-8">
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
-    </svg>
-    <div class="flex-1">
-      <p class="font-medium text-sm text-white">Admin User</p>
-      <p class="text-xs text-gray-300">Online</p>
-    </div>
-    <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" id="dropdownArrow" fill="currentColor" viewBox="0 0 20 20">
-      <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-    </svg>
-  </div>
-
-  <!-- Profile Dropdown Menu -->
-  <div id="profileDropdown" class="hidden absolute bottom-full left-4 right-4 mb-2 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-    <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200">
-      <svg class="w-4 h-4 mr-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-      </svg>
-      View Profile
-    </a>
-   
-    <hr class="my-1 border-gray-100">
-    <a href="#" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200">
-      <svg class="w-4 h-4 mr-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path>
-      </svg>
-      Logout
-    </a>
-  </div>
-</div>
-</aside>
-
-  <!-- Main Content -->
-  <div id="mainContent" class="min-h-screen transition-all duration-300 lg:ml-80">
-    <main id="mainContentArea" class="p-4 sm:p-4 lg:p-8 mt-4 sm:mt-6 lg:mt-0" role="main">
-      
-      <!-- Header -->
-      <header class="transition-all duration-300 mb-8" id="headerContent">
-        <h1 class="text-3xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-2 transition-all duration-300" id="dashboardTitle">
-          REFUND BOOKINGS
-        </h1>
-      </header>
-
-      <!-- Search and Filter Section -->
-      <section class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6" aria-label="Search and filter options">
-        <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-          
-          <!-- Search Box -->
-          <div class="flex-1 max-w-md">
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-              <input
-                type="text"
-                id="searchInput"
-                placeholder="Search by name, order ID, room number..."
-                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1D1354] focus:border-transparent transition-all duration-200"
-                aria-label="Search refund bookings"
+      <div class="p-4 border-t border-[#2E1B8C] relative">
+        <div
+          class="flex items-center space-x-3 cursor-pointer hover:bg-[#2E1B8C] rounded-lg p-2 transition-colors duration-200"
+        >
+          <a
+            href="#"
+            onclick="logout()"
+            class="flex items-center px-4 py-2 rounded-lg shadow-sm hover:drop-shadow-md text-white-600"
+          >
+            <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
               />
+            </svg>
+            <span class="font-medium text-basex">Logout</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div
+      id="mainContent"
+      class="min-h-screen transition-all duration-300 lg:ml-80"
+    >
+      <main
+        id="mainContentArea"
+        class="p-4 sm:p-4 lg:p-8 mt-4 sm:mt-6 lg:mt-0"
+        role="main"
+      >
+        <!-- Header -->
+        <header class="transition-all duration-300 mb-8" id="headerContent">
+          <h1
+            class="text-3xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-2 transition-all duration-300"
+            id="dashboardTitle"
+          >
+            REFUND BOOKINGS
+          </h1>
+          <div class="h-1 w-24 bg-primary rounded-full"></div>
+        </header>
+
+        <!-- Search and Filter Section -->
+        <section
+          class="bg-white rounded-xl professional-shadow border border-gray-200 p-6 mb-6"
+          aria-label="Search and filter options"
+        >
+          <div
+            class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between"
+          >
+            <!-- Search Box -->
+            <div class="flex-1 max-w-md">
+              <div class="relative">
+                <div
+                  class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                >
+                  <svg
+                    class="h-5 w-5 text-secondary"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="Search by name, order ID, room number..."
+                  class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 text-gray-700 placeholder-gray-400 bg-gray-50 focus:bg-white"
+                  aria-label="Search refund bookings"
+                />
+              </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="flex items-center gap-4">
+              <button
+                id="filtersBtn"
+                class="flex items-center gap-2 px-6 py-3 border border-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-200 text-primary font-medium professional-shadow hover:professional-shadow-lg"
+                aria-label="Open filters menu"
+              >
+                <svg
+                  class="h-4 w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"
+                  />
+                </svg>
+                <span>Filters</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Loading Indicator - positioned below table -->
+        <div
+          id="loadingIndicator"
+          class="flex justify-center items-center py-12 bg-white border-t border-gray-100 hidden"
+          role="status"
+          aria-label="Loading refund bookings"
+        >
+          <l-dot-spinner size="40" speed="0.9" color="#2563EB"></l-dot-spinner>
+          <span class="ml-3 text-gray-600 font-medium"
+            >Loading refund bookings...</span
+          >
+        </div>
+
+        <!-- Data Table -->
+        <section
+          class="bg-white rounded-xl professional-shadow-lg border border-gray-200 overflow-hidden"
+          id="tableContainer"
+          aria-label="Refund bookings data"
+        >
+          <div class="overflow-x-auto">
+            <table
+              class="w-full"
+              role="table"
+              aria-label="Refund bookings table"
+            >
+              <thead class="bg-professional-gradient text-white">
+                <tr>
+                  <th
+                    class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                    scope="col"
+                  >
+                    Order ID
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                    scope="col"
+                  >
+                    User Name
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                    scope="col"
+                  >
+                    Phone No
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                    scope="col"
+                  >
+                    Category Type
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                    scope="col"
+                  >
+                    Room No
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                    scope="col"
+                  >
+                    Date
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                    scope="col"
+                  >
+                    Check In
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                    scope="col"
+                  >
+                    Check Out
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                    scope="col"
+                  >
+                    Booked Date
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                    scope="col"
+                  >
+                    Price
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                    scope="col"
+                  >
+                    Refund Status
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                    scope="col"
+                  >
+                    Refund Amount
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                    scope="col"
+                  >
+                    Refund Reason
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                id="bookingTableBody"
+                class="bg-white divide-y divide-gray-100"
+              >
+                <!-- Data will be populated here by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- No Data Message -->
+          <div
+            id="noDataMessage"
+            class="bg-white p-12 text-center hidden"
+            role="status"
+          >
+            <div class="text-gray-500">
+              <svg
+                class="mx-auto h-16 w-16 text-gray-300 mb-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+              <h3 class="text-lg font-medium text-gray-800 mb-2">
+                No refund bookings found
+              </h3>
+              <p class="text-gray-500">
+                There are no refund bookings to display at this time.
+              </p>
             </div>
           </div>
 
-          <!-- Filters -->
-          <div class="flex items-center gap-4">
-            <button
-              id="filtersBtn"
-              class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-              aria-label="Open filters menu"
+          <!-- Simplified Pagination Section -->
+          <div
+            id="paginationContainer"
+            class="bg-gray-50 border-t border-gray-200 px-6 py-5"
+          >
+            <div
+              class="flex flex-col sm:flex-row items-center justify-between gap-4"
             >
-              <svg class="h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z" />
-              </svg>
-              <span class="text-gray-700">Filters</span>
-            </button>
+
+              <!-- Items per page selector -->
+              <div class="flex items-center gap-2 text-sm">
+                <label for="itemsPerPage" class="text-gray-600 font-medium"
+                  >Items per page:</label
+                >
+                <select
+                  id="itemsPerPage"
+                  class="border border-gray-300 rounded-md px-3 py-2 text-gray-700 font-medium focus:ring-2 focus:ring-primary focus:border-primary bg-white professional-shadow"
+                >
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+              </div>
+
+              <!-- Simplified Pagination Controls - Only Previous and Next -->
+              <div class="flex items-center gap-3">
+                <!-- Previous Page -->
+                <button
+                  id="prevPage"
+                  class="pagination-button flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:border-primary hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed bg-white font-medium"
+                  aria-label="Previous page"
+                >
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <span>Previous</span>
+                </button>
+
+                <!-- Page Info -->
+                <div class="flex items-center gap-2 text-sm text-gray-600 px-4">
+                  <span>Page</span>
+                  <span
+                    id="currentPageNumber"
+                    class="font-semibold text-primary"
+                    >1</span
+                  >
+                  <span>of</span>
+                  <span id="totalPages" class="font-semibold text-primary"
+                    >10</span
+                  >
+                </div>
+
+                <!-- Next Page -->
+                <button
+                  id="nextPage"
+                  class="pagination-button flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:border-primary hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed bg-white font-medium"
+                  aria-label="Next page"
+                >
+                  <span>Next</span>
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
-
-      
-  <!-- Loading Indicator - positioned below table -->
-  <div id="loadingIndicator" class="flex justify-center items-center py-12 bg-white border-t border-gray-100 hidden" role="status" aria-label="Loading refund bookings">
-    <l-dot-spinner size="40" speed="0.9" color="#1D1354"></l-dot-spinner>
-    <span class="ml-3 text-gray-600 font-medium">Loading refund bookings...</span>
-  </div>
-
-     <!-- Data Table -->
-<section class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" id="tableContainer" aria-label="Refund bookings data">
-  <div class="overflow-x-auto">
-    <table class="w-full" role="table" aria-label="Refund bookings table">
-      <thead class="bg-gray-50 border-b border-gray-200">
-        <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Order ID</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">User Name</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Phone No</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Category Type</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Room No</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Date</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Check In</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Check Out</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Booked Date</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Price</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Refund Status</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Refund Amount</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Refund Reason</th>
-        </tr>
-      </thead>
-      <tbody id="bookingTableBody" class="bg-white divide-y divide-gray-200">
-        <!-- Data will be populated here by JavaScript -->
-      </tbody>
-    </table>
-  </div>
-
-  <!-- No Data Message -->
-  <div id="noDataMessage" class="bg-white p-8 text-center hidden" role="status">
-    <div class="text-gray-500">
-      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-      </svg>
-      <h3 class="mt-2 text-sm font-medium text-gray-900">No refund bookings found</h3>
-      <p class="mt-1 text-sm text-gray-500">There are no refund bookings to display at this time.</p>
+        </section>
+      </main>
     </div>
-  </div>
-</section>
 
-    </main>
-  </div>
+    <script>
 
-  <!-- Include the separate JavaScript files -->
-  <script src="sidebar.js"></script>
-  <script src="refund-booking.js"></script>
-</body>
+(() => {
+  // =========================
+  // Refund Bookings Pagination (isolated)
+  // =========================
+
+  // State
+  let currentPage = 1;
+  let itemsPerPage = 10;
+  let totalItems = 0;
+  let allData = [];
+  let filteredData = [];
+
+  // Endpoints
+  const API_BASE = 'https://68c8b85aceef5a150f622643.mockapi.io';
+  const BOOKING_ENDPOINT = `${API_BASE}/admin/4`;
+
+  // Elements
+  const els = {
+    loading: document.getElementById('loadingIndicator'),
+    tableContainer: document.getElementById('tableContainer'),
+    tbody: document.getElementById('bookingTableBody'),
+    noData: document.getElementById('noDataMessage'),
+    // Search and pagination controls
+    searchInput: document.getElementById('searchInput'),
+    itemsPerPage: document.getElementById('itemsPerPage'),
+    prev: document.getElementById('prevPage'),
+    next: document.getElementById('nextPage'),
+    currentPageNumber: document.getElementById('currentPageNumber'),
+    totalPages: document.getElementById('totalPages'),
+    // Optional counters (may not exist in HTML)
+    startRecord: document.getElementById('startRecord'),
+    endRecord: document.getElementById('endRecord'),
+    totalRecords: document.getElementById('totalRecords'),
+    paginationContainer: document.getElementById('paginationContainer'),
+    mainContentArea: document.getElementById('mainContentArea'),
+  };
+
+  // UI helpers
+  const showLoading = () => els.loading?.classList.remove('hidden');
+  const hideLoading = () => els.loading?.classList.add('hidden');
+  const showNoData = () => { els.noData?.classList.remove('hidden'); els.tableContainer?.classList.add('hidden'); };
+  const hideNoData = () => { els.noData?.classList.add('hidden'); els.tableContainer?.classList.remove('hidden'); };
+  const showPagination = () => els.paginationContainer?.classList.remove('hidden');
+  const hidePagination = () => els.paginationContainer?.classList.add('hidden');
+
+  function setBtnState(btn, disabled) {
+    if (!btn) return;
+    btn.disabled = disabled;
+    if (disabled) {
+      btn.classList.add('opacity-40', 'cursor-not-allowed');
+      btn.classList.remove('hover:border-primary', 'hover:text-primary');
+    } else {
+      btn.classList.remove('opacity-40', 'cursor-not-allowed');
+      btn.classList.add('hover:border-primary', 'hover:text-primary');
+    }
+  }
+
+  function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    try {
+      const d = new Date(dateString);
+      if (isNaN(d.getTime())) return 'Invalid Date';
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    } catch { return 'Invalid Date'; }
+  }
+
+  function formatCurrency(amount) {
+    if (amount == null || amount === '') return 'N/A';
+    const num = parseFloat(amount);
+    if (isNaN(num)) return 'N/A';
+    return '₹' + num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text ?? '';
+    return div.innerHTML;
+  }
+
+  function statusBadge(status) {
+    const s = (status || '').toLowerCase();
+    let cls = "px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ";
+    if (s === 'completed' || s === 'refunded') cls += "bg-green-100 text-green-800";
+    else if (s === 'pending') cls += "bg-yellow-100 text-yellow-800";
+    else if (s === 'processing') cls += "bg-blue-100 text-blue-800";
+    else if (s === 'failed' || s === 'rejected') cls += "bg-red-100 text-red-800";
+    else cls += "bg-gray-100 text-gray-800";
+    return `<span class="${cls}">${escapeHtml(status || 'Unknown')}</span>`;
+  }
+
+  function renderTableRows(rows) {
+    if (!els.tbody) return;
+    els.tbody.innerHTML = '';
+    if (rows.length === 0) { showNoData(); return; }
+    hideNoData();
+
+    rows.forEach((b) => {
+      const tr = document.createElement('tr');
+      tr.className = "hover:bg-gray-50 transition-colors duration-150";
+      tr.innerHTML = `
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 font-medium">${escapeHtml(b.orderId || 'N/A')}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${escapeHtml(b.userName || 'N/A')}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${escapeHtml(b.phoneNo || 'N/A')}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${escapeHtml(b.categoryType || 'N/A')}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${escapeHtml(b.roomNo || 'N/A')}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${formatDate(b.date)}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${formatDate(b.checkIn)}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${formatDate(b.checkOut)}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${formatDate(b.bookedDate)}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">${formatCurrency(b.price)}</td>
+        <td class="px-6 py-4 whitespace-nowrap">${statusBadge(b.refundStatus)}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">${formatCurrency(b.refundAmount)}</td>
+        <td class="px-6 py-4 text-sm text-gray-700 max-w-xs">
+          <div class="truncate" title="${escapeHtml(b.refundReason || 'N/A')}">${escapeHtml(b.refundReason || 'N/A')}</div>
+        </td>
+      `;
+      els.tbody.appendChild(tr);
+    });
+  }
+
+  function renderCurrentPage() {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const pageData = filteredData.slice(startIndex, endIndex);
+    renderTableRows(pageData);
+  }
+
+  function updatePaginationUI() {
+    totalItems = filteredData.length;
+    const totalPagesCount = Math.ceil(totalItems / itemsPerPage) || 1;
+
+    // Clamp current page
+    if (currentPage < 1) currentPage = 1;
+    if (currentPage > totalPagesCount) currentPage = totalPagesCount;
+
+    // Optional record counters
+    const startRecord = totalItems > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
+    const endRecord = Math.min(currentPage * itemsPerPage, totalItems);
+    if (els.startRecord) els.startRecord.textContent = String(startRecord);
+    if (els.endRecord) els.endRecord.textContent = String(endRecord);
+    if (els.totalRecords) els.totalRecords.textContent = String(totalItems);
+
+    // Labels
+    if (els.currentPageNumber) els.currentPageNumber.textContent = totalItems > 0 ? String(currentPage) : '0';
+    if (els.totalPages) els.totalPages.textContent = String(totalPagesCount);
+
+    // Buttons
+    const disablePrev = currentPage <= 1 || totalItems === 0;
+    const disableNext = currentPage >= totalPagesCount || totalItems === 0;
+    setBtnState(els.prev, disablePrev);
+    setBtnState(els.next, disableNext);
+
+    // Containers
+    if (totalItems === 0) { showNoData(); hidePagination(); }
+    else { hideNoData(); showPagination(); }
+  }
+
+  function handleSearch(term) {
+    const t = term.toLowerCase().trim();
+    if (!t) {
+      filteredData = [...allData];
+    } else {
+      filteredData = allData.filter(b =>
+        (b.orderId || '').toLowerCase().includes(t) ||
+        (b.userName || '').toLowerCase().includes(t) ||
+        (b.phoneNo || '').toLowerCase().includes(t) ||
+        String(b.roomNo || '').toLowerCase().includes(t) ||
+        (b.categoryType || '').toLowerCase().includes(t)
+      );
+    }
+    currentPage = 1;
+    updatePaginationUI();
+    renderCurrentPage();
+  }
+
+  function debounce(fn, wait) {
+    let to;
+    return (...args) => {
+      clearTimeout(to);
+      to = setTimeout(() => fn(...args), wait);
+    };
+  }
+
+  // Data fetch
+  async function fetchRefundBookings() {
+    showLoading();
+    try {
+      const resp = await fetch(BOOKING_ENDPOINT);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
+      const data = await resp.json();
+
+      // Normalize response: either {refundBookings:[...]} or array
+      const list = Array.isArray(data) ? data : (Array.isArray(data?.refundBookings) ? data.refundBookings : []);
+      allData = list;
+      filteredData = [...allData];
+
+      // Initial UI
+      itemsPerPage = parseInt(els.itemsPerPage?.value, 10) || 10;
+      currentPage = 1;
+      updatePaginationUI();
+      renderCurrentPage();
+    } catch (err) {
+      console.error('[RefundBookings] Fetch failed:', err);
+      allData = [];
+      filteredData = [];
+      updatePaginationUI();
+      renderCurrentPage();
+    } finally {
+      hideLoading();
+    }
+  }
+
+  // Listeners
+  function wireListeners() {
+    els.prev?.addEventListener('click', (e) => {
+      if (e.currentTarget.disabled) return;
+      currentPage -= 1;
+      updatePaginationUI();
+      renderCurrentPage();
+      els.mainContentArea?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    els.next?.addEventListener('click', (e) => {
+      if (e.currentTarget.disabled) return;
+      currentPage += 1;
+      updatePaginationUI();
+      renderCurrentPage();
+      els.mainContentArea?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    els.itemsPerPage?.addEventListener('change', (e) => {
+      const v = parseInt(e.target.value, 10);
+      itemsPerPage = Number.isFinite(v) ? v : 10;
+      currentPage = 1;
+      updatePaginationUI();
+      renderCurrentPage();
+    });
+
+    els.searchInput?.addEventListener('input', debounce((e) => {
+      handleSearch(e.target.value || '');
+    }, 300));
+  }
+
+  // Boot
+  document.addEventListener('DOMContentLoaded', () => {
+    wireListeners();
+    fetchRefundBookings();
+  });
+})();
+
+
+// Format date helper
+function formatDate(dateString) {
+  if (!dateString) return 'N/A';
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Invalid Date';
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  } catch {
+    return 'Invalid Date';
+  }
+}
+
+// Format currency helper
+function formatCurrency(amount) {
+  if (amount == null || amount === '') return 'N/A';
+  const num = parseFloat(amount);
+  if (isNaN(num)) return 'N/A';
+  return '₹' + num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// Escape HTML to prevent XSS
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// Setup pagination event listeners
+function setupPaginationListeners() {
+  // Previous button
+  document.getElementById("prevPage")?.addEventListener("click", (e) => {
+    if (e.currentTarget.disabled) return;
+    if (currentPage > 1) {
+      currentPage--;
+      updatePaginationUI();
+      renderCurrentPage();
+      scrollToTop();
+    }
+  });
+  
+  // Next button
+  document.getElementById("nextPage")?.addEventListener("click", (e) => {
+    if (e.currentTarget.disabled) return;
+    const totalPagesCount = Math.ceil(totalItems / itemsPerPage) || 1;
+    if (currentPage < totalPagesCount) {
+      currentPage++;
+      updatePaginationUI();
+      renderCurrentPage();
+      scrollToTop();
+    }
+  });
+  
+  // Items per page selector
+  document.getElementById("itemsPerPage")?.addEventListener("change", (e) => {
+    itemsPerPage = parseInt(e.target.value) || 10;
+    currentPage = 1; // Reset to first page
+    updatePaginationUI();
+    renderCurrentPage();
+  });
+  
+  // Search input
+  document.getElementById("searchInput")?.addEventListener("input", debounce((e) => {
+    handleSearch(e.target.value);
+  }, 300));
+}
+
+// Handle search functionality
+function handleSearch(searchTerm) {
+  const term = searchTerm.toLowerCase().trim();
+  
+  if (!term) {
+    FilteredData = [...allData];
+  } else {
+    FilteredData = allData.filter(booking => {
+      return (
+        (booking.orderId || '').toLowerCase().includes(term) ||
+        (booking.userName || '').toLowerCase().includes(term) ||
+        (booking.phoneNo || '').toLowerCase().includes(term) ||
+        (booking.roomNo || '').toString().toLowerCase().includes(term) ||
+        (booking.categoryType || '').toLowerCase().includes(term)
+      );
+    });
+  }
+  
+  // Reset to first page and update
+  initializePagination();
+}
+
+// Debounce helper
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+// UI Helper Functions
+function showLoadingIndicator() {
+  document.getElementById("loadingIndicator")?.classList.remove("hidden");
+  document.getElementById("tableContainer")?.classList.add("opacity-50");
+}
+
+function hideLoadingIndicator() {
+  document.getElementById("loadingIndicator")?.classList.add("hidden");
+  document.getElementById("tableContainer")?.classList.remove("opacity-50");
+}
+
+function showNoDataMessage() {
+  document.getElementById("noDataMessage")?.classList.remove("hidden");
+  document.getElementById("bookingTableBody").innerHTML = "";
+}
+
+function hideNoDataMessage() {
+  document.getElementById("noDataMessage")?.classList.add("hidden");
+}
+
+function showPaginationContainer() {
+  document.getElementById("paginationContainer")?.classList.remove("hidden");
+}
+
+function hidePaginationContainer() {
+  document.getElementById("paginationContainer")?.classList.add("hidden");
+}
+
+function showErrorMessage(message) {
+  const tbody = document.getElementById("bookingTableBody");
+  if (tbody) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="13" class="px-6 py-12 text-center">
+          <div class="text-red-600">
+            <svg class="mx-auto h-12 w-12 text-red-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Error Loading Data</h3>
+            <p class="text-gray-600">${escapeHtml(message)}</p>
+          </div>
+        </td>
+      </tr>
+    `;
+  }
+  hidePaginationContainer();
+}
+
+function scrollToTop() {
+  document.getElementById("mainContentArea")?.scrollIntoView({ 
+    behavior: 'smooth', 
+    block: 'start' 
+  });
+}
+    </script>
+    <!-- Include the separate JavaScript files -->
+    <script src="sidebar.js"></script>
+    <script src="refund-booking.js"></script>
+  </body>
 </html>

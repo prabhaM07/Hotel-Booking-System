@@ -1,27 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zyra Hotel - Bookings</title>
+  <title>Zyra Hotel - About Us</title>
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
   <!-- Google Fonts: Montserrat -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    * {
-      font-family: 'Montserrat', sans-serif;
-    }
-   
-    .status-badge {
-      background: linear-gradient(45deg, #EFB85A, #F26538);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+
+  * {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .status-badge {
+    background: linear-gradient(45deg, #EFB85A, #F26538);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .links:hover {
+  color: #EFB85A;
+  }
+
+  .links {
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
   </style>
+
 </head>
 <body class="m-0 p-0">
   <!-- Header -->
@@ -31,37 +49,38 @@
       <div>
         <img src="/src/assets/logo.png" alt="Zyra Hotel Logo" class="h-10 w-auto" />
       </div>
-      
+
       <div class="flex items-center space-x-4">
         <!-- Menu + Book Now -->
         <div class="flex items-center space-x-4">
           <ul class="hidden md:flex space-x-6 font-semibold text-[#413030]">
             <li>
-              <span class="cursor-pointer relative inline-block group">
-                <a href="#home" class="hover:text-yellow-400 transition">Home</a>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="/src/index.html" class="hover:text-yellow-400 transition">Home</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
               </span>
             </li>
             <li>
               <span class="cursor-pointer relative inline-block group">
-                <a href="#rooms" class="hover:text-yellow-400 transition">Rooms</a>
+                <a href="/src/user/features/rooms/allRooms.html" class="hover:text-yellow-400 transition">Rooms</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
               </span>
             </li>
             <li>
-              <span class="cursor-pointer relative inline-block group">
-                <a href="#amenities" class="hover:text-yellow-400 transition">Facilities</a>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="/src/user/features/facilities/facilities.html" class="hover:text-yellow-400 transition">Facilities</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
               </span>
             </li>
             <li>
-              <span class="cursor-pointer relative inline-block group">
-                <a href="#contact" class="hover:text-yellow-400 transition">Contact Us</a>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="/src/user/features/contact/contactUs.html" class="hover:text-yellow-400 transition">Contact Us</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
               </span>
             </li>
           </ul>
-          <button class="rounded-full px-4 py-3 text-white text-sm font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
+
+          <button id="homeBookNow-btn" onclick="redirectRoom()" class="rounded-full px-4 py-3 text-white text-sm font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
             Book Now
           </button>
         </div>
@@ -82,332 +101,362 @@
       </div>
     </nav>
   </header>
-  
+
   <!-- Main Content with Gradient Background -->
   <div id="mainContent" class="min-h-screen pt-16">
     <main id="mainContentArea" class="w-full p-4 sm:p-6 lg:p-8 mt-4 sm:mt-6 lg:mt-0">
       <!-- About Section -->
-<section id="about" class="py-20 ">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="about" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    <!-- Hero Introduction -->
-    <div class="text-center mb-20">
-      
-      <h2 class="text-5xl font-bold text-gray-900 mb-6 leading-tight">
-        About <span class="bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] bg-clip-text text-transparent">Zyra Hotel</span>
-      </h2>
-      <div class="w-32 h-1 bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] mx-auto mb-8"></div>
-      <p class="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-        Where luxury meets comfort, and every moment becomes an unforgettable experience. Discover the epitome of hospitality excellence that has redefined the art of elegant accommodation.
-      </p>
-    </div>
+          <!-- Hero Introduction -->
+          <div class="text-center mb-20">
+            <h2 class="text-5xl font-bold text-gray-900 mb-6 leading-tight">
+              About <span id="siteTitle" class="bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] bg-clip-text text-transparent">Zyra Hotel</span>
+            </h2>
+            <div class="w-32 h-1 bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] mx-auto mb-8"></div>
+            <p id="aboutUsText" class="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+              Where luxury meets comfort, and every moment becomes an unforgettable experience. Discover the epitome of hospitality excellence that has redefined the art of elegant accommodation.
+            </p>
+          </div>
 
-    <!-- Founder Section -->
-    <div class="mb-24">
-      <div class="bg-white rounded-3xl shadow-lg overflow-hidden glass-effect">
-        <div class="grid grid-cols-1 xl:grid-cols-2">
+          <!-- Founder Section -->
+          <div class="mb-24">
+            <div class="bg-white rounded-3xl shadow-lg overflow-hidden glass-effect">
+              <div class="grid grid-cols-1 xl:grid-cols-2">
 
-          <!-- Founder Image -->
-          <div class="relative p-8 lg:p-12 flex items-center justify-center">
-            <div class="relative">
-              <!-- Main Founder Image -->
-              <div class="w-80 h-80 rounded-3xl bg-gradient-to-br from-[#EFB85A] via-[#F26538] to-[#E11162] p-1 ">
-                <div class="w-full h-full rounded-3xl bg-white flex items-center justify-center">
-                  <div class="w-72 h-72 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative overflow-hidden">
-                    <div class="absolute inset-0 "></div>
-                    <i class="fas fa-user-tie text-8xl text-gray-400 relative z-10"></i>
+                <!-- Founder Image -->
+                <div class="relative p-8 lg:p-12 flex items-center justify-center">
+                  <div class="relative">
+                    <!-- Main Founder Image -->
+                    <div class="w-80 h-80 rounded-3xl bg-gradient-to-br from-[#EFB85A] via-[#F26538] to-[#E11162] p-1">
+                      <div class="w-full h-full rounded-3xl bg-white flex items-center justify-center">
+                        <div class="w-72 h-72 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative overflow-hidden">
+                          <div class="absolute inset-0"></div>
+                          <i class="fas fa-user-tie text-8xl text-gray-400 relative z-10"></i>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Decorative Elements -->
+                    <div class="absolute -top-6 -right-6 w-20 h-20 bg-gradient-to-br from-[#EFB85A] via-[#F26538] to-[#E11162] rounded-full flex items-center justify-center shadow-xl">
+                      <i class="fas fa-crown text-white text-2xl"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Founder Content -->
+                <div class="p-8 lg:p-12 flex flex-col justify-center">
+                  <div class="mb-8">
+                    <h3 class="text-4xl font-bold text-gray-900 mb-6">Founder</h3>
+                  </div>
+
+                  <div class="space-y-6">
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                      With an unwavering commitment to redefining luxury hospitality, our founder envisioned Zyra Hotel as more than just accommodation—it's a sanctuary where dreams meet reality and every guest becomes part of our extended family.
+                    </p>
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                      Through decades of experience in the hospitality industry, we've crafted an environment that seamlessly blends world-class amenities with personalized service, ensuring each stay transcends expectations.
+                    </p>
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                      Every detail at Zyra Hotel reflects our founder's passion for creating memorable moments that exceed expectations and establish lasting connections with our valued guests worldwide.
+                    </p>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
 
-              <!-- Decorative Elements -->
-              <div class="absolute -top-6 -right-6 w-20 h-20 bg-gradient-to-br from-[#EFB85A] via-[#F26538] to-[#E11162] rounded-full flex items-center justify-center shadow-xl">
-                <i class="fas fa-crown text-white text-2xl"></i>
+          <!-- Achievement Statistics -->
+          <div class="mb-24">
+            <div class="bg-white rounded-3xl p-8 lg:p-12">
+              <div class="text-center mb-12">
+                <h3 class="text-4xl font-bold text-gray-900 mb-6">Our Achievements</h3>
+                <div class="w-24 h-1 bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] mx-auto"></div>
+              </div>
+
+              <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="text-center group">
+                  <div class="rounded-2xl p-8 shadow-lg transition-all duration-300 hover:scale-105">
+                    <div class="text-5xl font-bold bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] bg-clip-text text-transparent mb-4">100+</div>
+                    <div class="text-gray-600 font-semibold text-lg">Rooms</div>
+                  </div>
+                </div>
+                <div class="text-center group">
+                  <div class="shadow-lg rounded-2xl p-8 transition-all duration-300 hover:scale-105">
+                    <div class="text-5xl font-bold bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] bg-clip-text text-transparent mb-4">200+</div>
+                    <div class="text-gray-600 font-semibold text-lg">Customer</div>
+                  </div>
+                </div>
+                <div class="text-center group">
+                  <div class="rounded-2xl p-8 shadow-lg transition-all duration-300 hover:scale-105">
+                    <div class="text-5xl font-bold bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] bg-clip-text text-transparent mb-4">150+</div>
+                    <div class="text-gray-600 font-semibold text-lg">Reviews</div>
+                  </div>
+                </div>
+                <div class="text-center group">
+                  <div class="rounded-2xl p-8 shadow-lg transition-all duration-300 hover:scale-105">
+                    <div class="text-5xl font-bold bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] bg-clip-text text-transparent mb-4">200+</div>
+                    <div class="text-gray-600 font-semibold text-lg">Staffs</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Founder Content -->
-          <div class="p-8 lg:p-12 flex flex-col justify-center">
-            <div class="mb-8">
-              <h3 class="text-4xl font-bold text-gray-900 mb-6">Founder</h3>
-            </div>
-
-            <div class="space-y-6">
-              <p class="text-lg text-gray-700 leading-relaxed">
-                With an unwavering commitment to redefining luxury hospitality, our founder envisioned Zyra Hotel as more than just accommodation—it's a sanctuary where dreams meet reality and every guest becomes part of our extended family.
+          <!-- Management Team Carousel Section -->
+          <div class="mb-24">
+            <div class="text-center mb-16">
+              <h3 class="text-4xl font-bold text-gray-900 mb-6">Management Team</h3>
+              <div class="w-24 h-1 bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] mx-auto mb-6"></div>
+              <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Meet the exceptional minds behind Zyra Hotel's continued success and unwavering commitment to hospitality excellence.
               </p>
-              <p class="text-lg text-gray-700 leading-relaxed">
-                Through decades of experience in the hospitality industry, we've crafted an environment that seamlessly blends world-class amenities with personalized service, ensuring each stay transcends expectations.
-              </p>
-              <p class="text-lg text-gray-700 leading-relaxed">
-                Every detail at Zyra Hotel reflects our founder's passion for creating memorable moments that exceed expectations and establish lasting connections with our valued guests worldwide.
-              </p>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Achievement Statistics (Separate Section) -->
-    <div class="mb-24">
-      <div class="bg-white rounded-3xl p-8 lg:p-12">
-        <div class="text-center mb-12">
-          <h3 class="text-4xl font-bold text-gray-900 mb-6">Our Achievements</h3>
-          <div class="w-24 h-1 bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] mx-auto"></div>
-        </div>
+            <!-- Carousel Container -->
+            <div class="relative">
+              <!-- Navigation Arrows -->
+              <button id="prevBtn"
+                class="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white bg-opacity-90 rounded-full flex items-center justify-center shadow-lg hover:bg-opacity-100 hover:scale-110 transition-all duration-200 border-2 border-[#EFB85A] z-10">
+                <i class="fas fa-chevron-left text-[#F26538] text-lg"></i>
+              </button>
+              <button id="nextBtn"
+                class="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white bg-opacity-90 rounded-full flex items-center justify-center shadow-lg hover:bg-opacity-100 hover:scale-110 transition-all duration-200 border-2 border-[#EFB85A] z-10">
+                <i class="fas fa-chevron-right text-[#F26538] text-lg"></i>
+              </button>
 
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
-          <div class="text-center group">
-            <div class=" rounded-2xl p-8 shadow-lg transition-all duration-300 hover:scale-105">
-              <div class="text-5xl font-bold bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] bg-clip-text text-transparent mb-4">100+</div>
-              <div class="text-gray-600 font-semibold text-lg">Rooms</div>
-            </div>
-          </div>
-          <div class="text-center group">
-            <div class="shadow-lg rounded-2xl p-8 transition-all duration-300 hover:scale-105">
-              <div class="text-5xl font-bold bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] bg-clip-text text-transparent mb-4">200+</div>
-              <div class="text-gray-600 font-semibold text-lg">Customer</div>
-            </div>
-          </div>
-          <div class="text-center group">
-            <div class="rounded-2xl p-8 shadow-lg transition-all duration-300 hover:scale-105">
-              <div class="text-5xl font-bold bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] bg-clip-text text-transparent mb-4">150+</div>
-              <div class="text-gray-600 font-semibold text-lg">Reviews</div>
-            </div>
-          </div>
-          <div class="text-center group">
-            <div class=" rounded-2xl p-8 shadow-lg transition-all duration-300 hover:scale-105">
-              <div class="text-5xl font-bold bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] bg-clip-text text-transparent mb-4">200+</div>
-              <div class="text-gray-600 font-semibold text-lg">Staffs</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Management Team Carousel Section -->
-    <div class="mb-24">
-      <div class="text-center mb-16">
-        <h3 class="text-4xl font-bold text-gray-900 mb-6">Management Team</h3>
-        <div class="w-24 h-1 bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] mx-auto mb-6"></div>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-          Meet the exceptional minds behind Zyra Hotel's continued success and unwavering commitment to hospitality excellence.
-        </p>
-      </div>
-
-      <!-- Carousel Container -->
-<div class="relative">
-  <!-- Navigation Arrows -->
-  <button
-    class="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white bg-opacity-90 rounded-full flex items-center justify-center shadow-lg hover:bg-opacity-100 hover:scale-110 transition-all duration-200 border-2 border-[#EFB85A]">
-    <i class="fas fa-chevron-left text-[#F26538] text-lg"></i>
-  </button>
-  <button
-    class="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white bg-opacity-90 rounded-full flex items-center justify-center shadow-lg hover:bg-opacity-100 hover:scale-110 transition-all duration-200 border-2 border-[#EFB85A]">
-    <i class="fas fa-chevron-right text-[#F26538] text-lg"></i>
-  </button>
-
-  <!-- Carousel Track -->
-  <div class="overflow-hidden mx-14">
-    <div id="carouselTrack" class="flex transition-transform duration-500 ease-in-out">
-
-      <!-- Team Member 1 -->
-      <div class="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-4">
-        <div
-          class="bg-white rounded-3xl shadow-lg overflow-hidden glass-effect hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
-          <div
-            class="relative h-64 bg-gradient-to-border from-[#EFB85A]/20 via-[#F26538]/20 to-[#E11162]/20 flex items-center justify-center">
-            <div class="w-72 h-52 rounded-2xl bg-gray-200 p-1">
-              <div class="w-full h-full rounded-2xl bg-white flex items-center justify-center">
-                <div
-                  class="w-28 h-28 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                  <i class="fas fa-user-tie text-4xl text-gray-400"></i>
+              <!-- Carousel Track -->
+              <div class="overflow-hidden mx-14">
+                <div id="carouselTrack" class="flex transition-transform duration-500 ease-in-out">
+                  <!-- Team members will be populated here by JavaScript -->
                 </div>
               </div>
             </div>
           </div>
-          <div class="p-8">
-            <h4 class="text-2xl font-bold text-gray-900 mb-2">Sarah Mitchell</h4>
-            <p
-              class="text-lg font-semibold bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] bg-clip-text text-transparent mb-4">
-              General Manager
-            </p>
-          </div>
-        </div>
-      </div>
 
-      <!-- Team Member 2 -->
-      <div class="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-4">
-        <div
-          class="bg-white rounded-3xl shadow-lg overflow-hidden glass-effect hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
-          <div
-            class="relative h-64 bg-gradient-to-border from-[#EFB85A]/20 via-[#F26538]/20 to-[#E11162]/20 flex items-center justify-center">
-            <div class="w-72 h-52 rounded-2xl bg-gray-200 p-1">
-              <div class="w-full h-full rounded-2xl bg-white flex items-center justify-center">
-                <div
-                  class="w-28 h-28 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                  <i class="fas fa-user-tie text-4xl text-gray-400"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="p-8">
-            <h4 class="text-2xl font-bold text-gray-900 mb-2">Sarah Mitchell</h4>
-            <p
-              class="text-lg font-semibold bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] bg-clip-text text-transparent mb-4">
-              General Manager
-            </p>
-          </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Team Member 3 -->
-      <div class="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-4">
-        <div
-          class="bg-white rounded-3xl shadow-lg overflow-hidden glass-effect hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
-          <div
-            class="relative h-64 bg-gradient-to-border from-[#EFB85A]/20 via-[#F26538]/20 to-[#E11162]/20 flex items-center justify-center">
-            <div class="w-72 h-52 rounded-2xl bg-gray-200 p-1">
-              <div class="w-full h-full rounded-2xl bg-white flex items-center justify-center">
-                <div
-                  class="w-28 h-28 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                  <i class="fas fa-user-tie text-4xl text-gray-400"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="p-8">
-            <h4 class="text-2xl font-bold text-gray-900 mb-2">Sarah Mitchell</h4>
-            <p
-              class="text-lg font-semibold bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] bg-clip-text text-transparent mb-4">
-              General Manager
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Team Member 4 -->
-      <div class="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-4">
-        <div
-          class="bg-white rounded-3xl shadow-xl overflow-hidden glass-effect hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
-          <div
-            class="relative h-64 bg-gradient-to-border from-[#EFB85A]/20 via-[#F26538]/20 to-[#E11162]/20 flex items-center justify-center">
-            <div class="w-72 h-52 rounded-2xl bg-gray-200 p-1">
-              <div class="w-full h-full rounded-2xl bg-white flex items-center justify-center">
-                <div
-                  class="w-28 h-28 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                  <i class="fas fa-user-tie text-4xl text-gray-400"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="p-8">
-            <h4 class="text-2xl font-bold text-gray-900 mb-2">Sarah Mitchell</h4>
-            <p
-              class="text-lg font-semibold bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] bg-clip-text text-transparent mb-4">
-              General Manager
-            </p>
-          </div>
-        </div>
-      </div>
-
-    </div> <!-- end carouselTrack -->
-  </div> <!-- end overflow-hidden -->
+    </main>
   </div>
 
-</section>
-
-</main>
-  </div>
-  
   <!-- Footer -->
-  <footer class="bg-gray-100 text-gray-700 pt-2">
-    <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-      
-      <!-- Logo & About -->
-      <div class="text-left">
-        <h2 class="text-4xl font-extrabold mb-4 bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent">
-          Zyra
-        </h2>
-        <p class="text-gray-600 mb-6">
-          Experience luxury and comfort at Zyra Hotel. We provide exceptional hospitality with world-class amenities for an unforgettable stay.
-        </p>
-        <h3 class="font-semibold mb-2">Customer Support</h3>
-        <p class="text-gray-600">feedback@gmail.com</p>
-      </div>
-      
-      <!-- Quick Links -->
+<footer class="bg-gray-100 text-gray-700 pt-2">
+  <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+    
+    <!-- Logo & About -->
+    <div class="text-left">
+      <h2 class="text-4xl font-extrabold mb-4 bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent">
+        Zyra
+      </h2>
+      <p class="text-gray-600 mb-6">
+        Experience luxury and comfort at Zyra Hotel. We provide exceptional hospitality with world-class amenities for an unforgettable stay.
+      </p>
+      <h3 class="font-semibold mb-2">Customer Support</h3>
+      <p class="text-gray-600">feedback@gmail.com</p>
+    </div>
+
+        <!-- Quick Links -->
       <div class="grid grid-cols-2 gap-6">
         <div>
           <h3 class="font-semibold mb-4">Quick Links</h3>
           <ul class="space-y-2">
-            <li><a href="#home" class="hover:text-[#413030] transition">Home</a></li>
-            <li><a href="#rooms" class="hover:text-[#413030] transition">Rooms</a></li>
-            <li><a href="#amenities" class="hover:text-[#413030] transition">Facilities</a></li>
-            <li><a href="#testimonials" class="hover:text-[#413030] transition">Reviews</a></li>
-            <li><a href="#contact" class="hover:text-[#413030] transition">About us</a></li>
+           <li><a href="/src/index.html" class="links">Home</a></li>
+          <li><a href="/src/user/features/rooms/allRooms.html" class="links">Rooms</a></li>
+          <li><a href="/src/user/features/facilities/facilities.html" class="links">Facilities</a></li>
+          <li><a href="#testimonials" class="links">Reviews</a></li>
+          <li><a href="/src/user/features/contact/contactUs.html" class="links">About us</a></li>
           </ul>
         </div>
         <div class="pt-8 md:pt-0">
           <ul class="space-y-2">
-            <li><a href="#" class="hover:text-[#413030] transition">FAQs</a></li>
-            <li><a href="#" class="hover:text-[#413030] transition">Privacy Policy</a></li>
-            <li><a href="#" class="hover:text-[#413030] transition">Terms and Condition</a></li>
+            <li><a href="#" class="links">FAQs</a></li>
+            <li><a href="#" class="links">Privacy Policy</a></li>
+            <li><a href="#" class="links">Terms and Condition</a></li>
           </ul>
         </div>
       </div>
-      
-      <!-- Social Media -->
-      <div class="flex flex-col items-center md:items-start">
-        <h3 class="font-semibold mb-4">Follow us</h3>
-        <div class="flex space-x-6 text-2xl">
-          <a href="#" class="text-[#1877F2] hover:opacity-80 transition" aria-label="Facebook">
-            <i class="fab fa-facebook"></i>
-          </a>
-          <a href="#" class="text-[#1DA1F2] hover:opacity-80 transition" aria-label="Twitter">
-            <i class="fab fa-twitter"></i>
-          </a>
-          <a href="#" class="text-[#0A66C2] hover:opacity-80 transition" aria-label="LinkedIn">
-            <i class="fab fa-linkedin"></i>
-          </a>
-          <a href="#" class="text-[#E4405F] hover:opacity-80 transition" aria-label="Instagram">
-            <i class="fab fa-instagram"></i>
-          </a>
-        </div>
+
+
+    <!-- Social Media -->
+    <div class="flex flex-col items-center md:items-start">
+      <h3 class="font-semibold mb-4">Follow us</h3>
+      <div class="flex space-x-6 text-2xl">
+        <a href="#" class="text-[#1877F2] hover:opacity-80 transition" aria-label="Facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+        <a href="#" class="text-[#1DA1F2] hover:opacity-80 transition" aria-label="Twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#" class="text-[#0A66C2] hover:opacity-80 transition" aria-label="LinkedIn">
+          <i class="fab fa-linkedin"></i>
+        </a>
+        <a href="#" class="text-[#E4405F] hover:opacity-80 transition" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
       </div>
     </div>
-    <div class="bg-gray-200 text-center py-4">
-      <p class="text-sm text-gray-600">&copy; 2024 Zyra Hotel. All rights reserved.</p>
-    </div>
-  </footer>
- 
-  <!-- Carousel JavaScript -->
+  </div>
+
+  <!-- Copyright -->
+  <div class="border-t border-gray-300 py-4 text-center text-sm text-gray-500">
+    © 2025 Zyra Hotel | All rights reserved
+  </div>
+</footer>
+  
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    // Storage key for Zyra settings
+    const STORAGE_KEY = 'zyra:settings';
+
+    // Default values in case localStorage is empty
+    const defaultState = {
+      general: {
+        siteTitle: 'Zyra',
+        aboutUs: 'Where luxury meets comfort, and every moment becomes an unforgettable experience. Discover the epitome of hospitality excellence that has redefined the art of elegant accommodation.'
+      },
+      contact: {
+        address: 'xyz nagar 3rd street Chennai Tamil Nadu',
+        mapLink: 'https://maps.googleapis.com/GQfQ8jvQfylcytdGPqhQi',
+        phones: ['+9234615489', '+9234615489'],
+        email: 'feedback@gmail.com',
+        socials: {
+          facebook: 'https://www.facebook.com/',
+          twitter: 'https://www.twitter.com/',
+          linkedin: 'https://www.linkedin.com/',
+          instagram: 'https://www.instagram.com/'
+        },
+        frameSrc: ''
+      },
+      shutdown: false,
+      team: [
+        {
+          id: 'default-1',
+          name: 'Sarah Mitchell',
+          imageUrl: null
+        },
+        {
+          id: 'default-2',
+          name: 'John Anderson',
+          imageUrl: null
+        },
+        {
+          id: 'default-3',
+          name: 'Emily Johnson',
+          imageUrl: null
+        },
+        {
+          id: 'default-4',
+          name: 'Michael Brown',
+          imageUrl: null
+        }
+      ]
+    };
+
+    // Load settings from localStorage
+    function loadSettings() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return defaultState;
+        const parsed = JSON.parse(raw);
+        return { ...defaultState, ...parsed };
+      } catch {
+        return defaultState;
+      }
+    }
+
+    // Redirect to room booking
+    function redirectRoom() {
+      window.location.href = '/src/user/features/rooms/room.html';
+    }
+
+    // Update page content with data from localStorage
+    function updatePageContent() {
+      const settings = loadSettings();
+
+      // Update site title
+      const siteTitleEl = document.getElementById('siteTitle');
+      if (siteTitleEl && settings.general.siteTitle) {
+        siteTitleEl.textContent = settings.general.siteTitle;
+      }
+
+      // Update about us text
+      const aboutUsEl = document.getElementById('aboutUsText');
+      if (aboutUsEl && settings.general.aboutUs) {
+        aboutUsEl.textContent = settings.general.aboutUs;
+      }
+
+      // Update footer email
+      const footerEmailEl = document.getElementById('footerEmail');
+      if (footerEmailEl && settings.contact.email) {
+        footerEmailEl.textContent = settings.contact.email;
+      }
+
+      // Update social links
+      const socialLinks = ['facebook', 'twitter', 'linkedin', 'instagram'];
+      socialLinks.forEach(platform => {
+        const linkEl = document.getElementById(platform + 'Link');
+        if (linkEl && settings.contact.socials[platform]) {
+          linkEl.href = settings.contact.socials[platform];
+        }
+      });
+
+      // Update team carousel
+      updateTeamCarousel(settings.team);
+    }
+
+    // Create team member card
+    function createTeamMemberCard(member) {
+      return `
+        <div class="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-4">
+          <div class="bg-white rounded-3xl shadow-lg overflow-hidden glass-effect hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+            <div class="relative h-64 bg-gradient-to-br from-[#EFB85A]/20 via-[#F26538]/20 to-[#E11162]/20 flex items-center justify-center">
+              <div class="w-72 h-52 rounded-2xl bg-gray-200 p-1">
+                <div class="w-full h-full rounded-2xl bg-white flex items-center justify-center">
+                  ${member.imageUrl 
+                    ? `<img src="${member.imageUrl}" alt="${member.name}" class="w-full h-full object-cover rounded-2xl">` 
+                    : `<div class="w-28 h-28 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                         <i class="fas fa-user-tie text-4xl text-gray-400"></i>
+                       </div>`
+                  }
+                </div>
+              </div>
+            </div>
+            <div class="p-8">
+              <h4 class="text-2xl font-bold text-gray-900 mb-2">${member.name || 'Team Member'}</h4>
+              <p class="text-lg font-semibold bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] bg-clip-text text-transparent mb-4">
+                Team Member
+              </p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Update team carousel with localStorage data
+    function updateTeamCarousel(teamData) {
+      const carouselTrack = document.getElementById('carouselTrack');
+      if (!carouselTrack || !teamData || teamData.length === 0) return;
+
+      carouselTrack.innerHTML = teamData.map(member => createTeamMemberCard(member)).join('');
+
+      // Initialize carousel functionality
+      initializeCarousel(teamData.length);
+    }
+
+    // Initialize carousel functionality
+    function initializeCarousel(totalMembers) {
       const carouselTrack = document.getElementById('carouselTrack');
       const prevBtn = document.getElementById('prevBtn');
       const nextBtn = document.getElementById('nextBtn');
-      const indicators = document.querySelectorAll('.carousel-indicator');
 
       let currentSlide = 0;
       const itemsPerSlide = window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1;
-      const totalSlides = Math.ceil(6 / itemsPerSlide); // 6 team members
+      const totalSlides = Math.ceil(totalMembers / itemsPerSlide);
 
       function updateCarousel() {
         const translateX = -(currentSlide * (100 / itemsPerSlide));
         carouselTrack.style.transform = `translateX(${translateX}%)`;
-
-        // Update indicators
-        indicators.forEach((indicator, index) => {
-          if (index === currentSlide) {
-            indicator.classList.remove('bg-gray-300');
-            indicator.classList.add('bg-gradient-to-r', 'from-[#EFB85A]', 'to-[#E11162]');
-          } else {
-            indicator.classList.add('bg-gray-300');
-            indicator.classList.remove('bg-gradient-to-r', 'from-[#EFB85A]', 'to-[#E11162]');
-          }
-        });
       }
 
       function nextSlide() {
@@ -420,16 +469,9 @@
         updateCarousel();
       }
 
-      nextBtn.addEventListener('click', nextSlide);
-      prevBtn.addEventListener('click', prevSlide);
-
-      // Indicator clicks
-      indicators.forEach((indicator, index) => {
-        indicator.addEventListener('click', () => {
-          currentSlide = index;
-          updateCarousel();
-        });
-      });
+      // Event listeners
+      if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+      if (prevBtn) prevBtn.addEventListener('click', prevSlide);
 
       // Auto-play (optional)
       setInterval(nextSlide, 5000);
@@ -437,13 +479,27 @@
       // Handle window resize
       window.addEventListener('resize', () => {
         const newItemsPerSlide = window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1;
-        const newTotalSlides = Math.ceil(6 / newItemsPerSlide);
+        const newTotalSlides = Math.ceil(totalMembers / newItemsPerSlide);
         if (currentSlide >= newTotalSlides) {
           currentSlide = 0;
         }
         updateCarousel();
       });
+    }
+
+    // Initialize page when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      updatePageContent();
+    });
+
+    // Listen for storage changes (if content is updated in another tab)
+    window.addEventListener('storage', function(e) {
+      if (e.key === STORAGE_KEY) {
+        updatePageContent();
+      }
     });
   </script>
+
+  <script src="/src/auth.js"></script>
 </body>
 </html>

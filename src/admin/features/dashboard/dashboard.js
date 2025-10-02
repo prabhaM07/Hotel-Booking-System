@@ -29,17 +29,13 @@ let dashboardData = null;
 // Check if user is logged in
 function checkAuthStatus() {
   const adminUser = localStorage.getItem('adminUser');
-  if (!adminUser) {
-    window.location.href = '../login/login.html';
-    return false;
-  }
+ 
   return true;
 }
 
 // Add logout functionality
 function logout() {
   localStorage.removeItem('adminUser');
-  window.location.href = '../auth/login.html';
 }
 
 // =================== API DATA INTEGRATION ===================

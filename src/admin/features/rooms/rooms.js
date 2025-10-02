@@ -84,60 +84,73 @@ async function uploadToCloudinary(file) {
 // IMAGE STORAGE FUNCTIONS
 // =====================================
 
-function getRoomImagesFromStorage() {
+function getRoomDisplayThumbnail(room) {
+    // Check if thumbnailUrl is directly stored
+    if (room.thumbnailUrl) {
+        return room.thumbnailUrl;
+    }
+    
+    // Fallback to first image
+    if (room.images && room.images.length > 0) {
+        const firstImage = room.images[0];
+        if (typeof firstImage === 'object') {
+            return firstImage.thumbnailUrl || firstImage.url;
+        } else if (typeof firstImage === 'string') {
+            return firstImage;
+        }
+    }
+    
+    return null; // No thumbnail available
+}
+
+
+async function getRoomImagesFromAPI(roomId) {
     try {
-        const stored = localStorage.getItem(IMAGES_STORAGE_KEY);
-        return stored ? JSON.parse(stored) : {};
+        console.log('Fetching images for room ID:', roomId, 'from:', ROOMS_ENDPOINT);
+        
+        const response = await fetch(ROOMS_ENDPOINT);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch room data: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        const rooms = data.rooms || [];
+        const room = rooms.find(r => r.id == roomId);
+        
+        if (!room || !room.images) {
+            console.log(`No images found for room ${roomId}`);
+            return [];
+        }
+        
+        // Handle mixed image formats
+        const normalizedImages = room.images.map((image, index) => {
+            // If it's already a proper object
+            if (typeof image === 'object' && image.url) {
+                return image;
+            }
+            // If it's a string URL, convert to object
+            else if (typeof image === 'string') {
+                return {
+                    id: Date.now() + index,
+                    name: `Image ${index + 1}`,
+                    url: image,
+                    thumbnailUrl: image,
+                    publicId: `legacy_image_${index}`,
+                    uploadedAt: new Date().toISOString()
+                };
+            }
+            // Fallback for unexpected formats
+            else {
+                console.warn('Unexpected image format:', image);
+                return null;
+            }
+        }).filter(img => img !== null);
+        
+        console.log(`Found ${normalizedImages.length} images for room ${roomId}`);
+        return normalizedImages;
     } catch (error) {
-        console.error('Error reading images from localStorage:', error);
-        return {};
-    }
-}
-
-function saveRoomImagesToStorage(imagesData) {
-    try {
-        localStorage.setItem(IMAGES_STORAGE_KEY, JSON.stringify(imagesData));
-    } catch (error) {
-        console.error('❌ Error saving images to localStorage:', error);
-    }
-}
-
-function getRoomImages(roomId) {
-    // First try to get images from the room data (MockAPI)
-    const room = roomsData.find(r => r.id == roomId);
-    if (room && room.images && room.images.length > 0) {
-        return room.images;
-    }
-    
-    // Fallback to localStorage
-    const allImages = getRoomImagesFromStorage();
-    return allImages[roomId] || [];
-}
-
-function addImageToStorage(roomId, imageData) {
-    const allImages = getRoomImagesFromStorage();
-    if (!allImages[roomId]) {
-        allImages[roomId] = [];
-    }
-    
-    const metadata = {
-        id: imageData.id,
-        name: imageData.name,
-        url: imageData.url,
-        thumbnailUrl: imageData.thumbnailUrl,
-        publicId: imageData.publicId,
-        uploadedAt: imageData.uploadedAt
-    };
-    
-    allImages[roomId].push(metadata);
-    saveRoomImagesToStorage(allImages);
-}
-
-function removeImageFromStorage(roomId, imageIndex) {
-    const allImages = getRoomImagesFromStorage();
-    if (allImages[roomId] && allImages[roomId][imageIndex]) {
-        allImages[roomId].splice(imageIndex, 1);
-        saveRoomImagesToStorage(allImages);
+        console.error('Error fetching room images from API:', error);
+        return [];
     }
 }
 
@@ -1060,42 +1073,42 @@ async function addRoomImage(roomId, file) {
             submitBtn.disabled = true;
         }
         
-        // Upload to Cloudinary
+        // Upload to Cloudinary first
+        console.log('🌤️ Uploading to Cloudinary...');
         const uploadResult = await uploadToCloudinary(file);
         
         const imageData = {
+            
             id: Date.now(),
             name: file.name,
             url: uploadResult.url,
-            thumbnailUrl: uploadResult.thumbnailUrl,
+            thumbnailUrl: uploadResult.thumbnailUrl || uploadResult.url,
             publicId: uploadResult.publicId,
             uploadedAt: new Date().toISOString()
         };
         
-        // Try MockAPI update first, then localStorage
-        try {
-            await updateRoomImages(roomId, imageData);
-            console.log('✅ Image successfully added to MockAPI');
-        } catch (mockApiError) {
-            console.error('❌ MockAPI update failed:', mockApiError);
-            showErrorMessage('Warning: Image uploaded to Cloudinary but failed to sync with server. Changes may not persist.');
-        }
+        // Upload ONLY to MockAPI
+        await updateRoomImages(roomId, imageData);
+        console.log('✅ Image successfully added to MockAPI');
         
-        // Store in localStorage (for backup)
-        addImageToStorage(roomId, imageData);
-        
-        // Update UI
+        // Update UI with fresh data from API
         if (currentImageRoomId === roomId) {
-            const updatedImages = getRoomImages(roomId);
+            const updatedImages = await getRoomImagesFromAPI(roomId);
             renderImagesTable(updatedImages);
         }
         
-        renderTable();
+        // Refresh main table
+        await renderTable();
+        
+        // Close modal and show success - use correct function name
+        closeImageModalFn(); // Changed from closeImageModal to closeImageModalFn
+        showSuccessMessage(`Image "${file.name}" uploaded successfully!`);
+        
         return imageData;
         
     } catch (error) {
         console.error('❌ Error uploading image:', error);
-        showErrorMessage('Failed to upload image: ' + error.message);
+        showErrorMessage(`Failed to upload image: ${error.message}`);
         throw error;
     } finally {
         const submitBtn = document.querySelector('#addImageBtn');
@@ -1106,32 +1119,34 @@ async function addRoomImage(roomId, file) {
     }
 }
 
+
+
 async function updateRoomImages(roomId, newImageData) {
     try {
-        console.log(`🔄 Attempting to update room ${roomId} with image in MockAPI...`);
+        console.log(`🔄 Updating room ${roomId} with image in MockAPI...`);
         
         const currentResponse = await fetch(ROOMS_ENDPOINT);
         if (!currentResponse.ok) {
-            throw new Error(`Failed to fetch current room data: ${currentResponse.status} ${currentResponse.statusText}`);
+            throw new Error(`Failed to fetch current room data: ${currentResponse.status}`);
         }
         
         const currentData = await currentResponse.json();
         const currentRooms = currentData.rooms || [];
         
-        // Find the room and add the image
+        // Find room and add image
         let roomFound = false;
         const updatedRooms = currentRooms.map(room => {
             if (room.id == roomId) {
                 roomFound = true;
                 if (!room.images) room.images = [];
                 room.images.push(newImageData);
-                console.log(`📷 Added image to room ${roomId}. Total images: ${room.images.length}`);
+                console.log(`📷 Added image to room ${roomId}. Total: ${room.images.length}`);
             }
             return room;
         });
         
         if (!roomFound) {
-            throw new Error(`Room with ID ${roomId} not found in MockAPI`);
+            throw new Error(`Room with ID ${roomId} not found`);
         }
         
         // Update MockAPI
@@ -1142,29 +1157,24 @@ async function updateRoomImages(roomId, newImageData) {
                 'Accept': 'application/json'
             },
             body: JSON.stringify({
-                id: '5',
+                id: 5, // Remove quotes for number
                 rooms: updatedRooms
             })
         });
         
         if (!putResponse.ok) {
             const errorText = await putResponse.text();
-            throw new Error(`Failed to update room images in MockAPI: ${putResponse.status} ${putResponse.statusText} - ${errorText}`);
+            throw new Error(`MockAPI update failed: ${putResponse.status} - ${errorText}`);
         }
         
-        console.log('✅ Room images updated in MockAPI successfully');
+        console.log('✅ MockAPI updated successfully');
         
-        // Update local roomsData
-        const roomIndex = roomsData.findIndex(r => r.id == roomId);
-        if (roomIndex !== -1) {
-            if (!roomsData[roomIndex].images) roomsData[roomIndex].images = [];
-            roomsData[roomIndex].images.push(newImageData);
-            filteredData = [...roomsData];
-        }
+        // Update local cache ONLY (no localStorage)
+        await fetchRoomsData();
         
     } catch (error) {
-        console.error('❌ Failed to update room images in MockAPI:', error);
-        throw error; // Re-throw to handle in calling function
+        console.error('❌ MockAPI update failed:', error);
+        throw error;
     }
 }
 
@@ -1199,10 +1209,9 @@ async function uploadImage(imageFile) {
 }
 
 
-// FIXED: Enhanced addRoomWithImage with better error handling
 async function addRoomWithImage(formData, imageFile) {
     try {
-        console.log('Attempting to add room with data:', formData);
+        console.log('🔄 Attempting to add room with data:', formData);
         
         const currentResponse = await fetch(ROOMS_ENDPOINT);
         if (!currentResponse.ok) {
@@ -1215,7 +1224,7 @@ async function addRoomWithImage(formData, imageFile) {
         // Generate new room ID
         const newId = currentRooms.length > 0 ? Math.max(...currentRooms.map(r => r.id)) + 1 : 1;
         
-        // FIXED: Get selected features and facilities with fallback
+        // Get selected features and facilities with fallback
         let selectedFeatures, selectedFacilities;
         
         try {
@@ -1233,11 +1242,11 @@ async function addRoomWithImage(formData, imageFile) {
         const newRoom = {
             id: newId,
             categoryType: formData.name,
-            roomno : formData.roomno,
+            roomno: formData.roomno,
             area: formData.area,
             adultMax: parseInt(formData.adult) || 0,
             childrenMax: parseInt(formData.children) || 0,
-            price: formData.price.startsWith('$') ? formData.price : `₹${formData.price}`,
+            price: formData.price.startsWith('₹') || formData.price.startsWith('$') ? formData.price : `₹${formData.price}`,
             status: formData.status || 'active',
             selectedFeatures: selectedFeatures,
             selectedFacilities: selectedFacilities,
@@ -1257,17 +1266,36 @@ async function addRoomWithImage(formData, imageFile) {
         // Handle image upload if provided
         if (imageFile) {
             try {
-                const imageUrl = await uploadImage(imageFile);
-                newRoom.images = [imageUrl];
-                console.log('✅ Image uploaded successfully:', imageUrl);
+                console.log('🌤️ Uploading image to Cloudinary...');
+                const uploadResult = await uploadToCloudinary(imageFile);
+                
+                const imageData = {
+                    id: Date.now(),
+                    name: imageFile.name,
+                    url: uploadResult.url,
+                    thumbnailUrl: uploadResult.thumbnailUrl || uploadResult.url,
+                    publicId: uploadResult.publicId,
+                    uploadedAt: new Date().toISOString()
+                };
+                
+                // Add image to room
+                newRoom.images = [imageData];
+                
+                // Set as thumbnail URL (first and only image, so index 0)
+                newRoom.thumbnailUrl = imageData.thumbnailUrl;
+                newRoom.thumbnailIndex = 0;
+                
+                console.log('✅ Image uploaded and set as thumbnail:', imageData.thumbnailUrl);
             } catch (imageError) {
-                console.warn('Image upload failed, continuing without image:', imageError);
+                console.error('❌ Image upload failed:', imageError);
+                // Continue without image but show warning
+                showErrorMessage('Room will be created but image upload failed: ' + imageError.message);
             }
         }
         
-        console.log('New room object:', newRoom);
+        console.log('📋 New room object:', newRoom);
         
-        // Rest of the function remains the same...
+        // Add room to MockAPI
         const updatedRooms = [...currentRooms, newRoom];
         
         const putResponse = await fetch(ROOMS_ENDPOINT, {
@@ -1277,118 +1305,106 @@ async function addRoomWithImage(formData, imageFile) {
                 'Accept': 'application/json'
             },
             body: JSON.stringify({
-                id: '5',
+                id: 5, // Remove quotes - should be number
                 rooms: updatedRooms
             })
         });
         
         if (!putResponse.ok) {
-            throw new Error(`PUT failed: ${putResponse.status}`);
+            const errorText = await putResponse.text();
+            throw new Error(`MockAPI PUT failed: ${putResponse.status} - ${errorText}`);
         }
         
-        roomsData.push(newRoom);
-        filteredData = [...roomsData];
-        localStorage.setItem('rooms_backup', JSON.stringify(roomsData));
+        console.log('✅ Room added to MockAPI successfully');
+        
+        // Update local cache
         await fetchRoomsData();
+        
+        // Remove localStorage backup - use only MockAPI
+        // localStorage.removeItem('rooms_backup');
+        
         showSuccessMessage(`${newRoom.categoryType} added successfully!`);
         
         return newRoom;
         
     } catch (error) {
-        console.error('Error adding room:', error);
-        // Fallback logic similar to before...
+        console.error('❌ Error adding room:', error);
+        showErrorMessage(`Failed to add room: ${error.message}`);
         throw error;
     }
 }
+
 
 
 
 async function deleteRoomImage(imageIndex) {
     if (!currentImageRoomId) return;
     
-    const images = getRoomImages(currentImageRoomId);
-    if (!images[imageIndex]) return;
-    
-    const imageName = images[imageIndex].name;
-    if (!confirm(`Delete image "${imageName}"?`)) return;
-    
     try {
-        // Remove from MockAPI first
-        await removeImageFromMockAPI(currentImageRoomId, imageIndex);
+        // Get current images from API
+        const images = await getRoomImagesFromAPI(currentImageRoomId);
+        if (!images[imageIndex]) return;
         
-        // Remove from localStorage
-        removeImageFromStorage(currentImageRoomId, imageIndex);
+        const imageName = images[imageIndex].name;
+        if (!confirm(`Delete image "${imageName}"?`)) return;
         
-        // Update thumbnail selection
-        const currentThumbnail = getThumbnailSelection(currentImageRoomId);
-        if (currentThumbnail === imageIndex) {
-            saveThumbnailSelection(currentImageRoomId, 0);
-        } else if (currentThumbnail > imageIndex) {
-            saveThumbnailSelection(currentImageRoomId, currentThumbnail - 1);
-        }
+        // Remove from MockAPI only
+        await removeImageFromAPI(currentImageRoomId, imageIndex);
         
-        const updatedImages = getRoomImages(currentImageRoomId);
+        // Refresh UI
+        const updatedImages = await getRoomImagesFromAPI(currentImageRoomId);
         renderImagesTable(updatedImages);
+        await renderTable();
         
-        renderTable();
-        showSuccessMessage(`🗑️ Image "${imageName}" deleted successfully!`);
-
+        showSuccessMessage(`Image "${imageName}" deleted successfully!`);
     } catch (error) {
         console.error('❌ Error deleting image:', error);
         showErrorMessage('Failed to delete image');
     }
 }
 
-async function removeImageFromMockAPI(roomId, imageIndex) {
+async function removeImageFromAPI(roomId, imageIndex) {
     try {
+        console.log(`🗑️ Removing image ${imageIndex} from room ${roomId}...`);
+        
         const currentResponse = await fetch(ROOMS_ENDPOINT);
-        if (!currentResponse.ok) {
-            throw new Error('Failed to fetch current room data');
-        }
+        if (!currentResponse.ok) throw new Error('Failed to fetch current data');
         
         const currentData = await currentResponse.json();
         const currentRooms = currentData.rooms || [];
         
-        // Find the room and remove the image
         const updatedRooms = currentRooms.map(room => {
-            if (room.id == roomId && room.images && room.images[imageIndex]) {
+            if (room.id == roomId && room.images) {
                 room.images.splice(imageIndex, 1);
-                console.log(`🗑️ Removed image at index ${imageIndex} from room ${roomId}`);
+                console.log(`📷 Removed image. Remaining: ${room.images.length}`);
             }
             return room;
         });
         
-        // Update MockAPI
         const putResponse = await fetch(ROOMS_ENDPOINT, {
             method: 'PUT',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
+            headers: {
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                id: '5',
+                id: 5,
                 rooms: updatedRooms
             })
         });
         
-        if (!putResponse.ok) {
-            throw new Error('Failed to remove image from MockAPI');
-        }
+        if (!putResponse.ok) throw new Error(`Failed to remove image: ${putResponse.status}`);
         
-        console.log('✅ Image removed from MockAPI successfully');
+        console.log('✅ Image removed from MockAPI');
         
-        // Update local roomsData
-        const roomIndex = roomsData.findIndex(r => r.id == roomId);
-        if (roomIndex !== -1 && roomsData[roomIndex].images) {
-            roomsData[roomIndex].images.splice(imageIndex, 1);
-            filteredData = [...roomsData];
-        }
-        
+        // Update local cache
+        await fetchRoomsData();
+        return true;
     } catch (error) {
-        console.error('❌ Failed to remove image from MockAPI:', error);
+        console.error('❌ Failed to remove image from API:', error);
         throw error;
     }
 }
+
 
 async function removeAllImagesFromMockAPI(roomId) {
     try {
@@ -1444,8 +1460,7 @@ async function removeAllImagesFromMockAPI(roomId) {
 // =====================================
 // UI RENDERING FUNCTIONS
 // =====================================
-
-function renderTable() {
+async function renderTable() {
     if (!roomTableBody) return;
     
     showTable();
@@ -1461,8 +1476,12 @@ function renderTable() {
         return;
     }
     
+    // Use cached roomsData for image counts to avoid multiple API calls
     roomTableBody.innerHTML = filteredData.map((room, index) => {
-        const imageCount = getRoomImages(room.id).length;
+        // Get image count from cached roomsData instead of API call
+        const roomData = roomsData.find(r => r.id === room.id);
+        const imageCount = (roomData?.images || []).length;
+        
         return `
             <tr class="hover:bg-gray-50" data-room-id="${room.id}">
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${index + 1}</td>
@@ -1480,8 +1499,10 @@ function renderTable() {
         `;
     }).join('');
     
+    // Call attachButtonListeners after rendering
     attachButtonListeners();
 }
+
 
 function getActionButtons(room, imageCount) {
     return `
@@ -1513,7 +1534,13 @@ function renderImagesTable(images) {
     const imagesTableBody = document.getElementById('imagesTableBody');
     if (!imagesTableBody) return;
     
-    if (!images || images.length === 0) {
+    // Ensure images is an array
+    if (!Array.isArray(images)) {
+        console.error('renderImagesTable: images parameter is not an array:', images);
+        images = [];
+    }
+    
+    if (images.length === 0) {
         imagesTableBody.innerHTML = `
             <tr>
                 <td colspan="3" class="px-6 py-8 text-center text-gray-500">
@@ -1525,34 +1552,45 @@ function renderImagesTable(images) {
         return;
     }
     
+    // Get current thumbnail selection from API
     const selectedThumbnailIndex = getThumbnailSelection(currentImageRoomId);
     
-    imagesTableBody.innerHTML = images.map((imageData, index) => `
-        <tr data-image-index="${index}">
-            <td class="px-6 py-4">
-                <div class="w-32 h-20 bg-gray-200 rounded border flex items-center justify-center overflow-hidden">
-                    <img src="${imageData.thumbnailUrl || imageData.url}" 
-                         alt="${imageData.name}" 
-                         class="w-full h-full object-cover"
-                         loading="lazy">
-                </div>
-            </td>
-            <td class="px-6 py-4 text-center">
-                <input type="checkbox" 
-                       class="w-5 h-5 text-[#1D1354] bg-gray-100 border-gray-300 rounded focus:ring-[#1D1354] thumbnail-checkbox" 
-                       data-image-index="${index}" 
-                       ${index === selectedThumbnailIndex ? 'checked' : ''} />
-            </td>
-            <td class="px-6 py-4 text-center">
-                <button class="delete-image-btn text-red-600 hover:text-red-900 p-1 rounded transition-colors" 
-                        title="Delete Image: ${imageData.name}" data-image-index="${index}">
-                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                </button>
-            </td>
-        </tr>
-    `).join('');
+    imagesTableBody.innerHTML = images.map((imageData, index) => {
+        // Handle both object and string formats
+        const imageUrl = imageData.url || imageData;
+        const thumbnailUrl = imageData.thumbnailUrl || imageData.url || imageData;
+        const imageName = imageData.name || `Image ${index + 1}`;
+        
+        return `
+            <tr data-image-index="${index}">
+                <td class="px-6 py-4">
+                    <div class="w-32 h-20 bg-gray-200 rounded border flex items-center justify-center overflow-hidden ${index === selectedThumbnailIndex ? 'ring-2 ring-blue-500' : ''}">
+                        <img src="${thumbnailUrl}" 
+                             alt="${imageName}" 
+                             class="w-full h-full object-cover"
+                             loading="lazy"
+                             onerror="this.style.display='none'; this.parentNode.innerHTML='<span class=\'text-xs text-red-500\'>Image not found</span>';">
+                        ${index === selectedThumbnailIndex ? '<div class="absolute top-0 right-0 bg-blue-500 text-white text-xs px-1 rounded">THUMB</div>' : ''}
+                    </div>
+                </td>
+                <td class="px-6 py-4 text-center">
+                    <input type="checkbox" 
+                           class="w-5 h-5 text-[#1D1354] bg-gray-100 border-gray-300 rounded focus:ring-[#1D1354] thumbnail-checkbox" 
+                           data-image-index="${index}" 
+                           ${index === selectedThumbnailIndex ? 'checked' : ''} />
+                    <br><span class="text-xs text-gray-500">Thumbnail</span>
+                </td>
+                <td class="px-6 py-4 text-center">
+                    <button class="delete-image-btn text-red-600 hover:text-red-900 p-1 rounded transition-colors" 
+                            title="Delete Image: ${imageName}" data-image-index="${index}">
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
     
     attachImageDeleteListeners();
     attachThumbnailListeners();
@@ -2018,11 +2056,11 @@ async function openImageModal(roomId) {
 
     currentImageRoomId = roomId;
     if (imageModalTitle) {
-        const imageCount = getRoomImages(roomId).length;
+        const imageCount = (await getRoomImagesFromAPI(roomId)).length;
         imageModalTitle.textContent = `${room.categoryType} (${imageCount} images)`;
     }
-    
-    const existingImages = getRoomImages(roomId);
+
+    const existingImages = await getRoomImagesFromAPI(roomId);
     renderImagesTable(existingImages);
     
     imageModal.classList.remove("hidden");
@@ -2031,13 +2069,22 @@ async function openImageModal(roomId) {
 
 function closeImageModalFn() {
     if (imageModal) {
-        imageModal.classList.add("hidden");
-        document.body.style.overflow = "";
+        imageModal.classList.add('hidden');
+        document.body.style.overflow = '';
     }
-    if (roomImageFileName) roomImageFileName.textContent = "No file chosen";
-    if (roomImageInput) roomImageInput.value = "";
+    if (roomImageFileName) {
+        roomImageFileName.textContent = 'No file chosen';
+    }
+    if (roomImageInput) {
+        roomImageInput.value = '';
+    }
     currentImageRoomId = null;
 }
+
+// Add this temporarily to check available functions
+console.log('Available modal functions:');
+console.log('closeImageModalFn:', typeof closeImageModalFn);
+
 
 
 // =====================================
@@ -2088,24 +2135,21 @@ function showErrorMessage(message) {
 // EVENT HANDLERS FOR THUMBNAILS AND BUTTONS
 // =====================================
 
-function attachThumbnailListeners() {
-    const thumbnailCheckboxes = document.querySelectorAll('.thumbnail-checkbox');
-    
-    thumbnailCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', (e) => {
-            if (e.target.checked) {
-                thumbnailCheckboxes.forEach(otherCheckbox => {
-                    if (otherCheckbox !== e.target) {
-                        otherCheckbox.checked = false;
-                    }
-                });
-                
-                const selectedImageIndex = parseInt(e.target.getAttribute('data-image-index'));
-                console.log(`📝 Thumbnail ${selectedImageIndex} visually selected for room ${currentImageRoomId}`);
-            }
-        });
-    });
+
+function closeImageModalFn() {
+    if (imageModal) {
+        imageModal.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+    if (roomImageFileName) {
+        roomImageFileName.textContent = 'No file chosen';
+    }
+    if (roomImageInput) {
+        roomImageInput.value = '';
+    }
+    currentImageRoomId = null;
 }
+
 
 function attachButtonListeners() {
     document.querySelectorAll('.view-btn').forEach(button => {
@@ -2145,6 +2189,155 @@ function attachImageDeleteListeners() {
         });
     });
 }
+
+
+function attachThumbnailListeners() {
+    const thumbnailCheckboxes = document.querySelectorAll('.thumbnail-checkbox');
+    
+    thumbnailCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', async (e) => {
+            if (e.target.checked) {
+                // Uncheck other checkboxes (visual only)
+                thumbnailCheckboxes.forEach(otherCheckbox => {
+                    if (otherCheckbox !== e.target) {
+                        otherCheckbox.checked = false;
+                    }
+                });
+                
+                const selectedImageIndex = parseInt(e.target.getAttribute('data-image-index'));
+                console.log(`📝 Setting thumbnail ${selectedImageIndex} for room ${currentImageRoomId}`);
+                
+                // Save thumbnail selection to API
+                await setRoomThumbnailInAPI(currentImageRoomId, selectedImageIndex);
+            }
+        });
+    });
+}
+
+async function setRoomThumbnailInAPI(roomId, thumbnailIndex) {
+    try {
+        console.log(`🖼️ Setting thumbnail for room ${roomId}...`);
+        
+        const currentResponse = await fetch(ROOMS_ENDPOINT);
+        if (!currentResponse.ok) throw new Error('Failed to fetch current data');
+        
+        const currentData = await currentResponse.json();
+        const currentRooms = currentData.rooms || [];
+        
+        const updatedRooms = currentRooms.map(room => {
+            if (room.id == roomId && room.images && room.images[thumbnailIndex]) {
+                const selectedImage = room.images[thumbnailIndex];
+                
+                // Store the actual thumbnail URL instead of index
+                if (typeof selectedImage === 'object' && selectedImage.thumbnailUrl) {
+                    room.thumbnailUrl = selectedImage.thumbnailUrl;
+                } else if (typeof selectedImage === 'object' && selectedImage.url) {
+                    room.thumbnailUrl = selectedImage.url;
+                } else if (typeof selectedImage === 'string') {
+                    room.thumbnailUrl = selectedImage;
+                }
+                
+                // Also store the index for reference (optional)
+                room.thumbnailIndex = thumbnailIndex;
+                
+                console.log(`✅ Set thumbnail URL: ${room.thumbnailUrl}`);
+            }
+            return room;
+        });
+        
+        const putResponse = await fetch(ROOMS_ENDPOINT, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: 5,
+                rooms: updatedRooms
+            })
+        });
+        
+        if (!putResponse.ok) throw new Error(`Failed to set thumbnail: ${putResponse.status}`);
+        
+        // Update local cache
+        await fetchRoomsData();
+        showSuccessMessage(`Thumbnail ${thumbnailIndex + 1} set successfully!`);
+        
+    } catch (error) {
+        console.error('❌ Failed to set thumbnail in API:', error);
+        showErrorMessage('Failed to set thumbnail');
+    }
+}
+
+
+function getRoomThumbnailUrl(roomId) {
+    const room = roomsData.find(r => r.id == roomId);
+    if (!room) return null;
+    
+    // First, check if thumbnailUrl is directly stored
+    if (room.thumbnailUrl) {
+        return room.thumbnailUrl;
+    }
+    
+    // Fallback: use thumbnailIndex if available
+    if (room.images && room.images.length > 0) {
+        const thumbnailIndex = room.thumbnailIndex || 0;
+        const selectedImage = room.images[thumbnailIndex];
+        
+        if (selectedImage) {
+            if (typeof selectedImage === 'object') {
+                return selectedImage.thumbnailUrl || selectedImage.url;
+            } else if (typeof selectedImage === 'string') {
+                return selectedImage;
+            }
+        }
+        
+        // Ultimate fallback: first image
+        const firstImage = room.images[0];
+        if (typeof firstImage === 'object') {
+            return firstImage.thumbnailUrl || firstImage.url;
+        } else if (typeof firstImage === 'string') {
+            return firstImage;
+        }
+    }
+    
+    return null;
+}
+
+
+function getRoomThumbnailUrl(roomId) {
+    const room = roomsData.find(r => r.id == roomId);
+    if (!room) return null;
+    
+    // First, check if thumbnailUrl is directly stored
+    if (room.thumbnailUrl) {
+        return room.thumbnailUrl;
+    }
+    
+    // Fallback: use thumbnailIndex if available
+    if (room.images && room.images.length > 0) {
+        const thumbnailIndex = room.thumbnailIndex || 0;
+        const selectedImage = room.images[thumbnailIndex];
+        
+        if (selectedImage) {
+            if (typeof selectedImage === 'object') {
+                return selectedImage.thumbnailUrl || selectedImage.url;
+            } else if (typeof selectedImage === 'string') {
+                return selectedImage;
+            }
+        }
+        
+        // Ultimate fallback: first image
+        const firstImage = room.images[0];
+        if (typeof firstImage === 'object') {
+            return firstImage.thumbnailUrl || firstImage.url;
+        } else if (typeof firstImage === 'string') {
+            return firstImage;
+        }
+    }
+    
+    return null;
+}
+
 
 // =====================================
 // EVENT LISTENERS & INITIALIZATION
@@ -2292,6 +2485,7 @@ document.addEventListener('DOMContentLoaded', function() {
         addImageInput.addEventListener("change", (e) => {
             const file = e.target.files[0];
             if (file) {
+                console.log('Selected file:', file);
                 addFileName.textContent = file.name;
                 const imageErrors = validateImageFile(file);
                 if (imageErrors.length > 0) {
@@ -2461,14 +2655,6 @@ function showErrorModal(message) {
         `;
     }
 }
-
-
-
-
-
-
-
-
 
 
 // NEW FUNCTION: Add Room Modal
@@ -2698,3 +2884,4 @@ window.addEventListener('load', function() {
     console.log('Page loaded, fetching features and facilities...');
     fetchFeaturesFacilitiesData();
 });
+

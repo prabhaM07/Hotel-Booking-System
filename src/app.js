@@ -821,155 +821,9 @@ function setup3DKeyboardEvents() {
   });
 }
 
-// ===========================================
-// BOOKING FUNCTIONS
-// ===========================================
 
-function setupBookingSystem() {
-  checkinInput = getElementById("checkinDate");
-  checkoutInput = getElementById("checkoutDate");
-  searchButton = getElementById("searchButton");
-  mobileSearchButton = getElementById("mobileSearchButton");
 
-  // Adult counter elements
-  const adultMinus = getElementById("adultMinus");
-  const adultPlus = getElementById("adultPlus");
-  const adultDisplay = getElementById("adultCount");
 
-  // Children counter elements
-  const childrenMinus = getElementById("childrenMinus");
-  const childrenPlus = getElementById("childrenPlus");
-  const childrenDisplay = getElementById("childrenCount");
-
-  setupDateInputs();
-  setupGuestCounters(
-    { minusBtn: adultMinus, plusBtn: adultPlus, display: adultDisplay },
-    { minusBtn: childrenMinus, plusBtn: childrenPlus, display: childrenDisplay }
-  );
-
-  // Search buttons
-  if (searchButton) {
-    addEventListenerSafe(searchButton, "click", () => handleBookingSearch());
-  }
-
-  if (mobileSearchButton) {
-    addEventListenerSafe(mobileSearchButton, "click", () => handleBookingSearch());
-  }
-}
-
-function setupDateInputs() {
-  const today = getTodayString();
-  if (checkinInput) checkinInput.min = today;
-  if (checkoutInput) checkoutInput.min = today;
-
-  if (checkinInput && checkoutInput) {
-    addEventListenerSafe(checkinInput, "change", (e) => {
-      const checkinDate = e.target.value;
-      if (checkinDate) {
-        checkoutInput.min = checkinDate;
-        if (
-          checkoutInput.value &&
-          compareDates(checkoutInput.value, checkinDate) <= 0
-        ) {
-          checkoutInput.value = "";
-        }
-      }
-    });
-  }
-}
-
-function setupGuestCounters(adultControls, childrenControls) {
-  adultCount = 0;
-  childrenCount = 0;
-
-  // Adult controls
-  if (adultControls.minusBtn && adultControls.plusBtn && adultControls.display) {
-    addEventListenerSafe(adultControls.minusBtn, "click", () => {
-      if (adultCount > 0) {
-        adultCount--;
-        adultControls.display.textContent = adultCount;
-      }
-    });
-
-    addEventListenerSafe(adultControls.plusBtn, "click", () => {
-      adultCount++;
-      adultControls.display.textContent = adultCount;
-    });
-  }
-
-  // Children controls
-  if (childrenControls.minusBtn && childrenControls.plusBtn && childrenControls.display) {
-    addEventListenerSafe(childrenControls.minusBtn, "click", () => {
-      if (childrenCount > 0) {
-        childrenCount--;
-        childrenControls.display.textContent = childrenCount;
-      }
-    });
-
-    addEventListenerSafe(childrenControls.plusBtn, "click", () => {
-      childrenCount++;
-      childrenControls.display.textContent = childrenCount;
-    });
-  }
-}
-
-function getCheckinDate() {
-  return checkinInput ? checkinInput.value : "";
-}
-
-function getCheckoutDate() {
-  return checkoutInput ? checkoutInput.value : "";
-}
-
-function getGuestCounts() {
-  return {
-    adults: adultCount,
-    children: childrenCount,
-    total: adultCount + childrenCount,
-  };
-}
-
-function validateBookingData(bookingData) {
-  const { checkinDate, checkoutDate, adults } = bookingData;
-
-  // Date validation
-  const dateValidation = validateDateRange(checkinDate, checkoutDate);
-  if (!dateValidation.isValid) {
-    return dateValidation;
-  }
-
-  // Guest validation
-  if (adults === 0) {
-    return { isValid: false, message: "Please add at least one adult guest" };
-  }
-
-  return { isValid: true };
-}
-
-function handleBookingSearch() {
-  const checkinDate = getCheckinDate();
-  const checkoutDate = getCheckoutDate();
-  const guestCounts = getGuestCounts();
-
-  const bookingData = {
-    checkinDate,
-    checkoutDate,
-    ...guestCounts,
-  };
-
-  const validation = validateBookingData(bookingData);
-
-  if (!validation.isValid) {
-    showErrorMessage(validation.message);
-    return;
-  }
-
-  // Success - show search results
-  console.log("Search Data:", bookingData);
-
-  const message = `Searching for accommodation from ${checkinDate} to ${checkoutDate} for ${guestCounts.total} guests (${guestCounts.adults} adults, ${guestCounts.children} children)`;
-  showSuccessMessage(message);
-}
 
 // ===========================================
 // DROPDOWN FUNCTIONS
@@ -979,16 +833,14 @@ function generateGuestDropdown() {
   return `
     <div id="filtersDropdown" class="flex flex-col absolute top-full right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden w-80 z-50 animate-fadeIn">
       <div class="py-2">
-        <div id="aboutUs" class="px-6 py-3 cursor-pointer transition-all duration-200 flex items-center group hover:bg-gradient-to-r hover:from-pink-50 hover:to-orange-50">
+        <div onclick = "renderAboutus()" id="aboutUs" class="px-6 py-3 cursor-pointer transition-all duration-200 flex items-center group hover:bg-gradient-to-r hover:from-pink-50 hover:to-orange-50">
           <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-200" style="color: #E11162;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
           <span class="text-gray-700 font-medium group-hover:font-semibold transition-all duration-200">About us</span>
           <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-1 h-8 rounded-full" style="background: linear-gradient(to bottom, #E11162, #F26538);"></div>
         </div>
-
         <hr class="border-gray-200 mx-4">
-
         <div class="login-signup-btn px-6 py-3 cursor-pointer transition-all duration-200 flex items-center group hover:bg-gradient-to-r hover:from-pink-50 hover:to-orange-50">
           <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-200" style="color: #F26538;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
@@ -1004,11 +856,12 @@ function generateGuestDropdown() {
   `;
 }
 
+
 function generateLoggedInDropdown() {
   return `
     <div id="filtersDropdown" class="flex flex-col absolute top-full right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden w-80 z-50 animate-fadeIn">
       <div class="py-2">
-        <div id="userProfile" class="px-6 py-3 cursor-pointer transition-all duration-200 flex items-center group hover:bg-gradient-to-r hover:from-pink-50 hover:to-orange-50">
+        <div onclick = "renderProfile()" id="userProfile" class="px-6 py-3 cursor-pointer transition-all duration-200 flex items-center group hover:bg-gradient-to-r hover:from-pink-50 hover:to-orange-50">
           <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-200" style="color: #E11162;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
           </svg>
@@ -1018,30 +871,25 @@ function generateLoggedInDropdown() {
           </div>
           <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-1 h-8 rounded-full" style="background: linear-gradient(to bottom, #E11162, #F26538);"></div>
         </div>
-
-        <div class="px-6 py-3 cursor-pointer transition-all duration-200 flex items-center group hover:bg-gradient-to-r hover:from-pink-50 hover:to-orange-50 relative">
+        <div onclick = "renderBookings()" class="px-6 py-3 cursor-pointer transition-all duration-200 flex items-center group hover:bg-gradient-to-r hover:from-pink-50 hover:to-orange-50 relative">
           <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-200" style="color: #F26538;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
           </svg>
-          <div class="flex flex-col flex-1">
+          <div  class="flex flex-col flex-1">
             <span class="text-gray-700 font-medium group-hover:font-semibold transition-all duration-200">Bookings</span>
             <span class="text-gray-500 text-xs">View past booking history</span>
           </div>
           <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-1 h-8 rounded-full" style="background: linear-gradient(to bottom, #F26538, #EFB85A);"></div>
         </div>
-
         <hr class="border-gray-200 mx-4">
-
-        <div id="aboutUs" class="px-6 py-3 cursor-pointer transition-all duration-200 flex items-center group hover:bg-gradient-to-r hover:from-yellow-50 hover:to-orange-50">
+        <div onclick = "renderAboutus()" id="aboutUs" class="px-6 py-3 cursor-pointer transition-all duration-200 flex items-center group hover:bg-gradient-to-r hover:from-yellow-50 hover:to-orange-50">
           <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-200" style="color: #EFB85A;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
           <span class="text-gray-700 font-medium group-hover:font-semibold transition-all duration-200">About us</span>
           <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-1 h-8 rounded-full" style="background: linear-gradient(to bottom, #EFB85A, #F26538);"></div>
         </div>
-
         <hr class="border-gray-200 mx-4">
-
         <div class="logout-btn px-6 py-3 cursor-pointer transition-all duration-200 flex items-center group hover:bg-red-50">
           <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-200 text-red-600 group-hover:text-red-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
@@ -1052,6 +900,27 @@ function generateLoggedInDropdown() {
       </div>
     </div>
   `;
+}
+
+function redirectRoom(){
+    window.location.href = '/src/user/features/rooms/room.html';
+  }
+  
+
+function renderAboutus(){
+  window.location.href = "/src/user/features/aboutUs/about-us.html";
+}
+
+function renderReport(){
+  window.location.href = "/src/user/features/myBookings/myBookings.html";
+}
+
+function renderProfile(){
+  window.location.href = "/src/user/features/profile/profile.html";
+}
+
+function renderBookings(){
+  window.location.href = "/src/user/features/report/report.html";
 }
 
 function setupDropdown() {
@@ -1180,7 +1049,7 @@ document.addEventListener('click', function(e) {
   if (e.target.closest('#homeBookNow-btn')) {
     e.preventDefault();
     e.stopPropagation();
-    window.location.href = "/src/user/features/bookings/booking.html";
+    window.location.href = "/src/user/features/rooms/room.html";
   }
 });
 
@@ -1316,7 +1185,7 @@ function handleLoginSubmit(e, form) {
       }, 100);
       
       localStorage.setItem('UserId', result.user.id);
-
+      localStorage.setItem('currentUser', JSON.stringify(result.user));
       if (result.isAdmin) {
         localStorage.setItem("adminUser", JSON.stringify(result.user));
         setTimeout(() => {
@@ -1700,7 +1569,6 @@ async function initializeApp() {
     // Setup all components
     setupHeroCarousel();
     setup3DCarousel();
-    setupBookingSystem();
     setupDropdown();
     setupScrollToTop();
     setupLazyLoading();
@@ -1783,205 +1651,3 @@ if (typeof window !== "undefined") {
   };
 }
 
-
-
-
-
-
-// =====================================
-// API CONFIGURATION & GLOBAL VARIABLES
-// =====================================
-
-
-
-
-// var images;
-// var categoryType;
-// var features;
-// var facilities;
-// var maxadult;
-// var maxchild;
-
-            // <!-- Room Card 1 -->
-            // <article class="slide-in-left bg-white border rounded-2xl border-[#CAC1C1] p-6 overflow-hidden shadow-md w-full max-w-sm mx-auto flex flex-col transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
-            //   <div class="mb-4">
-            //     <img data-src="/src/assets/carousel2.jpg" alt="Supreme Deluxe Room" class="lazy-image rounded-xl w-full h-auto">
-            //   </div>
-            //   <div class="flex flex-col flex-grow">
-            //     <div class="flex flex-col items-start">
-            //       <h3 class="text-lg font-bold text-[#413030] mb-4">Supreme Deluxe Room</h3>
-            //       <p class="text-base text-gray-900">$12 per night</p>
-            //     </div>
-            //     <div class="space-y-2 py-3">
-            //       <div class="flex flex-col items-start">
-            //         <h4 class="text-sm font-bold text-[#413030] mb-2">Features</h4>
-            //         <ul class="flex list-none space-x-2 text-xs text-gray-600">
-            //           <li>Bedroom</li>
-            //           <li>Balcony</li>
-            //           <li>Kitchen</li>
-            //         </ul>
-            //       </div>
-            //       <div class="flex flex-col items-start">
-            //         <h4 class="text-sm font-bold text-[#413030] mb-2">Facilities</h4>
-            //         <ul class="flex list-none space-x-4 text-xs text-gray-400 items-center">
-            //           <li><img data-src="/src/assets/TV.jpeg" alt="TV" class="lazy-image w-6 h-6 object-contain"></li>
-            //           <li><img data-src="/src/assets/AC.avif" alt="AC" class="lazy-image w-6 h-6 object-contain"></li>
-            //           <li><img data-src="/src/assets/refrigerator.png" alt="Refrigerator" class="lazy-image w-6 h-6 object-contain"></li>
-            //         </ul>
-            //       </div>
-            //       <div class="flex flex-col items-start">
-            //         <h4 class="text-sm font-bold text-[#413030] mb-2">Guests</h4>
-            //         <ul class="flex list-none space-x-2 text-xs text-gray-600">
-            //           <li>4 Adults</li>
-            //           <li>5 Children</li>
-            //         </ul>
-            //       </div>
-            //     </div>
-            //     <div class="flex justify-between items-center px-6">
-            //       <span class="inline-block text-xs font-bold text-[#413030] border-b-2 border-[#413030] pb-1">
-            //         more details
-            //       </span>
-            //       <button class="rounded-full px-4 py-3 text-xs text-white font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
-            //         Book Now
-            //       </button>
-            //     </div>
-            //   </div>
-            // </article>
-
-            // <!-- Room Card 2 -->
-            // <article class="slide-in-right bg-white border rounded-2xl border-[#CAC1C1] p-6 overflow-hidden shadow-md w-full max-w-sm mx-auto flex flex-col transform transition-transform duration-300 hover:scale-105 hover:shadow-xl" style="animation-delay: 0.1s;">
-            //   <div class="mb-4">
-            //     <img data-src="/src/assets/carousel2.jpg" alt="Supreme Deluxe Room" class="lazy-image rounded-xl w-full h-auto">
-            //   </div>
-            //   <div class="flex flex-col flex-grow">
-            //     <div class="flex flex-col items-start">
-            //       <h3 class="text-lg font-bold text-[#413030] mb-4">Supreme Deluxe Room</h3>
-            //       <p class="text-base text-gray-900">$12 per night</p>
-            //     </div>
-            //     <div class="space-y-2 py-4">
-            //       <div class="flex flex-col items-start">
-            //         <h4 class="text-sm font-bold text-[#413030] mb-2">Features</h4>
-            //         <ul class="flex list-none space-x-2 text-xs text-gray-600">
-            //           <li>Bedroom</li>
-            //           <li>Balcony</li>
-            //           <li>Kitchen</li>
-            //         </ul>
-            //       </div>
-            //       <div class="flex flex-col items-start">
-            //         <h4 class="text-sm font-bold text-[#413030] mb-2">Facilities</h4>
-            //         <ul class="flex list-none space-x-4 text-xs text-gray-400 items-center">
-            //           <li><img data-src="/src/assets/TV.jpeg" alt="TV" class="lazy-image w-6 h-6 object-contain"></li>
-            //           <li><img data-src="/src/assets/AC.avif" alt="AC" class="lazy-image w-6 h-6 object-contain"></li>
-            //           <li><img data-src="/src/assets/refrigerator.png" alt="Refrigerator" class="lazy-image w-6 h-6 object-contain"></li>
-            //         </ul>
-            //       </div>
-            //       <div class="flex flex-col items-start">
-            //         <h4 class="text-sm font-bold text-[#413030] mb-2">Guests</h4>
-            //         <ul class="flex list-none space-x-2 text-xs text-gray-600">
-            //           <li>4 Adults</li>
-            //           <li>5 Children</li>
-            //         </ul>
-            //       </div>
-            //     </div>
-            //     <div class="flex justify-between items-center px-6">
-            //       <span class="inline-block text-xs font-bold text-[#413030] border-b-2 border-[#413030] pb-1">
-            //         more details
-            //       </span>
-            //       <button class="rounded-full px-4 py-3 text-xs text-white font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
-            //         Book Now
-            //       </button>
-            //     </div>
-            //   </div>
-            // </article>
-
-            // <!-- Room Card 3 -->
-            // <article class="slide-in-left bg-white border rounded-2xl border-[#CAC1C1] p-6 overflow-hidden shadow-md w-full max-w-sm mx-auto flex flex-col transform transition-transform duration-300 hover:scale-105 hover:shadow-xl" style="animation-delay: 0.2s;">
-            //   <div class="mb-4">
-            //     <img data-src="/src/assets/carousel2.jpg" alt="Supreme Deluxe Room" class="lazy-image rounded-xl w-full h-auto">
-            //   </div>
-            //   <div class="flex flex-col flex-grow">
-            //     <div class="flex flex-col items-start">
-            //       <h3 class="text-lg font-bold text-[#413030] mb-4">Supreme Deluxe Room</h3>
-            //       <p class="text-base text-gray-900">$12 per night</p>
-            //     </div>
-            //     <div class="space-y-2 py-4">
-            //       <div class="flex flex-col items-start">
-            //         <h4 class="text-sm font-bold text-[#413030] mb-2">Features</h4>
-            //         <ul class="flex list-none space-x-2 text-xs text-gray-600">
-            //           <li>Bedroom</li>
-            //           <li>Balcony</li>
-            //           <li>Kitchen</li>
-            //         </ul>
-            //       </div>
-            //       <div class="flex flex-col items-start">
-            //         <h4 class="text-sm font-bold text-[#413030] mb-2">Facilities</h4>
-            //         <ul class="flex list-none space-x-4 text-xs text-gray-400 items-center">
-            //           <li><img data-src="/src/assets/TV.jpeg" alt="TV" class="lazy-image w-6 h-6 object-contain"></li>
-            //           <li><img data-src="/src/assets/AC.avif" alt="AC" class="lazy-image w-6 h-6 object-contain"></li>
-            //           <li><img data-src="/src/assets/refrigerator.png" alt="Refrigerator" class="lazy-image w-6 h-6 object-contain"></li>
-            //         </ul>
-            //       </div>
-            //       <div class="flex flex-col items-start">
-            //         <h4 class="text-sm font-bold text-[#413030] mb-2">Guests</h4>
-            //         <ul class="flex list-none space-x-2 text-xs text-gray-600">
-            //           <li>4 Adults</li>
-            //           <li>5 Children</li>
-            //         </ul>
-            //       </div>
-            //     </div>
-            //     <div class="flex justify-between items-center px-6">
-            //       <span class="inline-block text-xs font-bold text-[#413030] border-b-2 border-[#413030] pb-1">
-            //         more details
-            //       </span>
-            //       <button class="rounded-full px-4 py-3 text-xs text-white font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
-            //         Book Now
-            //       </button>
-            //     </div>
-            //   </div>
-            // </article>
-
-            // <!-- Room Card 4 -->
-            // <article class="slide-in-right bg-white border rounded-2xl border-[#CAC1C1] p-6 overflow-hidden shadow-md w-full max-w-sm mx-auto flex flex-col transform transition-transform duration-300 hover:scale-105 hover:shadow-xl" style="animation-delay: 0.3s;">
-            //   <div class="mb-4">
-            //     <img data-src="/src/assets/carousel2.jpg" alt="Supreme Deluxe Room" class="lazy-image rounded-xl w-full h-auto">
-            //   </div>
-            //   <div class="flex flex-col flex-grow">
-            //     <div class="flex flex-col items-start">
-            //       <h3 class="text-lg font-bold text-[#413030] mb-4">Supreme Deluxe Room</h3>
-            //       <p class="text-base text-gray-900">$12 per night</p>
-            //     </div>
-            //     <div class="space-y-2 py-4">
-            //       <div class="flex flex-col items-start">
-            //         <h4 class="text-sm font-bold text-[#413030] mb-2">Features</h4>
-            //         <ul class="flex list-none space-x-2 text-xs text-gray-600">
-            //           <li>Bedroom</li>
-            //           <li>Balcony</li>
-            //           <li>Kitchen</li>
-            //         </ul>
-            //       </div>
-            //       <div class="flex flex-col items-start">
-            //         <h4 class="text-sm font-bold text-[#413030] mb-2">Facilities</h4>
-            //         <ul class="flex list-none space-x-4 text-xs text-gray-400 items-center">
-            //           <li><img data-src="/src/assets/TV.jpeg" alt="TV" class="lazy-image w-6 h-6 object-contain"></li>
-            //           <li><img data-src="/src/assets/AC.avif" alt="AC" class="lazy-image w-6 h-6 object-contain"></li>
-            //           <li><img data-src="/src/assets/refrigerator.png" alt="Refrigerator" class="lazy-image w-6 h-6 object-contain"></li>
-            //         </ul>
-            //       </div>
-            //       <div class="flex flex-col items-start">
-            //         <h4 class="text-sm font-bold text-[#413030] mb-2">Guests</h4>
-            //         <ul class="flex list-none space-x-2 text-xs text-gray-600">
-            //           <li>4 Adults</li>
-            //           <li>5 Children</li>
-            //         </ul>
-            //       </div>
-            //     </div>
-            //     <div class="flex justify-between items-center px-6">
-            //       <span class="inline-block text-xs font-bold text-[#413030] border-b-2 border-[#413030] pb-1">
-            //         more details
-            //       </span>
-            //       <button class="rounded-full px-4 py-3 text-xs text-white font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
-            //         Book Now
-            //       </button>
-            //     </div>
-            //   </div>
-            // </article>

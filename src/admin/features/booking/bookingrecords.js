@@ -22,7 +22,6 @@ let loadingIndicator, tableContainer, noDataMessage, bookingTableBody, searchInp
 
 // Status configuration object
 const statusConfig = {
-  'pending': { class: 'bg-yellow-100 text-yellow-800', label: 'Pending' },
   'confirmed': { class: 'bg-green-100 text-green-800', label: 'Confirmed' },
   'cancelled': { class: 'bg-red-100 text-red-800', label: 'Cancelled' },
   'completed': { class: 'bg-blue-100 text-blue-800', label: 'Completed' }
@@ -139,22 +138,21 @@ function renderTable() {
   try {
     bookingTableBody.innerHTML = filteredData.map(booking => `
       <tr class="hover:bg-gray-50">
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${booking.orderId || booking.id}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${booking.userName || booking.name || 'N/A'}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${booking.phoneNo || booking.phone || 'N/A'}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${booking.categoryType || booking.roomType || 'N/A'}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${booking.roomNo || booking.room || 'N/A'}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatDate(booking.date)}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatTime(booking.checkIn)}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatTime(booking.checkOut)}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatDate(booking.bookedDate)}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatPrice(booking.price)}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${booking.bookingId || booking.id}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${booking.firstName || booking.name || 'N/A'}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${booking.mobile || booking.mobile || 'N/A'}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${booking.roomType || booking.roomType || 'N/A'}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${booking.roomno || booking.room || 'N/A'}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatTime(booking.checkin)}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatTime(booking.checkout)}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatDate(booking.bookingDate)}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatPrice(booking.pricePerNight)}</td>
         <td class="px-6 py-4 whitespace-nowrap">${getStatusBadge(booking.status || 'pending')}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
           <button 
             class="text-gray-600 hover:text-gray-900 p-1 rounded transition-colors" 
             title="Download"
-            onclick="downloadBooking(${booking.id || booking.orderId})"
+            onclick="downloadBooking(${booking.bookingId || booking.orderId})"
           >
             <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -206,6 +204,8 @@ async function fetchBookingsData() {
       showNoData();
     } else {
       renderTable();
+      currentPage = 1;
+      updatePagination();
     }
 
     console.log('Bookings loaded:', bookingsData.length, 'records');
@@ -228,17 +228,20 @@ function performSearch() {
   
   if (!searchTerm) {
     filteredData = [...bookingsData];
+    currentPage = 1;
+    updatePagination();
+    renderTable();
   } else {
     filteredData = bookingsData.filter(booking => {
       const searchableFields = [
-        booking.userName || booking.name || '',
-        booking.phoneNo || booking.phone || '',
-        booking.orderId || booking.id || '',
-        booking.categoryType || booking.roomType || '',
-        booking.roomNo || booking.room || '',
+        booking.firstName || booking.name || '',
+        booking.mobile || booking.phone || '',
+        booking.bookingId || booking.id || '',
+        booking.roomType || booking.roomType || '',
+        booking.roomno || booking.room || '',
         booking.status || '',
-        formatDate(booking.date),
-        formatDate(booking.bookedDate)
+        formatDate(booking.bookingDate),
+        formatDate(booking.bookingDate)
       ].join(' ').toLowerCase();
       
       return searchableFields.includes(searchTerm);
@@ -264,7 +267,7 @@ function createFiltersDropdown() {
   if (!filtersBtn) return;
 
   const dropdownHTML = `
-    <div id="filtersDropdown" class="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 p-6 w-80 z-50">
+    <div id="filtersDropdown" class="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-xl border border-[#1D1354] p-6 w-80 z-50">
       <!-- Filter Header -->
       <div class="flex items-center justify-between mb-4">
         <h3 class="text-lg font-semibold text-gray-900">Filter Bookings</h3>
@@ -285,7 +288,7 @@ function createFiltersDropdown() {
               type="date" 
               id="filterDateFrom" 
               value="${currentFilters.dateFrom}"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D1354] focus:border-transparent text-sm"
+              class="w-full px-3 py-2 border border-[#1D1354] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D1354] focus:border-transparent text-sm"
             >
           </div>
           <div>
@@ -294,7 +297,7 @@ function createFiltersDropdown() {
               type="date" 
               id="filterDateTo" 
               value="${currentFilters.dateTo}"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D1354] focus:border-transparent text-sm"
+              class="w-full px-3 py-2 border border-[#1D1354] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D1354] focus:border-transparent text-sm"
             >
           </div>
         </div>
@@ -307,7 +310,7 @@ function createFiltersDropdown() {
             id="filterUserName" 
             placeholder="Enter guest name..."
             value="${currentFilters.userName}"
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D1354] focus:border-transparent text-sm"
+            class="w-full px-3 py-2 border border-[#1D1354] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D1354] focus:border-transparent text-sm"
           >
         </div>
 
@@ -316,7 +319,7 @@ function createFiltersDropdown() {
           <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
           <select 
             id="filterStatus"
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D1354] focus:border-transparent text-sm"
+            class="w-full px-3 py-2 border border-[#1D1354] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D1354] focus:border-transparent text-sm"
           >
             <option value="">All Statuses</option>
             <option value="pending" ${currentFilters.status === 'pending' ? 'selected' : ''}>Pending</option>
@@ -334,7 +337,7 @@ function createFiltersDropdown() {
             id="filterRoomNo" 
             placeholder="Enter room number..."
             value="${currentFilters.roomNo}"
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D1354] focus:border-transparent text-sm"
+            class="w-full px-3 py-2 border border-[#1D1354] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D1354] focus:border-transparent text-sm"
           >
         </div>
 
@@ -346,7 +349,7 @@ function createFiltersDropdown() {
             id="filterCategoryType" 
             placeholder="Enter category..."
             value="${currentFilters.categoryType}"
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D1354] focus:border-transparent text-sm"
+            class="w-full px-3 py-2 border border-[#1D1354] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1D1354] focus:border-transparent text-sm"
           >
         </div>
       </div>
@@ -464,7 +467,7 @@ function filterBooking() {
   // Convert date strings to Date objects for comparison
   const fromDate = parseFilterDate(currentFilters.dateFrom);
   const toDate = parseFilterDate(currentFilters.dateTo);
-
+  
   filteredData = bookingsData.filter(booking => {
     const bUserName = (booking.userName || booking.name || '').toLowerCase();
     const bStatus = (booking.status || '').toLowerCase();
@@ -501,6 +504,8 @@ function filterBooking() {
     return userNameMatch && statusMatch && roomNoMatch && categoryMatch && dateMatch;
   });
 
+  currentPage = 1;
+  updatePagination();
   renderTable();
   hideFiltersDropdown();
   
@@ -527,6 +532,8 @@ function clearFilters() {
   
   // Reset filtered data to show all bookings
   filteredData = [...bookingsData];
+  currentPage = 1;
+  updatePagination();
   renderTable();
   hideFiltersDropdown();
   
@@ -874,3 +881,170 @@ window.exportAllBookingsAsExcel = exportAllBookingsAsExcel;
 window.downloadBooking = downloadBooking;
 window.filterBooking = filterBooking;
 window.performSearch = performSearch; 
+
+// Pagination state (single source of truth = filteredData)
+let currentPage = 1;
+let itemsPerPage = 10;
+
+function getTotalPages() {
+  const total = filteredData.length;
+  return Math.max(1, Math.ceil(total / itemsPerPage));
+}
+
+function getPageData() {
+  const start = (currentPage - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return filteredData.slice(start, end);
+}
+
+function updateButtonStyles(button, isDisabled) {
+  if (!button) return;
+  if (isDisabled) {
+    button.classList.add('opacity-40', 'cursor-not-allowed');
+    button.classList.remove('hover:border-primary', 'hover:text-primary');
+  } else {
+    button.classList.remove('opacity-40', 'cursor-not-allowed');
+    button.classList.add('hover:border-primary', 'hover:text-primary');
+  }
+}
+
+
+// Update pagination controls and labels from filteredData
+function updatePagination() {
+  const totalItems = filteredData.length;
+  const totalPagesCount = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+
+  // Clamp currentPage into valid range
+  if (currentPage > totalPagesCount) currentPage = totalPagesCount;
+  if (currentPage < 1) currentPage = 1;
+
+  const startRecord = totalItems > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
+  const endRecord = totalItems > 0 ? Math.min(currentPage * itemsPerPage, totalItems) : 0;
+
+  const $start = document.getElementById('startRecord');
+  const $end = document.getElementById('endRecord');
+  const $total = document.getElementById('totalRecords');
+  const $page = document.getElementById('currentPageNumber');
+  const $pages = document.getElementById('totalPages');
+
+  if ($start) $start.textContent = startRecord;
+  if ($end) $end.textContent = endRecord;
+  if ($total) $total.textContent = totalItems;
+  if ($page) $page.textContent = totalItems > 0 ? currentPage : 0;
+  if ($pages) $pages.textContent = Math.ceil(Math.max(0, totalItems) / Math.max(1, itemsPerPage));
+
+  const prevButton = document.getElementById('prevPage');
+  const nextButton = document.getElementById('nextPage');
+
+  const onFirst = currentPage === 1 || totalItems === 0;
+  const onLast = currentPage >= totalPagesCount || totalItems === 0;
+
+  if (prevButton) {
+    prevButton.disabled = onFirst;
+    updateButtonStyles(prevButton, prevButton.disabled);
+  }
+  if (nextButton) {
+    nextButton.disabled = onLast;
+    updateButtonStyles(nextButton, nextButton.disabled);
+  }
+}
+
+// Navigate and render using filteredData
+function goToPage(page) {
+  const totalPagesCount = getTotalPages();
+  if (page >= 1 && page <= totalPagesCount) {
+    currentPage = page;
+    updatePagination();
+    renderTable();
+  }
+}
+
+// Render only the current page
+function renderTable() {
+  if (!loadingIndicator || !tableContainer || !noDataMessage || !bookingTableBody) {
+    console.error('DOM elements not found in renderTable');
+    return;
+  }
+
+  loadingIndicator.style.display = 'none';
+  tableContainer.style.display = 'block';
+  noDataMessage.style.display = 'none';
+
+  if (filteredData.length === 0) {
+    bookingTableBody.innerHTML = `
+      <tr>
+        <td colspan="12" class="px-6 py-8 text-center text-gray-500">
+          No records match your search criteria.
+        </td>
+      </tr>
+    `;
+    updatePagination(); // keep counters in sync when empty
+    return;
+  }
+
+  try {
+    const pageData = getPageData();
+    bookingTableBody.innerHTML = pageData.map(booking => `
+      <tr class="hover:bg-gray-50">
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${booking.bookingId || booking.id}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${booking.firstName || booking.name || 'N/A'}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${booking.mobile || booking.mobile || 'N/A'}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${booking.roomType || booking.roomType || 'N/A'}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${booking.roomno || booking.room || 'N/A'}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatTime(booking.checkin)}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatTime(booking.checkout)}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatDate(booking.bookingDate)}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatPrice(booking.pricePerNight)}</td>
+        <td class="px-6 py-4 whitespace-nowrap">${getStatusBadge(booking.status || 'pending')}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+          <button 
+            class="text-gray-600 hover:text-gray-900 p-1 rounded transition-colors" 
+            title="Download"
+            onclick="downloadBooking(${booking.bookingId || booking.orderId})"
+          >
+            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </button>
+        </td>
+      </tr>
+    `).join('');
+
+    updatePagination();
+  } catch (error) {
+    console.error('Error rendering table:', error);
+    showError('Error displaying booking records');
+  }
+}
+
+// Wire up pagination controls safely
+const $prev = document.getElementById('prevPage');
+const $next = document.getElementById('nextPage');
+const $perPage = document.getElementById('itemsPerPage');
+
+if ($prev) {
+  $prev.addEventListener('click', (e) => {
+    const btn = e.currentTarget;
+    if (btn.disabled) return;
+    goToPage(currentPage - 1);
+  });
+}
+
+if ($next) {
+  $next.addEventListener('click', (e) => {
+    const btn = e.currentTarget;
+    if (btn.disabled) return;
+    goToPage(currentPage + 1);
+  });
+}
+
+if ($perPage) {
+  $perPage.addEventListener('change', (e) => {
+    const val = parseInt(e.target.value, 10);
+    itemsPerPage = Number.isFinite(val) && val > 0 ? val : 10;
+    currentPage = 1; // reset to first page after page-size change
+    updatePagination();
+    renderTable();
+  });
+}
+

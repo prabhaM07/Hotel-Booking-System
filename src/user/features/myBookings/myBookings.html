@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Bookings - Zyra Hotel</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    .modal-hidden { display: none !important; }
+    .modal-visible { display: flex !important; }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+     .links:hover {
+    color: #EFB85A;
+   
+  }
+  .links{
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+    .gradient-bg { background: linear-gradient(135deg, #EFB85A 0%, #F26538 100%); }
+    .luxury-gradient { background: linear-gradient(135deg, #F26538 0%, #E11162 100%); }
+    .smooth-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .smooth-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); }
+
+    .status-upcoming { background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); color: white; }
+    .status-ongoing { background: linear-gradient(135deg, #10B981 0%, #059669 100%); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); color: white; }
+    .status-completed { background: linear-gradient(135deg, #f6a15c 0%, #ed793a 100%); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); color: white; }
+    .status-cancelled { background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); color: white; }
+
+    @keyframes pulse-glow { 0%, 100% { box-shadow: 0 4px 20px rgba(239, 184, 90, 0.3); } 50% { box-shadow: 0 8px 30px rgba(239, 184, 90, 0.5); } }
+    .pulse-glow { animation: pulse-glow 2s infinite; }
+
+    .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 12px; }
+    @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #EFB85A, #F26538); border-radius: 3px; }
+
+    .modal-backdrop { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); }
+
+    .theme-primary { background: #EFB85A; }
+    .theme-secondary { background: #F26538; }
+    .theme-accent { background: #E11162; }
+    .text-theme-primary { color: #EFB85A; }
+    .text-theme-secondary { color: #F26538; }
+    .text-theme-accent { color: #E11162; }
+    .border-theme-primary { border-color: #EFB85A; }
+    .border-theme-secondary { border-color: #F26538; }
+    .border-theme-accent { border-color: #E11162; }
+  </style>
+</head>
+
+<body class="min-h-screen">
+  <!-- Header -->
+  <header class="fixed top-0 w-full z-50 shadow-md bg-white">
+    <nav class="flex h-16 items-center justify-between px-6">
+      <div>
+        <img src="/src/assets/logo.png" alt="Zyra Hotel Booking" class="h-10 w-auto" />
+      </div>
+
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-4">
+          <ul class="hidden md:flex space-x-6 font-semibold text-[#413030]">
+            <li>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="/src/index.html" class="hover:text-yellow-400 transition">Home</a>
+                <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
+              </span>
+            </li>
+            <li>
+              <span class="cursor-pointer relative inline-block group">
+                <a href="/src/user/features/rooms/allRooms.html" class="hover:text-yellow-400 transition">Rooms</a>
+                <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
+              </span>
+            </li>
+            <li>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="/src/user/features/facilities/facilities.html" class="hover:text-yellow-400 transition">Facilities</a>
+                <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
+              </span>
+            </li>
+            <li>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="/src/user/features/contact/contactUs.html" class="hover:text-yellow-400 transition">Contact Us</a>
+                <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
+              </span>
+            </li>
+          </ul>
+
+          <button id="homeBookNow-btn" onclick="redirectRoom()" class="rounded-full px-4 py-3 text-white text-sm font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
+            Book Now
+          </button>
+        </div>
+
+        <div id="mobileIcons" class="flex relative h-full items-center cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+              stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+              fill="#C2C6CC" class="w-8 h-8">
+            <path fill-rule="evenodd"
+                  d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
+                  clip-rule="evenodd"/>
+          </svg>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="pt-24 pb-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="mb-8">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">My Bookings</h1>
+            <p class="text-gray-600">Manage your luxury hotel reservations</p>
+          </div>
+        </div>
+
+        <div class="glass-card p-2 rounded-2xl w-fit">
+          <div class="flex gap-2 flex-wrap">
+            <button class="filter-btn px-6 py-3 text-sm font-medium rounded-xl transition gradient-bg text-white shadow-lg" data-status="all">
+              <i class="fas fa-list mr-2"></i>All Bookings
+            </button>
+            <button class="filter-btn px-6 py-3 text-sm font-medium rounded-xl transition text-gray-600 hover:bg-white/50" data-status="upcoming">
+              <i class="fas fa-clock mr-2"></i>Upcoming
+            </button>
+            <button class="filter-btn px-6 py-3 text-sm font-medium rounded-xl transition text-gray-600 hover:bg-white/50" data-status="ongoing">
+              <i class="fas fa-play mr-2"></i>Ongoing
+            </button>
+            <button class="filter-btn px-6 py-3 text-sm font-medium rounded-xl transition text-gray-600 hover:bg-white/50" data-status="completed">
+              <i class="fas fa-check-circle mr-2"></i>Completed
+            </button>
+            <button class="filter-btn px-6 py-3 text-sm font-medium rounded-xl transition text-gray-600 hover:bg-white/50" data-status="cancelled">
+              <i class="fas fa-ban mr-2"></i>Cancelled
+            </button>
+
+          </div>
+        </div>
+      </div>
+
+      <div id="bookingsContainer" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6"></div>
+
+      <!-- Pagination Toolbar -->
+      <div id="paginationToolbar" class="mt-8 glass-card rounded-2xl px-4 py-3 hidden">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="flex items-center gap-2 text-sm text-gray-600">
+            <span>Per page</span>
+            <select id="pageSizeSelect" class="border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+              <option value="6">6</option>
+              <option value="9">9</option>
+              <option value="12">12</option>
+            </select>
+            <span id="pageStatus" class="ml-2"></span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="prevPageBtn" class="px-3 py-2 text-sm rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed">
+              <i class="fas fa-angle-left mr-1"></i>Prev
+            </button>
+
+            <div id="pageNumbers" class="flex items-center gap-1"></div>
+
+            <button id="nextPageBtn" class="px-3 py-2 text-sm rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed">
+              Next<i class="fas fa-angle-right ml-1"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="emptyState" class="hidden text-center py-20">
+        <div class="glass-card max-w-md mx-auto p-12 rounded-3xl">
+          <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fas fa-calendar-alt text-2xl text-white"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-2">No bookings found</h3>
+          <p class="text-gray-500 mb-6">Start your journey with Zyra Hotel</p>
+          <button class="gradient-bg text-white px-8 py-3 rounded-xl font-medium smooth-hover">
+            Make Your First Booking
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Action Modal -->
+  <div id="actionModal" class="modal-hidden fixed inset-0 z-50 items-center justify-center p-4 modal-backdrop">
+    <div class="glass-card max-w-lg w-full rounded-3xl overflow-hidden smooth-hover" onclick="event.stopPropagation();">
+      <div class="gradient-bg p-6 text-white">
+        <div class="flex justify-between items-center">
+          <h3 id="modalTitle" class="text-xl font-semibold"></h3>
+          <button type="button" id="closeBtn" class="text-white hover:text-red-300 text-3xl font-bold cursor-pointer border-none bg-transparent" style="padding: 5px; line-height: 1;">×</button>
+        </div>
+      </div>
+
+      <div class="p-6">
+        <div id="modalContent" class="mb-8"></div>
+        <div class="flex gap-4">
+          <button type="button" id="cancelBtn" class="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 cursor-pointer">
+            Cancel
+          </button>
+          <button type="button" id="confirmBtn" class="flex-1 px-6 py-3 gradient-bg text-white rounded-xl font-medium cursor-pointer">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+      <!-- Footer -->
+<footer class="bg-gray-100 text-gray-700 pt-2">
+  <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+    
+    <!-- Logo & About -->
+    <div class="text-left">
+      <h2 class="text-4xl font-extrabold mb-4 bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent">
+        Zyra
+      </h2>
+      <p class="text-gray-600 mb-6">
+        Experience luxury and comfort at Zyra Hotel. We provide exceptional hospitality with world-class amenities for an unforgettable stay.
+      </p>
+      <h3 class="font-semibold mb-2">Customer Support</h3>
+      <p class="text-gray-600">feedback@gmail.com</p>
+    </div>
+
+        <!-- Quick Links -->
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <h3 class="font-semibold mb-4">Quick Links</h3>
+          <ul class="space-y-2">
+           <li><a href="/src/index.html" class="links">Home</a></li>
+          <li><a href="/src/user/features/rooms/allRooms.html" class="links">Rooms</a></li>
+          <li><a href="/src/user/features/facilities/facilities.html" class="links">Facilities</a></li>
+          <li><a href="#testimonials" class="links">Reviews</a></li>
+          <li><a href="/src/user/features/contact/contactUs.html" class="links">About us</a></li>
+          </ul>
+        </div>
+        <div class="pt-8 md:pt-0">
+          <ul class="space-y-2">
+            <li><a href="#" class="links">FAQs</a></li>
+            <li><a href="#" class="links">Privacy Policy</a></li>
+            <li><a href="#" class="links">Terms and Condition</a></li>
+          </ul>
+        </div>
+      </div>
+
+
+    <!-- Social Media -->
+    <div class="flex flex-col items-center md:items-start">
+      <h3 class="font-semibold mb-4">Follow us</h3>
+      <div class="flex space-x-6 text-2xl">
+        <a href="#" class="text-[#1877F2] hover:opacity-80 transition" aria-label="Facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+        <a href="#" class="text-[#1DA1F2] hover:opacity-80 transition" aria-label="Twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#" class="text-[#0A66C2] hover:opacity-80 transition" aria-label="LinkedIn">
+          <i class="fab fa-linkedin"></i>
+        </a>
+        <a href="#" class="text-[#E4405F] hover:opacity-80 transition" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Copyright -->
+  <div class="border-t border-gray-300 py-4 text-center text-sm text-gray-500">
+    © 2025 Zyra Hotel | All rights reserved
+  </div>
+</footer>
+  
+
+  <script>
+    function redirectRoom(){ window.location.href = '/src/user/features/rooms/room.html'; }
+
+    let user_id = localStorage.getItem('user_id');
+    let Bookings_Data = [];
+    let Rooms_Data = [];
+    let currentFilter = 'all';
+    let currentBookingId = null;
+    let currentAction = null;
+    let selectedRating = 0;
+    let processedBookings = [];
+
+    // Pagination
+    let currentPage = 1;
+    let pageSize = 6;
+
+    async function fetchBookingsData() {
+      try {
+        const res = await fetch('https://68c8b85aceef5a150f622643.mockapi.io/admin/3');
+        if (!res.ok) throw new Error(res.status);
+        const json = await res.json();
+        Bookings_Data = json.bookings || [];
+      } catch(e) {
+        console.error('Error fetching bookings:', e);
+        Bookings_Data = [];
+      }
+    }
+
+    async function fetchRoomsData() {
+      try {
+        const res = await fetch('https://68c8b85aceef5a150f622643.mockapi.io/admin/5');
+        if (!res.ok) throw new Error(res.status);
+        const json = await res.json();
+        Rooms_Data = json.rooms || [];
+      } catch(e) {
+        console.error('Error fetching rooms:', e);
+        Rooms_Data = [];
+      }
+    }
+
+    function determineBookingStatus(checkIn, checkOut) {
+      const today = new Date(); today.setHours(0,0,0,0);
+      const ciDate = new Date(checkIn); const coDate = new Date(checkOut);
+      ciDate.setHours(0,0,0,0); coDate.setHours(0,0,0,0);
+      if (today < ciDate) return 'upcoming';
+      else if (today >= ciDate && today <= coDate) return 'ongoing';
+      return 'completed';
+    }
+
+    function processBookingsWithRoomImages() {
+      let user_id = localStorage.getItem('UserId');
+      processedBookings = Bookings_Data
+        .filter(b => String(b.userId) === String(user_id))
+        .map(b => {
+          const match = Rooms_Data.find(r => r.roomno === b.roomNo || r.roomno === b.roomno);
+          const img = match?.images?.[0]?.thumbnailUrl || '/src/assets/default-room.jpg';
+          const ci = new Date(b.checkIn || b.checkin);
+          const co = new Date(b.checkOut || b.checkout);
+          const nights = Math.max(1, Math.ceil((co - ci) / (1000 * 60 * 60 * 24)));
+          const uniqueId = b.id || b.orderId || b.bookingId || Math.random().toString(36).substr(2, 9);
+          let status = b.status;
+          if (status !== 'cancelled') status = determineBookingStatus(ci, co);
+
+          return {
+            id: uniqueId,
+            bookingId: b.bookingId || uniqueId,
+            orderId: b.orderId || b.id,
+            userName: b.userName || (b.firstName + ' ' + b.lastName).trim(),
+            phoneNo: b.phoneNo || b.mobile,
+            categoryType: b.categoryType || b.roomType,
+            roomNo: b.roomNo || b.roomno,
+            date: b.checkIn || b.checkin,
+            checkOutDate: b.checkOut || b.checkout,
+            price: b.price || b.totalAmount || b.pricePerNight,
+            status,
+            nights,
+            image: img,
+            amenities: ['Free WiFi', 'Air Conditioning', 'Room Service', 'Daily Housekeeping'],
+            // Inside the return {...} of processBookingsWithRoomImages:
+            userId: b.userId,
+            rescheduled: b.rescheduled === true || b.reschedule === 'done' || !!b.rescheduleOf,
+            // optional key to persist across flows
+            rawKey: computeRawKey(b),
+
+          };
+        });
+
+      return processedBookings;
+    }
+
+    // Cancel in place: mark cancel: true on the same row (no new entries)
+async function cancelBookingInPlace(currentProcessedBooking, reason = '') {
+  await fetchBookingsData();
+  const list = Array.isArray(Bookings_Data) ? Bookings_Data.slice() : [];
+
+  // Robust locate
+  const targetKey = String(
+    currentProcessedBooking.rawKey ||
+    computeRawKey(currentProcessedBooking) ||
+    currentProcessedBooking.bookingId ||
+    currentProcessedBooking.id ||
+    currentProcessedBooking.orderId ||
+    ''
+  );
+
+  let idx = list.findIndex(b => computeRawKey(b) === targetKey);
+  if (idx === -1) {
+    const idTarget = String(currentProcessedBooking.bookingId || currentProcessedBooking.id || currentProcessedBooking.orderId || '');
+    if (idTarget) idx = list.findIndex(b => String(b.bookingId || b.id || b.orderId || '') === idTarget);
+  }
+  if (idx === -1) {
+    idx = list.findIndex(b =>
+      String(b.userId) === String(currentProcessedBooking.userId || getCurrentUser()?.id || getUserProfileFallback().userId) &&
+      String(b.roomno || b.roomNo) === String(currentProcessedBooking.roomNo) &&
+      normDateStr(b.checkin || b.checkIn) === normDateStr(currentProcessedBooking.date) &&
+      normDateStr(b.checkout || b.checkOut) === normDateStr(currentProcessedBooking.checkOutDate)
+    );
+  }
+  if (idx === -1) throw new Error('Original booking not found');
+
+  const original = list[idx];
+
+  // Mark cancelled and persist
+  const updated = {
+    ...original,
+    cancel: true,                  // requested boolean flag
+    status: 'cancelled',           // keep existing UI status compatible
+    cancelledAt: new Date().toISOString(),
+    cancelReason: reason || original.cancelReason || ''
+  };
+
+  const updatedList = list.slice();
+  updatedList[idx] = updated;
+
+  const updatedDoc = { id: '3', bookings: updatedList };
+  const putRes = await fetch('https://68c8b85aceef5a150f622643.mockapi.io/admin/3', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updatedDoc)
+  });
+  if (!putRes.ok) throw new Error(`PUT failed: ${putRes.status}`);
+
+  Bookings_Data = updatedDoc.bookings.slice();
+  return updated;
+}
+
+// Rebook: check availability and create a brand-new booking row
+async function rebookViaApi(currentProcessedBooking, newCi, newCo) {
+  await fetchBookingsData();
+  const list = Array.isArray(Bookings_Data) ? Bookings_Data.slice() : [];
+
+  // Pull the original cancelled row to copy details
+  const targetKey = String(
+    currentProcessedBooking.rawKey ||
+    computeRawKey(currentProcessedBooking) ||
+    currentProcessedBooking.bookingId ||
+    currentProcessedBooking.id ||
+    currentProcessedBooking.orderId ||
+    ''
+  );
+
+  let original = list.find(b => computeRawKey(b) === targetKey);
+  if (!original) {
+    const idTarget = String(currentProcessedBooking.bookingId || currentProcessedBooking.id || currentProcessedBooking.orderId || '');
+    if (idTarget) original = list.find(b => String(b.bookingId || b.id || b.orderId || '') === idTarget);
+  }
+  if (!original) throw new Error('Original booking not found for rebook');
+
+  // Availability for the same room (exclusive checkout)
+  const roomNo = original.roomno || original.roomNo;
+  const available = isRoomAvailableInList(roomNo, newCi, newCo, list); // no excludeKey since it’s a new booking
+  if (!available) throw new Error('Selected dates are not available for this room');
+
+  // Compute totals
+  const nights = diffNights(newCi, newCo);
+  const ppnFromField = Number(original.pricePerNight || 0);
+  const ppnFallback = Number(original.totalAmount || 0) / Math.max(1, Number(original.nights || 1));
+  const pricePerNight = Number.isFinite(ppnFromField) && ppnFromField > 0 ? ppnFromField : Math.round(ppnFallback) || 0;
+  const totalAmount = pricePerNight * nights;
+
+  // User details
+  const cu = getCurrentUser();
+  const userBlock = cu
+    ? { firstName: cu.name || original.firstName, lastName: original.lastName, email: cu.email || original.email, mobile: cu.mobile || original.mobile, userId: String(cu.id || original.userId || '') }
+    : { firstName: original.firstName, lastName: original.lastName, email: original.email, mobile: original.mobile, userId: String(original.userId || getUserProfileFallback().userId || '') };
+
+  // Build a new booking id
+  const baseId = String(original.bookingId || original.id || original.orderId || `BK${Date.now().toString().slice(-6)}`);
+  const newBookingId = `${baseId}-RB`;
+
+  const newEntry = {
+    ...original,
+    ...userBlock,
+    // identifiers for the new row
+    bookingId: newBookingId,
+    id: newBookingId,
+
+    // new dates
+    checkin: newCi,
+    checkout: newCo,
+    checkIn: newCi,
+    checkOut: newCo,
+
+    // amounts
+    nights,
+    pricePerNight,
+    totalAmount,
+
+    // lineage
+    rebookOf: baseId,
+
+    // flags and status
+    cancel: false,
+    rescheduled: false,
+    reschedule: false,
+    status: 'confirmed',
+
+    // timestamps
+    bookingDate: new Date().toISOString()
+  };
+
+  const updatedDoc = { id: '3', bookings: [...list, newEntry] };
+  const putRes = await fetch('https://68c8b85aceef5a150f622643.mockapi.io/admin/3', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updatedDoc)
+  });
+  if (!putRes.ok) throw new Error(`PUT failed: ${putRes.status}`);
+
+  Bookings_Data = updatedDoc.bookings.slice();
+  return newEntry;
+}
+
+    function getBookingActions(booking) {
+  const today = new Date();
+  const ci = new Date(booking.date);
+  const days = Math.ceil((ci - today) / (1000 * 60 * 60 * 24));
+
+  // Only rebook in Cancelled tab
+  if (booking.status === 'cancelled') {
+    return [
+      {
+        type: 'rebook',
+        label: 'Book Again',
+        icon: 'fas fa-redo',
+        class: 'text-green-600 hover:text-green-700 hover:bg-green-50'
+      }
+    ];
+  }
+
+  const acts = [];
+  // Details for active bookings
+  acts.push({
+    type:'details',
+    label:'View Details',
+    icon:'fas fa-eye',
+    class:'text-blue-600 hover:text-blue-700 hover:bg-blue-50'
+  });
+
+  if (booking.status === 'upcoming') {
+    acts.push({
+      type:'query',
+      label:'User Query',
+      icon:'fas fa-question-circle',
+      class:'text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50'
+    });
+    if (days > 1) {
+      acts.push({
+        type:'cancel',
+        label:'Cancel Booking',
+        icon:'fas fa-times-circle',
+        class:'text-red-600 hover:text-red-700 hover:bg-red-50'
+      });
+    }
+    if (!booking.rescheduled && days > 2) {
+      acts.push({
+        type:'reschedule',
+        label:'Reschedule',
+        icon:'fas fa-calendar-alt',
+        class:'text-orange-600 hover:text-orange-700 hover:bg-orange-50'
+      });
+    }
+  } else if (booking.status === 'ongoing') {
+    acts.push({
+      type:'query',
+      label:'User Query',
+      icon:'fas fa-question-circle',
+      class:'text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50'
+    });
+  } else if (booking.status === 'completed') {
+    acts.push({
+      type:'review',
+      label:'Rate & Review',
+      icon:'fas fa-star',
+      class:'text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50'
+    });
+    acts.push({
+      type:'rebook',
+      label:'Book Again',
+      icon:'fas fa-redo',
+      class:'text-green-600 hover:text-green-700 hover:bg-green-50'
+    });
+  }
+
+  return acts;
+}
+
+
+
+    function generateBookingCard(b) {
+      const actions = getBookingActions(b);
+      let statusClass = 'status-upcoming', statusIcon = 'fas fa-clock', statusText = 'Upcoming';
+      if (b.status === 'ongoing') { statusClass='status-ongoing'; statusIcon='fas fa-play'; statusText='Ongoing'; }
+      else if (b.status === 'completed') { statusClass='status-completed'; statusIcon='fas fa-check-circle'; statusText='Completed'; }
+      else if (b.status === 'cancelled') { statusClass='status-cancelled'; statusIcon='fas fa-times-circle'; statusText='Cancelled'; }
+
+      return `
+        <div class="booking-card glass-card rounded-3xl overflow-hidden smooth-hover" data-status="${b.status}">
+          <div class="relative h-48">
+            <img src="${b.image}" alt="${b.categoryType}" class="w-full h-full object-cover">
+            <div class="absolute top-4 right-4">
+              <span class="inline-flex items-center gap-2 px-3 py-1 text-sm font-medium rounded-full ${statusClass}">
+                <i class="${statusIcon}"></i>${statusText}
+              </span>
+            </div>
+            <div class="absolute bottom-4 left-4 text-white">
+              <div class="text-2xl font-bold">₹${b.price}</div>
+              <div class="text-sm opacity-90 font-semibold">${b.nights} nights</div>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="mb-4">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xl font-semibold text-gray-800">${b.categoryType}</h3>
+                <span class="text-sm text-gray-500">Room ${b.roomNo}</span>
+              </div>
+              <p class="text-sm text-gray-600">Booking #${b.bookingId}</p>
+            </div>
+            <div class="space-y-3 mb-6">
+              <div class="flex items-center gap-3 text-sm">
+                <i class="fas fa-user w-4 text-gray-400"></i>
+                <span class="text-gray-600">Guest:</span>
+                <span class="font-medium text-gray-800">${b.userName}</span>
+              </div>
+              <div class="flex items-center gap-3 text-sm">
+                <i class="fas fa-calendar w-4 text-gray-400"></i>
+                <span class="text-gray-600">Check-in:</span>
+                <span class="font-medium text-gray-800">${new Date(b.date).toLocaleDateString()}</span>
+              </div>
+              <div class="flex items-center gap-3 text-sm">
+                <i class="fas fa-calendar-check w-4 text-gray-400"></i>
+                <span class="text-gray-600">Check-out:</span>
+                <span class="font-medium text-gray-800">${new Date(b.checkOutDate).toLocaleDateString()}</span>
+              </div>
+            </div>
+            ${actions.length ? `<div class="flex flex-wrap gap-2 border-t border-gray-100 pt-4">
+              ${actions.map(a => `
+                <button onclick="handleBookingAction('${a.type}', '${b.id}')" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition ${a.class}">
+                  <i class="${a.icon}"></i>${a.label}
+                </button>`).join('')}
+            </div>` : ''}
+          </div>
+        </div>`;
+    }
+
+    // Pagination controls
+    function renderPaginationControls(totalItems) {
+      const toolbar = document.getElementById('paginationToolbar');
+      const pageNumbers = document.getElementById('pageNumbers');
+      const prevBtn = document.getElementById('prevPageBtn');
+      const nextBtn = document.getElementById('nextPageBtn');
+      const pageSizeSelect = document.getElementById('pageSizeSelect');
+      const pageStatus = document.getElementById('pageStatus');
+      if (!toolbar || !pageNumbers || !prevBtn || !nextBtn || !pageSizeSelect || !pageStatus) return;
+
+      if (totalItems === 0) { toolbar.classList.add('hidden'); return; }
+      toolbar.classList.remove('hidden');
+
+      const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+      currentPage = Math.min(Math.max(1, currentPage), totalPages);
+      pageSizeSelect.value = String(pageSize);
+
+      const startIdx = totalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+      const endIdx = Math.min(currentPage * pageSize, totalItems);
+      pageStatus.textContent = `Showing ${startIdx}–${endIdx} of ${totalItems}`;
+
+      prevBtn.disabled = currentPage <= 1;
+      nextBtn.disabled = currentPage >= totalPages;
+
+      const windowSize = 5;
+      let startPage = Math.max(1, currentPage - Math.floor(windowSize / 2));
+      let endPage = startPage + windowSize - 1;
+      if (endPage > totalPages) { endPage = totalPages; startPage = Math.max(1, endPage - windowSize + 1); }
+
+      const btnBase = "min-w-9 h-9 px-3 rounded-lg border text-sm";
+      const inactive = "border-gray-300 text-gray-700 hover:bg-gray-50";
+      const active = "border-transparent bg-[#EFB85A] text-white";
+      let html = '';
+
+      if (startPage > 1) {
+        html += `<button data-page="1" class="${btnBase} ${inactive}">1</button>`;
+        if (startPage > 2) html += `<span class="px-2 text-gray-400">…</span>`;
+      }
+      for (let p = startPage; p <= endPage; p++) {
+        const isActive = p === currentPage;
+        html += `<button data-page="${p}" class="${btnBase} ${isActive ? active : inactive}">${p}</button>`;
+      }
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) html += `<span class="px-2 text-gray-400">…</span>`;
+        html += `<button data-page="${totalPages}" class="${btnBase} ${inactive}">${totalPages}</button>`;
+      }
+
+      pageNumbers.innerHTML = html;
+
+      pageNumbers.querySelectorAll('button[data-page]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const p = parseInt(btn.getAttribute('data-page'), 10);
+          if (!Number.isNaN(p) && p !== currentPage) { currentPage = p; renderBookings(); }
+        });
+      });
+
+      prevBtn.onclick = () => { if (currentPage > 1) { currentPage -= 1; renderBookings(); } };
+      nextBtn.onclick = () => {
+        const totalPagesNow = Math.max(1, Math.ceil(totalItems / pageSize));
+        if (currentPage < totalPagesNow) { currentPage += 1; renderBookings(); }
+      };
+      pageSizeSelect.onchange = (e) => {
+        const val = parseInt(e.target.value, 10);
+        if (!Number.isNaN(val) && val > 0) { pageSize = val; currentPage = 1; renderBookings(); }
+      };
+    }
+
+    async function renderBookings() {
+      const cont = document.getElementById('bookingsContainer');
+      const empty = document.getElementById('emptyState');
+
+      cont.innerHTML = Array(3).fill().map(() => `
+        <div class="glass-card rounded-3xl overflow-hidden">
+          <div class="skeleton h-48"></div>
+          <div class="p-6 space-y-4">
+            <div class="skeleton h-6 w-3/4"></div>
+            <div class="skeleton h-4 w-1/2"></div>
+            <div class="skeleton h-4 w-full"></div>
+            <div class="skeleton h-10 w-full"></div>
+          </div>
+        </div>
+      `).join('');
+
+      const processed = processBookingsWithRoomImages();
+      let filtered = processed;
+      if (currentFilter !== 'all') filtered = processed.filter(b => b.status === currentFilter);
+
+      const totalItems = filtered.length;
+
+      if (!totalItems) {
+        cont.innerHTML = '';
+        empty.classList.remove('hidden');
+        renderPaginationControls(0);
+        return;
+      }
+
+      const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+      currentPage = Math.min(Math.max(1, currentPage), totalPages);
+      const start = (currentPage - 1) * pageSize;
+      const end = start + pageSize;
+      const pageItems = filtered.slice(start, end);
+
+      empty.classList.add('hidden');
+      cont.innerHTML = pageItems.map(generateBookingCard).join('');
+
+      renderPaginationControls(totalItems);
+    }
+
+    function setupFilters() {
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.remove('gradient-bg', 'text-white', 'shadow-lg');
+            b.classList.add('text-gray-600', 'hover:bg-white/50');
+          });
+          btn.classList.add('gradient-bg', 'text-white', 'shadow-lg');
+          btn.classList.remove('text-gray-600', 'hover:bg-white/50');
+          currentFilter = btn.dataset.status;
+          currentPage = 1;
+          renderBookings();
+        });
+      });
+    }
+
+    function setupStarRating() {
+      const starContainer = document.getElementById('starRating');
+      if (!starContainer) return;
+      document.querySelectorAll('#starRating i').forEach((star, idx) => {
+        star.addEventListener('click', () => { selectedRating = idx + 1; updateStars('#starRating', selectedRating); });
+        star.addEventListener('mouseover', () => updateStars('#starRating', idx + 1, true));
+      });
+      starContainer.addEventListener('mouseleave', () => updateStars('#starRating', selectedRating));
+    }
+
+    function updateStars(sel, r, hover = false) {
+      document.querySelectorAll(`${sel} i`).forEach((s, idx) => {
+        s.className = idx < r
+          ? `fas fa-star ${sel === '#starRating' ? 'text-3xl' : 'text-lg'} cursor-pointer text-yellow-400 transition`
+          : `fas fa-star ${sel === '#starRating' ? 'text-3xl' : 'text-lg'} cursor-pointer ${hover ? 'text-yellow-200' : 'text-gray-300'} transition`;
+      });
+    }
+
+    // ===== PDF: Helpers & Generator =====
+    // 1) Replace the previous formatter with this
+function formatINR(amount, withSymbol = true) {
+  const num = Number(amount) || 0;
+  // Use plain number formatting (no currency sign) to avoid special spaces
+  const formatted = new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(num);
+  // Prefix with ASCII 'INR ' instead of ₹ and remove non-breaking spaces just in case
+  const clean = formatted.replace(/\u202F|\u00A0/g, ' ');
+  return withSymbol ? `INR ${clean}` : clean;
+}
+
+
+
+
+    function generateReceiptPDF(b) {
+      try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+        const pageWidth = doc.internal.pageSize.getWidth();
+
+        // Header bar
+        doc.setFillColor(242, 101, 56); // #F26538
+        doc.rect(0, 0, pageWidth, 80, 'F');
+
+        // Header text
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(20);
+        doc.text('Zyra Hotel', 40, 36);
+        doc.setFontSize(12);
+        doc.text('Booking Receipt', 40, 58);
+        const todayStr = new Date().toLocaleDateString();
+        doc.text(`Date: ${todayStr}`, pageWidth - 40, 36, { align: 'right' });
+
+        // Body base styles
+        doc.setTextColor(33, 37, 41);
+        doc.setFontSize(12);
+
+        // Booking Details table
+        const details = [
+          ['Booking ID', String(b.bookingId || b.id || '-')],
+          ['Guest', String(b.userName || '-')],
+          ['Phone', String(b.phoneNo || 'N/A')],
+          ['Room Type', String(b.categoryType || '-')],
+          ['Room No', String(b.roomNo || '-')],
+          ['Check-in', new Date(b.date).toLocaleDateString()],
+          ['Check-out', new Date(b.checkOutDate).toLocaleDateString()],
+          ['Nights', String(b.nights || '-')],
+          ['Status', (b.status || '-').charAt(0).toUpperCase() + (b.status || '-').slice(1)]
+        ];
+
+        doc.autoTable({
+          startY: 110,
+          head: [['Detail', 'Value']],
+          body: details,
+          styles: { fontSize: 10, cellPadding: 8, lineColor: [230,230,230], lineWidth: 0.5 },
+          headStyles: { fillColor: [239,184,90], textColor: 255, halign: 'left' }, // #EFB85A
+          columnStyles: { 0: { cellWidth: 140 } }
+        });
+
+        // Payment Summary
+        const summaryY = doc.lastAutoTable.finalY + 20;
+        const totalAmount = Number(b.price) || 0;
+
+        // 2) In generateReceiptPDF, Payment Summary section:
+        doc.autoTable({
+          startY: summaryY,
+          head: [['Description', 'Amount']],
+          body: [
+            ['Accommodation', formatINR(totalAmount, true)],
+            ['Total Paid', formatINR(totalAmount, true)]
+          ],
+          styles: { font: 'helvetica', fontSize: 10, cellPadding: 8, lineColor: [230,230,230], lineWidth: 0.5 },
+          headStyles: { fillColor: [239,184,90], textColor: 255, halign: 'left' },
+          columnStyles: { 0: { cellWidth: pageWidth - 200 }, 1: { halign: 'right' } },
+          didParseCell: (data) => {
+            if (data.section === 'body' && data.row.index === 1) data.cell.styles.fontStyle = 'bold';
+          }
+        });
+
+        // Footer note
+        const finalY = doc.lastAutoTable.finalY + 30;
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text('Thank you for choosing Zyra Hotel.', 40, finalY);
+        doc.text('For support: feedback@gmail.com', 40, finalY + 16);
+
+        const fileName = `Zyra_Receipt_${b.bookingId || b.id || 'receipt'}.pdf`;
+        doc.save(fileName);
+      } catch (err) {
+        console.error('PDF generation error:', err);
+        alert('Could not generate receipt. Please try again.');
+      }
+    }
+    // ===== End PDF =====
+
+    // Modal
+    function openBookingModal() {
+      const modal = document.getElementById('actionModal');
+      if (!modal) return false;
+      modal.classList.remove('modal-hidden');
+      modal.classList.add('modal-visible');
+      setupModalEvents();
+      return true;
+    }
+
+    function closeBookingModal() {
+      const modal = document.getElementById('actionModal');
+      if (!modal) return false;
+      modal.classList.remove('modal-visible');
+      modal.classList.add('modal-hidden');
+      selectedRating = 0;
+      currentBookingId = null;
+      currentAction = null;
+      return true;
+    }
+
+    function setupModalEvents() {
+      const closeBtn = document.getElementById('closeBtn');
+      const cancelBtn = document.getElementById('cancelBtn');
+      const modal = document.getElementById('actionModal');
+
+      if (closeBtn) {
+        closeBtn.replaceWith(closeBtn.cloneNode(true));
+        const newCloseBtn = document.getElementById('closeBtn');
+        newCloseBtn.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); closeBookingModal(); });
+      }
+
+      if (cancelBtn) {
+        cancelBtn.replaceWith(cancelBtn.cloneNode(true));
+        const newCancelBtn = document.getElementById('cancelBtn');
+        newCancelBtn.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); closeBookingModal(); });
+      }
+
+      if (modal) {
+        modal.addEventListener('click', function(e) { if (e.target === modal) closeBookingModal(); });
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('actionModal');
+        if (modal && modal.classList.contains('modal-visible')) closeBookingModal();
+      }
+    });
+
+    async function confirmAction() {
+  const booking = processedBookings.find(x => x.id === currentBookingId || x.bookingId === currentBookingId);
+
+  try {
+    switch (currentAction) {
+      case 'details':
+        if (!booking) { alert('Booking not found. Please refresh and try again.'); break; }
+        generateReceiptPDF(booking);
+        break;
+
+        case 'query': {
+        const confirmBtn = document.getElementById('confirmBtn');
+        const subject = document.getElementById('querySubject')?.value?.trim();
+        const message = document.getElementById('queryText')?.value?.trim();
+        if (!message) { alert('Please enter your query'); return; }
+        if (confirmBtn) { confirmBtn.disabled = true; confirmBtn.textContent = 'Submitting...'; }
+        await saveUserQuery(booking || {}, subject, message);
+        alert('Your query has been submitted to support.');
+        break;
+      }
+
+
+       // Replace only the 'reschedule' case
+case 'reschedule': {
+  const nd = document.getElementById('newDate')?.value;
+  const nc = document.getElementById('newCheckOut')?.value;
+  if (!nd || !nc) { alert('Please select both dates'); return; }
+  if (new Date(nd) >= new Date(nc)) { alert('Check-out date must be after check-in date'); return; }
+
+  const btn = document.getElementById('confirmBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Checking availability...'; }
+
+  const booking = processedBookings.find(x => x.id === currentBookingId || x.bookingId === currentBookingId);
+  try {
+    const newRow = await rescheduleViaApi(booking, nd, nc);
+    alert('Booking rescheduled successfully!');
+  } catch (err) {
+    console.error(err);
+    alert(err.message || 'Could not reschedule. Please try different dates.');
+  } finally {
+    closeBookingModal();
+    renderBookings();
+  }
+  break;
+}
+  case 'cancel': {
+  const reason = document.getElementById('cancelReason')?.value;
+  if (!reason) { alert('Please select a cancellation reason'); return; }
+
+  if (!booking) { alert('Booking not found'); return; }
+
+  // Persist: mark cancel: true on the same record (status: 'cancelled' for UI)
+  cancelBookingInPlace(booking, reason)
+    .then(() => {
+      alert('Booking cancelled successfully. Refund will be processed in 3-5 business days.');
+      try { closeBookingModal && closeBookingModal(); } catch (_) {}
+      try { renderBookings && renderBookings(); } catch (_) {}
+    })
+    .catch(err => {
+      console.error(err);
+      alert('Failed to cancel booking. Please try again.');
+    });
+  break;
+}
+
+case 'rebook': {
+  const ci = document.getElementById('rebookCheckIn')?.value;
+  const co = document.getElementById('rebookCheckOut')?.value;
+  if (!ci || !co) { alert('Please select both dates'); return; }
+  if (new Date(ci) >= new Date(co)) { alert('Check-out date must be after check-in date'); return; }
+  if (!booking) { alert('Booking not found'); return; }
+
+  // Create a brand-new booking after availability validation
+  rebookViaApi(booking, ci, co)
+    .then(() => {
+      alert('Rebooked successfully.');
+      try { closeBookingModal && closeBookingModal(); } catch (_) {}
+      try { renderBookings && renderBookings(); } catch (_) {}
+    })
+    .catch(err => {
+      console.error(err);
+      alert(err?.message || 'Failed to rebook. Please try different dates.');
+    });
+  break;
+}
+
+
+        case 'review': {
+          const booking = processedBookings.find(x => x.id === currentBookingId || x.bookingId === currentBookingId);
+          if (!selectedRating) { alert('Please provide a rating'); return; }
+          const comment = document.getElementById('reviewComment')?.value?.trim() || '';
+
+          const btn = document.getElementById('confirmBtn');
+          if (btn) { btn.disabled = true; btn.textContent = 'Submitting...'; }
+
+          await saveRatingReview(booking || {}, selectedRating, comment);
+          alert('Thank you for the review!');
+          break;
+        }
+
+        
+    }
+
+      closeBookingModal();
+      renderBookings();
+        } catch (err) {
+        console.error('Query save failed:', err);
+        alert('Could not submit query. Please try again.');
+      } finally {
+        closeBookingModal();
+        renderBookings();
+      }
+    }
+
+    function getCurrentUser() {
+  try {
+    const raw = localStorage.getItem('currentUser');
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function getUserProfile(fallback = {}) {
+  const cu = getCurrentUser();
+  if (cu && typeof cu === 'object') {
+    return {
+      userId: String(cu.id ?? fallback.userId ?? ''),
+      userName: cu.name || fallback.userName || '',
+      email: cu.email || fallback.email || '',
+      phone: cu.mobile || fallback.phone || fallback.phoneNo || '',
+      avatar: cu.avatar || null,
+      loggedIn: !!cu.loggedIn
+    };
+  }
+  // Fallback to legacy keys if currentUser not present
+  return {
+    userId: localStorage.getItem('UserId') || localStorage.getItem('user_id') || fallback.userId || '',
+    userName: localStorage.getItem('UserName') || fallback.userName || '',
+    email: localStorage.getItem('UserEmail') || fallback.email || '',
+    phone: localStorage.getItem('UserPhone') || fallback.phone || fallback.phoneNo || '',
+    avatar: null,
+    loggedIn: false
+  };
+}
+
+
+// Date helpers and overlap logic
+function normDateStr(d) { const x = new Date(d); x.setHours(0,0,0,0); return isNaN(x) ? String(d || '') : x.toISOString().split('T')[0]; }
+
+function rangesOverlap(ciA, coA, ciB, coB) {
+  // Exclusive checkout logic: [checkin, checkout)
+  const aS = new Date(normDateStr(ciA)), aE = new Date(normDateStr(coA));
+  const bS = new Date(normDateStr(ciB)), bE = new Date(normDateStr(coB));
+  return aS < bE && bS < aE;
+}
+
+function diffNights(ci, co) {
+  const aS = new Date(normDateStr(ci)), aE = new Date(normDateStr(co));
+  return Math.max(1, Math.ceil((aE - aS) / (1000 * 60 * 60 * 24)));
+}
+
+// Stable key to find raw backend row even if bookingId/id is missing
+function computeRawKey(obj) {
+  const uid  = String(obj.userId ?? obj.user_id ?? '');
+  const room = String(obj.roomno ?? obj.roomNo ?? '');
+  const ci   = normDateStr(obj.checkin ?? obj.checkIn ?? obj.date);
+  const co   = normDateStr(obj.checkout ?? obj.checkOut ?? obj.checkOutDate);
+  const amt  = String(obj.totalAmount ?? obj.price ?? obj.pricePerNight ?? '');
+  const bid  = obj.bookingId ?? obj.id ?? obj.orderId;
+  return bid ? String(bid) : `${uid}|${room}|${ci}|${co}|${amt}`;
+}
+
+// Current user from localStorage
+function getCurrentUser() {
+  try { const raw = localStorage.getItem('currentUser'); return raw ? JSON.parse(raw) : null; } catch { return null; }
+}
+
+function getUserProfileFallback() {
+  // Fallback if currentUser not present
+  return {
+    userId: localStorage.getItem('UserId') || localStorage.getItem('user_id') || '',
+    userName: localStorage.getItem('UserName') || '',
+    email: localStorage.getItem('UserEmail') || '',
+    mobile: localStorage.getItem('UserPhone') || ''
+  };
+}
+
+function isRoomAvailableInList(roomNo, newCi, newCo, list, excludeKey) {
+  const roomKey = String(roomNo || '').trim();
+  return !list.some(b => {
+    const key = computeRawKey(b);
+    if (key === excludeKey) return false;            // ignore the original row
+    if ((b.status || '').toLowerCase() === 'cancelled') return false; // ignore cancelled
+    const sameRoom = String(b.roomno || b.roomNo || '').trim() === roomKey;
+    if (!sameRoom) return false;
+    return rangesOverlap(newCi, newCo, b.checkin || b.checkIn, b.checkout || b.checkOut);
+  });
+}
+
+
+async function rescheduleViaApi(currentProcessedBooking, newCi, newCo) {
+  // 1) Refresh latest data via existing loader
+  await fetchBookingsData(); // populates global Bookings_Data
+  const list = Array.isArray(Bookings_Data) ? Bookings_Data.slice() : [];
+
+  // 2) Find the original backend row robustly
+  const targetKey =
+    String(
+      currentProcessedBooking.rawKey ||
+      computeRawKey(currentProcessedBooking) ||
+      currentProcessedBooking.bookingId ||
+      currentProcessedBooking.id ||
+      currentProcessedBooking.orderId ||
+      ''
+    );
+
+  let idx = list.findIndex(b => computeRawKey(b) === targetKey);
+  if (idx === -1) {
+    // Fallback by identifiers
+    const idTarget = String(
+      currentProcessedBooking.bookingId ||
+      currentProcessedBooking.id ||
+      currentProcessedBooking.orderId ||
+      ''
+    );
+    if (idTarget) {
+      idx = list.findIndex(b =>
+        String(b.bookingId || b.id || b.orderId || '') === idTarget
+      );
+    }
+  }
+  if (idx === -1) {
+    // Final fallback by fields
+    idx = list.findIndex(b =>
+      String(b.userId) === String(currentProcessedBooking.userId || getCurrentUser()?.id || getUserProfileFallback().userId) &&
+      String(b.roomno || b.roomNo) === String(currentProcessedBooking.roomNo) &&
+      normDateStr(b.checkin || b.checkIn) === normDateStr(currentProcessedBooking.date) &&
+      normDateStr(b.checkout || b.checkOut) === normDateStr(currentProcessedBooking.checkOutDate)
+    );
+  }
+  if (idx === -1) throw new Error('Original booking not found in source');
+
+  const original = list[idx];
+  if (original.rescheduled === true || original.reschedule === 'done' || original.reschedule === true) {
+    throw new Error('This booking has already been rescheduled once');
+  }
+
+  // 3) Availability for the same room (exclusive checkout)
+  const roomNo = original.roomno || original.roomNo;
+  const excludeKey = computeRawKey(original);
+  const ok = isRoomAvailableInList(roomNo, newCi, newCo, list, excludeKey);
+  if (!ok) throw new Error('Selected dates are not available for this room');
+
+  // 4) Compute derived totals
+  const nights = diffNights(newCi, newCo);
+  const ppnFromField = Number(original.pricePerNight || 0);
+  const ppnFallback = Number(original.totalAmount || 0) / Math.max(1, Number(original.nights || 1));
+  const pricePerNight = Number.isFinite(ppnFromField) && ppnFromField > 0 ? ppnFromField : Math.round(ppnFallback) || 0;
+  const totalAmount = pricePerNight * nights;
+
+  // 5) Build user info from currentUser (kept in sync)
+  const cu = getCurrentUser();
+  const userBlock = cu
+    ? {
+        firstName: cu.name || original.firstName,
+        lastName: original.lastName,
+        email: cu.email || original.email,
+        mobile: cu.mobile || original.mobile,
+        userId: String(cu.id || original.userId || '')
+      }
+    : {
+        firstName: original.firstName,
+        lastName: original.lastName,
+        email: original.email,
+        mobile: original.mobile,
+        userId: String(original.userId || getUserProfileFallback().userId || '')
+      };
+
+  // 6) Update the original row in-place (NO new booking created)
+  const updatedOriginal = {
+    ...original,
+    ...userBlock,
+
+    // preserve prior dates for audit/history
+    previousCheckin: original.checkin ?? original.checkIn ?? null,
+    previousCheckout: original.checkout ?? original.checkOut ?? null,
+
+    // apply new dates (keep both casings for compatibility)
+    checkin: newCi,
+    checkout: newCo,
+    checkIn: newCi,
+    checkOut: newCo,
+
+    // recompute derived fields
+    nights,
+    pricePerNight,
+    totalAmount,
+
+    // mark rescheduled so UI disables further reschedules
+    rescheduled: true,
+    reschedule: true,        // if UI checks boolean flag
+    rescheduledAt: new Date().toISOString(),
+
+    // keep status sensible
+    status: original.status && original.status !== 'cancelled' ? original.status : 'confirmed',
+  };
+
+  // 7) Persist back without adding any new entries
+  const updatedList = list.slice();
+  updatedList[idx] = updatedOriginal;
+
+  const updatedDoc = { id: '3', bookings: updatedList };
+
+  const putRes = await fetch('https://68c8b85aceef5a150f622643.mockapi.io/admin/3', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updatedDoc),
+  });
+  if (!putRes.ok) throw new Error(`PUT failed: ${putRes.status}`);
+
+  // 8) Sync in-memory for UI and return the updated booking
+  Bookings_Data = updatedDoc.bookings.slice();
+  return updatedOriginal;
+}
+
+
+async function saveRatingReview(booking, rating, description) {
+  const url = 'https://68c8b85aceef5a150f622643.mockapi.io/admin/8';
+
+  // 1) Load existing record so we can append to the nested array
+  const getRes = await fetch(url, { method: 'GET' });
+  if (!getRes.ok) throw new Error(`GET ${getRes.status}`);
+  const data = await getRes.json();
+
+  // 2) Prepare array with hyphenated key
+  const key = 'ratings-reviews';
+  const list = Array.isArray(data[key]) ? data[key].slice() : [];
+
+  // 3) Create incremental id if numeric ids exist; else fallback to timestamp
+  const maxId = list.reduce((m, it) => {
+    const n = Number(it.id);
+    return Number.isFinite(n) ? Math.max(m, n) : m;
+  }, 0);
+  const newId = maxId ? maxId + 1 : Date.now();
+
+  // 4) Map fields from booking and current user
+  const profile = getUserProfile({
+    userId: booking?.userId || '',
+    userName: booking?.userName || ''
+  });
+
+  const nowISO = new Date().toISOString();
+  const todayStr = nowISO.slice(0, 10);
+
+  const entry = {
+    id: String(newId),
+    userId: String(profile.userId || ''),
+    userName: profile.userName || '',
+    roomType: booking?.categoryType || '',
+    roomNo: booking?.roomNo || '',
+    date: todayStr,
+    rating: Number(rating) || 0,
+    description: description || '',
+    status: 'published',
+    createdAt: nowISO,
+    read: false
+  };
+
+  // 5) Append and PUT back
+  const putBody = { ...data, [key]: [...list, entry] };
+  const putRes = await fetch(url, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(putBody)
+  });
+  if (!putRes.ok) throw new Error(`PUT ${putRes.status}`);
+  return entry;
+}
+
+async function saveUserQuery(booking, subject, description) {
+  const url = 'https://68c8b85aceef5a150f622643.mockapi.io/admin/9';
+  // 1) Load existing record so we can append to nested array
+  const getRes = await fetch(url, { method: 'GET' });
+  if (!getRes.ok) throw new Error(`GET ${getRes.status}`);
+  const data = await getRes.json();
+
+  const list = Array.isArray(data.userQueries) ? data.userQueries.slice() : [];
+  const maxId = list.reduce((m, it) => {
+    const n = Number(it.id);
+    return Number.isFinite(n) ? Math.max(m, n) : m;
+  }, 0);
+  const newId = maxId ? maxId + 1 : Date.now();
+
+  const profile = getUserProfile({
+    userId: booking?.userId || '',
+    userName: booking?.userName || '',
+    phoneNo: booking?.phoneNo || ''
+  });
+
+  const nowISO = new Date().toISOString();
+  const todayStr = nowISO.slice(0, 10);
+
+  const entry = {
+    id: String(newId),
+    userId: String(profile.userId || ''),
+    userName: profile.userName || '',
+    email: profile.email || '',
+    phone: profile.phone || '',
+    avatar: profile.avatar || null,
+    loggedIn: profile.loggedIn,
+    date: todayStr,
+    subject: subject || `Booking #${booking?.bookingId || booking?.id || ''} – ${booking?.categoryType || 'Room'}`,
+    description: description || '',
+    status: 'pending',
+    createdAt: nowISO,
+    read: false,
+    booking: {
+      bookingId: booking?.bookingId || booking?.id || '',
+      orderId: booking?.orderId || '',
+      roomNo: booking?.roomNo || '',
+      roomType: booking?.categoryType || '',
+      checkIn: booking?.date || '',
+      checkOut: booking?.checkOutDate || '',
+      amount: booking?.price ?? '',
+      status: booking?.status || ''
+    }
+  };
+
+  const putBody = { ...data, userQueries: [...list, entry] };
+  const putRes = await fetch(url, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(putBody)
+  });
+  if (!putRes.ok) throw new Error(`PUT ${putRes.status}`);
+  return entry;
+}
+
+
+    function handleBookingAction(action, bookingId) {
+      const b = processedBookings.find(x => x.id === bookingId || x.bookingId === bookingId);
+      if (!b) { alert('Booking not found. Please refresh the page and try again.'); return; }
+
+      currentBookingId = bookingId;
+      currentAction = action;
+
+      const title = document.getElementById('modalTitle');
+      const content = document.getElementById('modalContent');
+      const confirmBtn = document.getElementById('confirmBtn');
+
+      switch(action) {
+        case 'details':
+          title.innerHTML = '<i class="fas fa-eye mr-2"></i>Booking Details';
+          content.innerHTML = `
+            <div class="space-y-6">
+              <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
+                <div class="flex items-center gap-4 mb-4">
+                  <img src="${b.image}" alt="${b.categoryType}" class="w-16 h-16 rounded-xl object-cover">
+                  <div>
+                    <h4 class="font-semibold text-gray-800">${b.categoryType}</h4>
+                    <p class="text-sm text-gray-600">Room ${b.roomNo}</p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                  <div><span class="text-gray-500">Booking ID:</span><span class="font-medium text-gray-800 ml-2">${b.bookingId}</span></div>
+                  <div><span class="text-gray-500">Total Amount:</span><span class="font-medium text-gray-800 ml-2">₹${b.price}</span></div>
+                  <div><span class="text-gray-500">Guest:</span><span class="font-medium text-gray-800 ml-2">${b.userName}</span></div>
+                  <div><span class="text-gray-500">Phone:</span><span class="font-medium text-gray-800 ml-2">${b.phoneNo || 'N/A'}</span></div>
+                  <div><span class="text-gray-500">Check-in:</span><span class="font-medium text-gray-800 ml-2">${new Date(b.date).toLocaleDateString()}</span></div>
+                  <div><span class="text-gray-500">Check-out:</span><span class="font-medium text-gray-800 ml-2">${new Date(b.checkOutDate).toLocaleDateString()}</span></div>
+                </div>
+              </div>
+            </div>`;
+          confirmBtn.innerHTML = '<i class="fas fa-download mr-2"></i>Download Receipt';
+          confirmBtn.className = 'flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl font-medium cursor-pointer';
+          break;
+
+        case 'query':
+  title.innerHTML = '<i class="fas fa-question-circle mr-2"></i>Submit Query';
+  const subjDefault = `Booking #${b.bookingId} – ${b.categoryType}`;
+  content.innerHTML = `
+    <div class="space-y-6">
+      <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+        <h4 class="font-medium text-indigo-800 mb-2">Booking Information</h4>
+        <p class="text-sm text-indigo-600">${b.categoryType} - Room ${b.roomNo}</p>
+        <p class="text-sm text-indigo-600">Booking #${b.bookingId}</p>
+      </div>
+      <div class="grid grid-cols-1 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+          <input id="querySubject" type="text" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                 value="${subjDefault}" placeholder="Enter subject" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Your Query</label>
+          <textarea id="queryText" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="Please describe your query or concern..."></textarea>
+        </div>
+      </div>
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+        <p class="text-sm text-gray-600">
+          <i class="fas fa-info-circle mr-2"></i>
+          Our customer support team will respond to your query within 24 hours via email or phone.
+        </p>
+      </div>
+    </div>`;
+  confirmBtn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Submit Query';
+  confirmBtn.className = 'flex-1 px-6 py-3 bg-indigo-600 text-white rounded-xl font-medium cursor-pointer';
+  break;
+
+
+        case 'cancel':
+          title.innerHTML = '<i class="fas fa-times-circle mr-2"></i>Cancel Booking';
+          content.innerHTML = `
+            <div class="space-y-6">
+              <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                <h4 class="font-medium text-gray-800 mb-2">Booking Details</h4>
+                <p class="text-sm text-gray-600">${b.categoryType} - Room ${b.roomNo}</p>
+                <p class="text-sm text-gray-600">₹${b.price} for ${b.nights} nights</p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Reason for Cancellation</label>
+                <select id="cancelReason" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                  <option value="">Select a reason</option>
+                  <option value="change-plans">Change in travel plans</option>
+                  <option value="emergency">Emergency</option>
+                  <option value="better-deal">Found better deal elsewhere</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+                <div class="flex items-start gap-3">
+                  <i class="fas fa-exclamation-triangle text-red-500 mt-1"></i>
+                  <div>
+                    <h4 class="font-medium text-red-800 mb-2">Cancellation Policy</h4>
+                    <ul class="text-sm text-red-600 space-y-1">
+                      <li>• Free cancellation up to 24 hours before check-in</li>
+                      <li>• 50% charge within 24 hours</li>
+                      <li>• No refund for same-day cancellations</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>`;
+          confirmBtn.innerHTML = '<i class="fas fa-times-circle mr-2"></i>Confirm Cancellation';
+          confirmBtn.className = 'flex-1 px-6 py-3 bg-red-600 text-white rounded-xl font-medium cursor-pointer';
+          break;
+
+        case 'reschedule':
+          title.innerHTML = '<i class="fas fa-calendar-alt mr-2"></i>Reschedule Booking';
+          content.innerHTML = `
+            <div class="space-y-6">
+              <div class="bg-orange-50 border border-orange-200 rounded-xl p-4">
+                <h4 class="font-medium text-orange-800 mb-2">Current Booking</h4>
+                <p class="text-sm text-orange-600">${b.categoryType} - Room ${b.roomNo}</p>
+                <p class="text-sm text-orange-600">${new Date(b.date).toLocaleDateString()} to ${new Date(b.checkOutDate).toLocaleDateString()}</p>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">New Check-in Date</label>
+                  <input type="date" id="newDate" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500" min="${new Date().toISOString().split('T')[0]}">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">New Check-out Date</label>
+                  <input type="date" id="newCheckOut" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500" min="${new Date().toISOString().split('T')[0]}">
+                </div>
+              </div>
+            </div>`;
+          confirmBtn.innerHTML = '<i class="fas fa-calendar-alt mr-2"></i>Reschedule Booking';
+          confirmBtn.className = 'flex-1 px-6 py-3 bg-orange-600 text-white rounded-xl font-medium cursor-pointer';
+          break;
+
+        case 'review':
+          title.innerHTML = '<i class="fas fa-star mr-2"></i>Rate & Review';
+          content.innerHTML = `
+            <div class="space-y-6">
+              <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                <h4 class="font-medium text-yellow-800 mb-2">Your Experience</h4>
+                <p class="text-sm text-yellow-600">${b.categoryType} - Room ${b.roomNo}</p>
+                <p class="text-sm text-yellow-600">Stayed from ${new Date(b.date).toLocaleDateString()} to ${new Date(b.checkOutDate).toLocaleDateString()}</p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-3">Rate your stay</label>
+                <div id="starRating" class="flex gap-1 mb-6">
+                  ${Array(5).fill().map(() => '<i class="fas fa-star text-3xl cursor-pointer text-gray-300 transition"></i>').join('')}
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Share your experience</label>
+                <textarea id="reviewComment" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500" placeholder="Tell us about your stay..."></textarea>
+              </div>
+            </div>`;
+          confirmBtn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Submit Review';
+          confirmBtn.className = 'flex-1 px-6 py-3 bg-yellow-600 text-white rounded-xl font-medium cursor-pointer';
+          setTimeout(setupStarRating, 100);
+          break;
+
+        case 'rebook':
+          title.innerHTML = '<i class="fas fa-redo mr-2"></i>Book Again';
+          content.innerHTML = `
+            <div class="space-y-6">
+              <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+                <h4 class="font-medium text-green-800 mb-2">Previous Stay</h4>
+                <p class="text-sm text-green-600">${b.categoryType} - Room ${b.roomNo}</p>
+                <p class="text-sm text-green-600">₹${b.price} for ${b.nights} nights</p>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Check-in Date</label>
+                  <input type="date" id="rebookCheckIn" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500" min="${new Date().toISOString().split('T')[0]}">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Check-out Date</label>
+                  <input type="date" id="rebookCheckOut" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500" min="${new Date().toISOString().split('T')[0]}">
+                </div>
+              </div>
+            </div>`;
+          confirmBtn.innerHTML = '<i class="fas fa-redo mr-2"></i>Book Same Room';
+          confirmBtn.className = 'flex-1 px-6 py-3 bg-green-600 text-white rounded-xl font-medium cursor-pointer';
+          break;
+      }
+
+      if (confirmBtn) {
+        confirmBtn.replaceWith(confirmBtn.cloneNode(true));
+        const newConfirmBtn = document.getElementById('confirmBtn');
+        newConfirmBtn.addEventListener('click', function() { confirmAction(); });
+      }
+
+      openBookingModal();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      fetchRoomsData().then(() => {
+        fetchBookingsData().then(() => {
+          setupFilters();
+          renderBookings();
+        });
+      });
+    });
+  </script>
+
+  <!-- Auth -->
+  <script src="/src/auth.js"></script>
+
+  <!-- PDF Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.1"></script>
+</body>
+</html>

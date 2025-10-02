@@ -522,27 +522,4 @@ function clearFilters() {
   hideFiltersDropdown();
 }
 
-// Profile dropdown functionality
-function toggleProfileDropdown() {
-  const dropdown = document.getElementById('profileDropdown');
-  const arrow = document.getElementById('dropdownArrow');
-  
-  if (dropdown.classList.contains('hidden')) {
-    dropdown.classList.remove('hidden');
-    arrow.style.transform = 'rotate(180deg)';
-  } else {
-    dropdown.classList.add('hidden');
-    arrow.style.transform = 'rotate(0deg)';
-  }
-}
 
-// Close dropdown when clicking outside
-document.addEventListener('click', function(e) {
-  const profileDropdown = document.getElementById('profileDropdown');
-  const profileSection = e.target.closest('.p-4.border-t');
-  
-  if (profileDropdown && !profileSection && !profileDropdown.classList.contains('hidden')) {
-    profileDropdown.classList.add('hidden');
-    document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
-  }
-});

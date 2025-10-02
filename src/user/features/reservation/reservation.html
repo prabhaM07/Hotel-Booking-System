@@ -1,28 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zyra Hotel - Bookings</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <!-- Google Fonts: Montserrat -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      font-family: 'Montserrat', sans-serif;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Zyra Hotel Bookings</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<!-- Google Fonts: Montserrat -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* {
+font-family: 'Montserrat', sans-serif;
+}
+/* Custom styles for disabled dates */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+.date-unavailable {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+.links:hover {
+    color: #EFB85A;
+   
+  }
+  .links{
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+</style>
 </head>
 <body class="m-0 p-0">
-  <!-- Header -->
+<!-- Header -->
   <header class="fixed top-0 w-full z-50 shadow-md bg-white">
     <nav class="flex h-16 items-center justify-between px-6">
       <!-- Logo -->
       <div>
-        <img src="/src/assets/logo.png" alt="Zyra Hotel Logo" class="h-10 w-auto" />
+        <img src="/src/assets/logo.png" alt="Zyra Hotel Booking" class="h-10 w-auto" />
       </div>
       
       <div class="flex items-center space-x-4">
@@ -30,34 +46,37 @@
         <div class="flex items-center space-x-4">
           <ul class="hidden md:flex space-x-6 font-semibold text-[#413030]">
             <li>
-              <span class="cursor-pointer relative inline-block group">
-                <a href="#home" class="hover:text-yellow-400 transition">Home</a>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="/src/index.html" class="hover:text-yellow-400 transition">Home</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
               </span>
             </li>
             <li>
               <span class="cursor-pointer relative inline-block group">
-                <a href="#rooms" class="hover:text-yellow-400 transition">Rooms</a>
+                <a href="/src/user/features/rooms/allRooms.html" class="hover:text-yellow-400 transition">Rooms</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
               </span>
             </li>
             <li>
-              <span class="cursor-pointer relative inline-block group">
-                <a href="#amenities" class="hover:text-yellow-400 transition">Facilities</a>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="/src/user/features/facilities/facilities.html" class="hover:text-yellow-400 transition">Facilities</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
               </span>
             </li>
             <li>
-              <span class="cursor-pointer relative inline-block group">
-                <a href="#contact" class="hover:text-yellow-400 transition">Contact Us</a>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="/src/user/features/contact/contactUs.html" class="hover:text-yellow-400 transition">Contact Us</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
               </span>
             </li>
           </ul>
-          <button class="rounded-full px-4 py-3 text-white text-sm font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
+
+          <button id = "homeBookNow-btn" onclick = "redirectRoom()" class="rounded-full px-4 py-3 text-white text-sm font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
             Book Now
           </button>
+       
         </div>
+
         <!-- Mobile Icons -->
         <div id="mobileIcons" class="flex relative h-full items-center cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
@@ -67,7 +86,7 @@
           </svg>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
               fill="#C2C6CC" class="w-8 h-8">
-            <path fill-rule="evenodd" 
+            <path fill-rule="evenodd"
                   d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" 
                   clip-rule="evenodd"/>
           </svg>
@@ -76,263 +95,1116 @@
     </nav>
   </header>
 
-  <div id="mainContent" class="min-h-screen transition-all duration-300 pt-16">
-    <main id="mainContentArea" class="w-full p-4 sm:p-6 lg:p-8 mt-4 sm:mt-6 lg:mt-0">
-      <!-- Breadcrumb Navigation -->
-      <nav class="mb-6 text-gray-500 text-sm ml-10">
-        <a href="#" class="hover:text-[#F26538] transition">Home</a> 
-        <span class="mx-2">></span>
-        <a href="#" class="hover:text-[#F26538] transition">Rooms</a>
-        <span class="mx-2">></span>
-        <span class="text-gray-700">Confirm</span>
-      </nav>
+<div id="mainContent" class="min-h-screen transition-all duration-300 pt-16">
+<main id="mainContentArea" class="w-full p-4 sm:p-6 lg:p-8 mt-2 sm:mt-4 lg:mt-0">
 
-      <!-- Page Title -->
-      <div class="mb-8 ml-10">
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">Confirm Booking</h1>
-      </div>
 
-      <!-- Main Content Grid -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 px-10">
-        
-        <!-- Room Image Section -->
-        <div class="bg-gray-200 rounded-lg h-200 flex items-center justify-center relative overflow-hidden">
-          <!-- Placeholder for room image -->
-          <div class="absolute inset-0 bg-gray-200 flex items-center justify-center">
-            <div class="text-center text-gray-400">
-              <i class="fas fa-search text-6xl mb-4 opacity-50"></i>
-              <p class="text-lg">Room Image</p>
-            </div>
-          </div>
-        </div>
+<!-- Page Title -->
+<div class="mb-6 sm:mb-8 ml-2 sm:ml-6 lg:ml-10">
+<h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Confirm Booking</h1>
+<div id="roomInfo" class="text-sm text-gray-600"></div>
+</div>
 
-        <!-- Booking Form Section -->
-        <div class="bg-white">
-          <h2 class="text-2xl font-semibold text-gray-800 mb-6">Booking Details</h2>
-          
-          <form class="space-y-6">
-            <!-- Name Field -->
-            <div>
-              <label for="name" class="block text-sm font-semibold text-[#E11162] mb-2">Name</label>
-              <input 
-                type="text" 
-                id="name" 
-                name="name" 
-                placeholder="Enter your Name"
-                class="w-full px-4 py-3 border-2 border-[#EFB85A]/30  rounded-lg focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent outline-none transition"
-                required
-              />
-            </div>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 px-2 sm:px-6 lg:px-10">
+<!-- Room Image Section -->
+<div class="bg-gray-200 rounded-lg h-[350px] sm:h-[200px] lg:h-[300px] xl:h-[400px] flex items-center justify-center relative overflow-hidden">
+<!-- Placeholder for room image -->
+<div class="absolute inset-0 bg-gray-200 flex items-center justify-center">
+<div class="text-center text-gray-400">
+<i class="fas fa-camera text-4xl sm:text-6xl mb-2 sm:mb-4 opacity-50"></i>
+<p class="text-sm sm:text-lg">Room Image</p>
+</div>
+</div>
+</div>
 
-            <!-- Mobile Number Field -->
-            <div>
-              <label for="mobile" class="block text-sm font-semibold text-[#E11162] mb-2">Mobile no</label>
-              <input 
-                type="tel" 
-                id="mobile" 
-                name="mobile" 
-                placeholder="Enter your Number"
-                class="w-full px-4 py-3 border-2 border-[#EFB85A]/30  rounded-lg focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent outline-none transition"
-                required
-              />
-            </div>
+<!-- Booking Form Section -->
+<div class="bg-white">
+<h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6">Booking Details</h2>
+<form id="bookingForm" class="space-y-4 sm:space-y-6">
+<!-- Personal Information Section -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- First Name -->
+<div>
+<label for="firstName" class="block text-sm font-semibold text-[#E11162] mb-2">First Name</label>
+<input
+type="text"
+id="firstName"
+name="firstName"
+placeholder="Enter your first name"
+class="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent outline-none transition text-sm sm:text-base"
+required
+/>
+</div>
+<!-- Last Name -->
+<div>
+<label for="lastName" class="block text-sm font-semibold text-[#E11162] mb-2">Last Name</label>
+<input
+type="text"
+id="lastName"
+name="lastName"
+placeholder="Enter your last name"
+class="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent outline-none transition text-sm sm:text-base"
+required
+/>
+</div>
+</div>
 
-            <!-- Address Field -->
-            <div>
-              <label for="address" class="block text-sm font-semibold text-[#E11162] mb-2">Address</label>
-              <textarea 
-                id="address" 
-                name="address" 
-                rows="4"
-                placeholder="Enter your Address"
-                class="w-full px-4 py-3 border-2 border-[#EFB85A]/30  rounded-lg focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent outline-none transition resize-none"
-                required
-              ></textarea>
-            </div>
+<!-- Contact Information -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Email Address -->
+<div>
+<label for="email" class="block text-sm font-semibold text-[#E11162] mb-2">Email Address</label>
+<input
+type="email"
+id="email"
+name="email"
+placeholder="Enter your email"
+class="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent outline-none transition text-sm sm:text-base"
+required
+/>
+</div>
+<!-- Mobile Number -->
+<div>
+<label for="mobile" class="block text-sm font-semibold text-[#E11162] mb-2">Mobile Number</label>
+<input
+type="tel"
+id="mobile"
+name="mobile"
+placeholder="Enter your mobile number"
+class="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent outline-none transition text-sm sm:text-base"
+required
+/>
+</div>
+</div>
 
-            <!-- Booking Details Row -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <!-- Quantity -->
-              <div>
-                <label for="quantity" class="block text-sm font-semibold text-[#E11162] mb-2 ">Quantity</label>
-                <div class="flex items-center space-x-3 border border-[#F26538] p-2 justify-center rounded-lg">
-            <button class="w-7 h-7 rounded-full border-2 border-[#EFB85A]/30  flex items-center justify-center hover:bg-gray-100 focus:ring-2 focus:ring-[#EFB85A] focus:border-[#EFB85A] outline-none" onclick="decrementGuest('adults')">
-              <span class="text-gray-600">-</span>
-            </button>
-            <span id="adultCount" class="w-8 text-center font-semibold">1</span>
-            <button class="w-7 h-7 rounded-full border-2 border-[#EFB85A]/30  flex items-center justify-center hover:bg-gray-100 focus:ring-2 focus:ring-[#EFB85A] focus:border-[#EFB85A] outline-none" onclick="incrementGuest('adults')">
-              <span class="text-gray-600">+</span>
-            </button>
-          </div>
-              </div>
+<!-- Address Field -->
+<div>
+<label for="address" class="block text-sm font-semibold text-[#E11162] mb-2">Address (minimum 10 letters required)</label>
+<textarea
+id="address"
+name="address"
+rows="3"
+placeholder="Enter your complete address"
+class="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent outline-none transition resize-none text-sm sm:text-base"
+required
+></textarea>
+</div>
 
-              <!-- Check In -->
-              <div>
-                <label for="checkin" class="block text-sm font-semibold text-[#E11162] mb-2">Check In</label>
-                <div class="relative">
-                       <input type="date" class="w-full px-3 py-2 border border-[#F26538] rounded-lg focus:ring-2 focus:ring-[#EFB85A] focus:border-[#EFB85A] outline-none">
+<!-- Check-in and Check-out Dates -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Check In -->
+<div>
+<label for="checkin" class="block text-sm font-semibold text-[#E11162] mb-2">Check In Date</label>
+<input type="date" id="checkin" name="checkin" class="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent outline-none text-sm sm:text-base" required>
+</div>
+<!-- Check Out -->
+<div>
+<label for="checkout" class="block text-sm font-semibold text-[#E11162] mb-2">Check Out Date</label>
+<input type="date" id="checkout" name="checkout" class="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent outline-none text-sm sm:text-base" required>
+</div>
+</div>
 
-                </div>
-              </div>
+<!-- Total Price Display -->
+<div id="priceDisplay" class="bg-gray-50 p-4 rounded-lg border-2 border-[#EFB85A]/20 hidden">
+<div class="flex justify-between items-center">
+<span class="text-sm font-semibold text-gray-700">Total Amount:</span>
+<span id="totalPrice" class="text-lg font-bold text-[#E11162]">₹0</span>
+</div>
+</div>
 
-              <!-- Check Out -->
-              <div>
-                <label for="checkout" class="block text-sm font-semibold text-[#E11162] mb-2">Check out</label>
-                <div class="relative">
-                        <input type="date" class="w-full px-3 py-2 border border-[#F26538] rounded-lg focus:ring-2 focus:ring-[#EFB85A] focus:border-[#EFB85A] outline-none">
+<!-- Terms and Conditions -->
+<div class="flex items-start space-x-3">
+<input
+type="checkbox"
+id="terms"
+name="terms"
+class="mt-1 w-4 h-4 text-[#EFB85A] border-gray-300 rounded focus:ring-[#EFB85A]"
+required
+/>
+<label for="terms" class="text-xs sm:text-sm text-gray-700">
+I accept the <a href="#" class="text-[#F26538] hover:underline">Terms and Conditions</a> and <a href="#" class="text-[#F26538] hover:underline">Privacy Policy</a>
+</label>
+</div>
 
-                </div>
-              </div>
-            </div>
+<!-- Pay Now Button -->
+<div class="pt-4">
+<button
+type="submit"
+class="w-full bg-gradient-to-br from-[#EFB85A] via-[#F26538] to-[#E11162] text-white py-3 sm:py-4 px-6 rounded-lg font-semibold hover:scale-105 transition duration-200 text-sm sm:text-base"
+>
+Proceed to Payment
+</button>
+</div>
+</form>
+</div>
+</div>
+</main>
+</div>
 
-            <!-- Terms and Conditions -->
-            <div class="flex items-start space-x-3">
-              <input 
-                type="checkbox" 
-                id="terms" 
-                name="terms" 
-                class="mt-1 w-4 h-4 text-[#EFB85A] border-gray-300 rounded focus:ring-[#EFB85A]"
-                required
-              />
-              <label for="terms" class="text-sm text-gray-700">
-                Accept <a href="#" class="text-[#F26538] hover:underline">Terms and Condition</a>
-              </label>
-            </div>
 
-            <!-- Pay Now Button -->
-            <div class="pt-4">
-              <button 
-                type="submit" 
-                class="w-full bg-gradient-to-br from-[#EFB85A] via-[#F26538] to-[#E11162] text-white py-3 px-6 rounded-lg font-semibold hover:scale-105 transition duration-200"
-              >
-                Pay now
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </main>
-  </div>
+      <!-- Footer -->
+<footer class="bg-gray-100 text-gray-700 pt-2">
+  <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+    
+    <!-- Logo & About -->
+    <div class="text-left">
+      <h2 class="text-4xl font-extrabold mb-4 bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent">
+        Zyra
+      </h2>
+      <p class="text-gray-600 mb-6">
+        Experience luxury and comfort at Zyra Hotel. We provide exceptional hospitality with world-class amenities for an unforgettable stay.
+      </p>
+      <h3 class="font-semibold mb-2">Customer Support</h3>
+      <p class="text-gray-600">feedback@gmail.com</p>
+    </div>
 
-  <!-- Footer -->
-  <footer class="bg-gray-100 text-gray-700 pt-2">
-    <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-      
-      <!-- Logo & About -->
-      <div class="text-left">
-        <h2 class="text-4xl font-extrabold mb-4 bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent">
-          Zyra
-        </h2>
-        <p class="text-gray-600 mb-6">
-          Experience luxury and comfort at Zyra Hotel. We provide exceptional hospitality with world-class amenities for an unforgettable stay.
-        </p>
-        <h3 class="font-semibold mb-2">Customer Support</h3>
-        <p class="text-gray-600">feedback@gmail.com</p>
-      </div>
-      
-      <!-- Quick Links -->
+        <!-- Quick Links -->
       <div class="grid grid-cols-2 gap-6">
         <div>
           <h3 class="font-semibold mb-4">Quick Links</h3>
           <ul class="space-y-2">
-            <li><a href="#home" class="hover:text-[#413030] transition">Home</a></li>
-            <li><a href="#rooms" class="hover:text-[#413030] transition">Rooms</a></li>
-            <li><a href="#amenities" class="hover:text-[#413030] transition">Facilities</a></li>
-            <li><a href="#testimonials" class="hover:text-[#413030] transition">Reviews</a></li>
-            <li><a href="#contact" class="hover:text-[#413030] transition">About us</a></li>
+           <li><a href="/src/index.html" class="links">Home</a></li>
+          <li><a href="/src/user/features/rooms/allRooms.html" class="links">Rooms</a></li>
+          <li><a href="/src/user/features/facilities/facilities.html" class="links">Facilities</a></li>
+          <li><a href="#testimonials" class="links">Reviews</a></li>
+          <li><a href="/src/user/features/contact/contactUs.html" class="links">About us</a></li>
           </ul>
         </div>
         <div class="pt-8 md:pt-0">
           <ul class="space-y-2">
-            <li><a href="#" class="hover:text-[#413030] transition">FAQs</a></li>
-            <li><a href="#" class="hover:text-[#413030] transition">Privacy Policy</a></li>
-            <li><a href="#" class="hover:text-[#413030] transition">Terms and Condition</a></li>
+            <li><a href="#" class="links">FAQs</a></li>
+            <li><a href="#" class="links">Privacy Policy</a></li>
+            <li><a href="#" class="links">Terms and Condition</a></li>
           </ul>
         </div>
       </div>
-      
-      <!-- Social Media -->
-      <div class="flex flex-col items-center md:items-start">
-        <h3 class="font-semibold mb-4">Follow us</h3>
-        <div class="flex space-x-6 text-2xl">
-          <a href="#" class="text-[#1877F2] hover:opacity-80 transition" aria-label="Facebook">
-            <i class="fab fa-facebook"></i>
-          </a>
-          <a href="#" class="text-[#1DA1F2] hover:opacity-80 transition" aria-label="Twitter">
-            <i class="fab fa-twitter"></i>
-          </a>
-          <a href="#" class="text-[#0A66C2] hover:opacity-80 transition" aria-label="LinkedIn">
-            <i class="fab fa-linkedin"></i>
-          </a>
-          <a href="#" class="text-[#E4405F] hover:opacity-80 transition" aria-label="Instagram">
-            <i class="fab fa-instagram"></i>
-          </a>
-        </div>
+
+
+    <!-- Social Media -->
+    <div class="flex flex-col items-center md:items-start">
+      <h3 class="font-semibold mb-4">Follow us</h3>
+      <div class="flex space-x-6 text-2xl">
+        <a href="#" class="text-[#1877F2] hover:opacity-80 transition" aria-label="Facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+        <a href="#" class="text-[#1DA1F2] hover:opacity-80 transition" aria-label="Twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#" class="text-[#0A66C2] hover:opacity-80 transition" aria-label="LinkedIn">
+          <i class="fab fa-linkedin"></i>
+        </a>
+        <a href="#" class="text-[#E4405F] hover:opacity-80 transition" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
       </div>
     </div>
-    <div class="bg-gray-200 text-center py-4">
-      <p class="text-sm text-gray-600">&copy; 2024 Zyra Hotel. All rights reserved.</p>
-    </div>
-  </footer>
+  </div>
 
-  <script>
-    // Quantity controls
-    function increaseQuantity() {
-      const quantityInput = document.getElementById('quantity');
-      let currentValue = parseInt(quantityInput.value);
-      quantityInput.value = currentValue + 1;
-    }
+  <!-- Copyright -->
+  <div class="border-t border-gray-300 py-4 text-center text-sm text-gray-500">
+    © 2025 Zyra Hotel | All rights reserved
+  </div>
+</footer>
+  
 
-    function decreaseQuantity() {
-      const quantityInput = document.getElementById('quantity');
-      let currentValue = parseInt(quantityInput.value);
-      if (currentValue > 1) {
-        quantityInput.value = currentValue - 1;
-      }
-    }
+<script>
 
-    // Form validation
-    document.querySelector('form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const name = document.getElementById('name').value;
-      const mobile = document.getElementById('mobile').value;
-      const address = document.getElementById('address').value;
-      const checkin = document.getElementById('checkin').value;
-      const checkout = document.getElementById('checkout').value;
-      const terms = document.getElementById('terms').checked;
-      
-      if (!name || !mobile || !address || !checkin || !checkout || !terms) {
-        alert('Please fill in all required fields and accept the terms and conditions.');
-        return;
-      }
-      
-      // Check if checkout date is after checkin date
-      if (new Date(checkout) <= new Date(checkin)) {
-        alert('Check-out date must be after check-in date.');
-        return;
-      }
-      
-      alert('Booking confirmed! Redirecting to payment...');
-      // Here you would normally process the booking
-    });
+    function redirectRoom(){
+    window.location.href = '/src/user/features/rooms/room.html';
+  }
+  
+// ===========================================
+// BOOKING SYSTEM VARIABLES
+// ===========================================
+let booking_existing_data = [];
+let booking_users = [];
+let booking_currentUser = null;
+let booking_currentRoom = null;
+let booking_user_id = localStorage.getItem('user_id');
+let booking_roomno = localStorage.getItem('roomno');
+let booking_currentroom = localStorage.getItem('currentRoom');
 
-    // Set minimum date to today
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('checkin').setAttribute('min', today);
-    document.getElementById('checkout').setAttribute('min', today);
+try {
+    booking_currentRoom = JSON.parse(booking_currentroom);
+} catch (error) {
+    console.error('Error parsing room data:', error);
+}
+
+// Guest counters
+let adultCount = 1;
+let childrenCount = 0;
+
+// ===========================================
+// FORM VALIDATION FUNCTIONS
+// ===========================================
+function showError(fieldId, message) {
+    const field = document.getElementById(fieldId);
+    const existingError = field.parentNode.querySelector('.error-message');
     
-    // Update checkout minimum date when checkin changes
-    document.getElementById('checkin').addEventListener('change', function() {
-      const checkinDate = this.value;
-      const checkoutInput = document.getElementById('checkout');
-      checkoutInput.setAttribute('min', checkinDate);
-      
-      // If checkout is before new checkin date, clear it
-      if (checkoutInput.value && checkoutInput.value <= checkinDate) {
-        checkoutInput.value = '';
-      }
+    // Remove existing error message
+    if (existingError) {
+        existingError.remove();
+    }
+    
+    // Create and insert error message
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message text-red-500 text-xs mt-1 font-medium';
+    errorDiv.textContent = message;
+    field.parentNode.appendChild(errorDiv);
+}
+
+function clearError(fieldId) {
+    const field = document.getElementById(fieldId);
+    const existingError = field.parentNode.querySelector('.error-message');
+    
+    // Remove error message
+    if (existingError) {
+        existingError.remove();
+    }
+}
+
+function validateFirstName(value) {
+    const nameRegex = /^[A-Za-z\s]{2,30}$/;
+    if (!value.trim()) {
+        return 'First name is required';
+    }
+    if (!nameRegex.test(value)) {
+        return 'First name must be 2-30 characters and contain only letters';
+    }
+    return null;
+}
+
+function validateLastName(value) {
+    const nameRegex = /^[A-Za-z\s]{1,30}$/;
+    if (!value.trim()) {
+        return 'Last name is required';
+    }
+    if (!nameRegex.test(value)) {
+        return 'Last name must be 1-30 characters and contain only letters';
+    }
+    return null;
+}
+
+function validateEmail(value) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!value.trim()) {
+        return 'Email address is required';
+    }
+    if (!emailRegex.test(value)) {
+        return 'Please enter a valid email address';
+    }
+    return null;
+}
+
+function validateMobile(value) {
+    const mobileRegex = /^[0-9]{10}$/;
+    if (!value.trim()) {
+        return 'Mobile number is required';
+    }
+    if (!mobileRegex.test(value)) {
+        return 'Mobile number must be exactly 10 digits';
+    }
+    return null;
+}
+
+function validateAddress(value) {
+    if (!value.trim()) {
+        return 'Address is required';
+    }
+    // Count only letters (remove spaces, numbers, punctuation)
+    const letterCount = value.replace(/[^A-Za-z]/g, '').length;
+    if (letterCount < 10) {
+        return `Address must contain at least 10 letters (currently ${letterCount} letters)`;
+    }
+    return null;
+}
+
+function validateCheckinDate(value) {
+    if (!value) {
+        return 'Check-in date is required';
+    }
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const checkinDate = new Date(value);
+    
+    if (checkinDate < today) {
+        return 'Check-in date cannot be in the past';
+    }
+    
+    const checkoutValue = document.getElementById('checkout').value;
+    if (checkoutValue) {
+        const checkoutDate = new Date(checkoutValue);
+        if (checkinDate >= checkoutDate) {
+            return 'Check-in date must be before check-out date';
+        }
+    }
+    
+    // Check availability for this date
+    const roomBookings = booking_existing_data.filter(booking => 
+        booking.roomno === booking_roomno && booking.status !== 'cancelled'
+    );
+    
+    const isBooked = roomBookings.some(booking => {
+        const bookedCheckin = new Date(booking.checkin);
+        const bookedCheckout = new Date(booking.checkout);
+        return checkinDate >= bookedCheckin && checkinDate < bookedCheckout;
     });
-  </script>
-  </body>
+    
+    if (isBooked) {
+        return 'This check-in date is not available. Room is already booked.';
+    }
+    
+    return null;
+}
+
+function validateCheckoutDate(value) {
+    if (!value) {
+        return 'Check-out date is required';
+    }
+    
+    const checkinValue = document.getElementById('checkin').value;
+    if (checkinValue) {
+        const checkinDate = new Date(checkinValue);
+        const checkoutDate = new Date(value);
+        
+        if (checkoutDate <= checkinDate) {
+            return 'Check-out date must be after check-in date';
+        }
+        
+        // Check if any day in the range is booked
+        const roomBookings = booking_existing_data.filter(booking => 
+            booking.roomno === booking_roomno && booking.status !== 'cancelled'
+        );
+        
+        const isRangeBooked = roomBookings.some(booking => {
+            const bookedCheckin = new Date(booking.checkin);
+            const bookedCheckout = new Date(booking.checkout);
+            return (checkinDate < bookedCheckout && checkoutDate > bookedCheckin);
+        });
+        
+        if (isRangeBooked) {
+            return 'Some dates in your selected range are not available. Please choose different dates.';
+        }
+    }
+    
+    return null;
+}
+
+// ===========================================
+// EVENT LISTENERS FOR FORM VALIDATION
+// ===========================================
+document.addEventListener('DOMContentLoaded', function() {
+    // First Name Validation
+    document.getElementById('firstName').addEventListener('blur', function() {
+        const error = validateFirstName(this.value);
+        if (error) {
+            showError('firstName', error);
+        } else {
+            clearError('firstName');
+        }
+    });
+
+    document.getElementById('firstName').addEventListener('input', function() {
+        const existingError = this.parentNode.querySelector('.error-message');
+        if (existingError) {
+            const error = validateFirstName(this.value);
+            if (!error) {
+                clearError('firstName');
+            }
+        }
+    });
+
+    // Last Name Validation
+    document.getElementById('lastName').addEventListener('blur', function() {
+        const error = validateLastName(this.value);
+        if (error) {
+            showError('lastName', error);
+        } else {
+            clearError('lastName');
+        }
+    });
+
+    document.getElementById('lastName').addEventListener('input', function() {
+        const existingError = this.parentNode.querySelector('.error-message');
+        if (existingError) {
+            const error = validateLastName(this.value);
+            if (!error) {
+                clearError('lastName');
+            }
+        }
+    });
+
+    // Email Validation
+    document.getElementById('email').addEventListener('blur', function() {
+        const error = validateEmail(this.value);
+        if (error) {
+            showError('email', error);
+        } else {
+            clearError('email');
+        }
+    });
+
+    document.getElementById('email').addEventListener('input', function() {
+        const existingError = this.parentNode.querySelector('.error-message');
+        if (existingError) {
+            const error = validateEmail(this.value);
+            if (!error) {
+                clearError('email');
+            }
+        }
+    });
+
+    // Mobile Number Validation
+    document.getElementById('mobile').addEventListener('blur', function() {
+        const error = validateMobile(this.value);
+        if (error) {
+            showError('mobile', error);
+        } else {
+            clearError('mobile');
+        }
+    });
+
+    document.getElementById('mobile').addEventListener('input', function() {
+        // Allow only numbers
+        this.value = this.value.replace(/[^0-9]/g, '');
+        
+        const existingError = this.parentNode.querySelector('.error-message');
+        if (existingError) {
+            const error = validateMobile(this.value);
+            if (!error) {
+                clearError('mobile');
+            }
+        }
+    });
+
+    // Address Validation
+    document.getElementById('address').addEventListener('blur', function() {
+        const error = validateAddress(this.value);
+        if (error) {
+            showError('address', error);
+        } else {
+            clearError('address');
+        }
+    });
+
+    document.getElementById('address').addEventListener('input', function() {
+        const existingError = this.parentNode.querySelector('.error-message');
+        if (existingError) {
+            const error = validateAddress(this.value);
+            if (!error) {
+                clearError('address');
+            }
+        }
+    });
+
+    // Check-in Date Validation
+    document.getElementById('checkin').addEventListener('change', function() {
+        const error = validateCheckinDate(this.value);
+        if (error) {
+            showError('checkin', error);
+        } else {
+            clearError('checkin');
+            // Also revalidate checkout date
+            const checkoutField = document.getElementById('checkout');
+            if (checkoutField.value) {
+                const checkoutError = validateCheckoutDate(checkoutField.value);
+                if (checkoutError) {
+                    showError('checkout', checkoutError);
+                } else {
+                    clearError('checkout');
+                }
+            }
+        }
+        calculateTotalPrice();
+    });
+
+    // Check-out Date Validation
+    document.getElementById('checkout').addEventListener('change', function() {
+        const error = validateCheckoutDate(this.value);
+        if (error) {
+            showError('checkout', error);
+        } else {
+            clearError('checkout');
+            // Also revalidate checkin date
+            const checkinField = document.getElementById('checkin');
+            if (checkinField.value) {
+                const checkinError = validateCheckinDate(checkinField.value);
+                if (checkinError) {
+                    showError('checkin', checkinError);
+                } else {
+                    clearError('checkin');
+                }
+            }
+        }
+        calculateTotalPrice();
+    });
+
+    // Terms and Conditions Validation
+    document.getElementById('terms').addEventListener('change', function() {
+        if (!this.checked) {
+            showError('terms', 'You must accept the terms and conditions');
+        } else {
+            clearError('terms');
+        }
+    });
+
+    // Initialize other functions
+    Promise.all([fetchBookingData(), fetchBookingUsers()]).then(() => {
+        updateRoomDisplay();
+    });
+
+    // Add form submit handler with complete validation
+    document.getElementById('bookingForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        let hasErrors = false;
+        const formData = new FormData(this);
+        
+        // Validate all fields
+        const firstNameError = validateFirstName(formData.get('firstName'));
+        const lastNameError = validateLastName(formData.get('lastName'));
+        const emailError = validateEmail(formData.get('email'));
+        const mobileError = validateMobile(formData.get('mobile'));
+        const addressError = validateAddress(formData.get('address'));
+        const checkinError = validateCheckinDate(formData.get('checkin'));
+        const checkoutError = validateCheckoutDate(formData.get('checkout'));
+        const termsChecked = document.getElementById('terms').checked;
+        
+        // Show errors if any
+        if (firstNameError) {
+            showError('firstName', firstNameError);
+            hasErrors = true;
+        }
+        if (lastNameError) {
+            showError('lastName', lastNameError);
+            hasErrors = true;
+        }
+        if (emailError) {
+            showError('email', emailError);
+            hasErrors = true;
+        }
+        if (mobileError) {
+            showError('mobile', mobileError);
+            hasErrors = true;
+        }
+        if (addressError) {
+            showError('address', addressError);
+            hasErrors = true;
+        }
+        if (checkinError) {
+            showError('checkin', checkinError);
+            hasErrors = true;
+        }
+        if (checkoutError) {
+            showError('checkout', checkoutError);
+            hasErrors = true;
+        }
+        if (!termsChecked) {
+            showError('terms', 'You must accept the terms and conditions');
+            hasErrors = true;
+        }
+        
+        // If no errors, proceed with booking
+        if (!hasErrors) {
+            handleBookingSubmission(event);
+        } else {
+            // Scroll to first error
+            const firstError = document.querySelector('.error-message');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    });
+});
+
+// ===========================================
+// BOOKING DATA FETCH FUNCTIONS
+// ===========================================
+async function fetchBookingData() { 
+    try {
+        const booking = await fetch('https://68c8b85aceef5a150f622643.mockapi.io/admin/3'); 
+        const data = (await booking.json()).bookings; 
+        
+        booking_existing_data.length = 0;
+        data.forEach(i => booking_existing_data.push(i)); 
+        
+        updateDateAvailability();
+        return booking_existing_data; 
+    } catch (error) {
+        console.error('Error fetching bookings data:', error);
+        return [];
+    }
+}
+
+async function fetchBookingUsers() { 
+    try {
+        const users = await fetch('https://68c8b85aceef5a150f622643.mockapi.io/users'); 
+        const data = await users.json(); 
+        
+        booking_users.length = 0;
+        data.forEach(i => booking_users.push(i)); 
+        
+        booking_currentUser = booking_users.find(r => r.id === booking_user_id);
+        prePopulateForm();
+        return booking_users; 
+    } catch (error) {
+        console.error('Error fetching users data:', error);
+        return [];
+    }
+}
+
+function prePopulateForm() {
+    if (booking_currentUser) {
+        document.getElementById('firstName').value = booking_currentUser.name ? booking_currentUser.name.split(' ')[0] : '';
+        document.getElementById('lastName').value = booking_currentUser.name ? booking_currentUser.name.split(' ').slice(1).join(' ') : '';
+        document.getElementById('email').value = booking_currentUser.email || '';
+        document.getElementById('mobile').value = booking_currentUser.mobile || '';
+        document.getElementById('address').value = booking_currentUser.address || '';
+    }
+}
+
+function updateRoomDisplay() {
+    if (booking_currentRoom) {
+        const roomImageContainer = document.querySelector('.bg-gray-200.rounded-lg');
+        if (booking_currentRoom.images && booking_currentRoom.images.length > 0) {
+            roomImageContainer.innerHTML = `
+                <img src="${booking_currentRoom.images[0].thumbnailUrl}" 
+                     alt="${booking_currentRoom.categoryType}" 
+                     class="w-full h-full object-cover rounded-lg">
+            `;
+        }
+        
+        const roomInfo = document.getElementById('roomInfo');
+        roomInfo.innerHTML = `
+            <p class="mb-1"><strong>${booking_currentRoom.categoryType}</strong> - Room ${booking_currentRoom.roomno}</p>
+            <p class="text-xs">Area: ${booking_currentRoom.area} sq ft | Max Adults: ${booking_currentRoom.adultMax} | Max Children: ${booking_currentRoom.childrenMax}</p>
+        `;
+        
+        document.getElementById('priceDisplay').classList.remove('hidden');
+        calculateTotalPrice();
+    }
+}
+
+function calculateTotalPrice() {
+    if (!booking_currentRoom) return;
+    
+    const checkinDate = document.getElementById('checkin').value;
+    const checkoutDate = document.getElementById('checkout').value;
+    
+    if (checkinDate && checkoutDate) {
+        const checkin = new Date(checkinDate);
+        const checkout = new Date(checkoutDate);
+        const nights = Math.ceil((checkout - checkin) / (1000 * 60 * 60 * 24));
+        
+        if (nights > 0) {
+            const pricePerNight = parseInt(booking_currentRoom.price.replace(/[₹,]/g, ''));
+            const totalAmount = pricePerNight * nights;
+            
+            document.getElementById('totalPrice').textContent = `₹${totalAmount.toLocaleString()}`;
+            
+            document.getElementById('priceDisplay').innerHTML = `
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span>Price per night:</span>
+                        <span>${booking_currentRoom.price}</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span>Number of nights:</span>
+                        <span>${nights}</span>
+                    </div>
+                    <hr class="border-gray-300">
+                    <div class="flex justify-between items-center">
+                        <span class="font-semibold text-gray-700">Total Amount:</span>
+                        <span class="text-lg font-bold text-[#E11162]">₹${totalAmount.toLocaleString()}</span>
+                    </div>
+                </div>
+            `;
+        }
+    }
+}
+
+function updateDateAvailability() {
+    const checkinInput = document.getElementById('checkin');
+    const checkoutInput = document.getElementById('checkout');
+    
+    const today = new Date().toISOString().split('T')[0];
+    checkinInput.min = today;
+    checkoutInput.min = today;
+}
+
+function incrementGuest(type) {
+    if (type === 'adults') {
+        if (adultCount < booking_currentRoom.adultMax) {
+            adultCount++;
+            document.getElementById('adultCount').textContent = adultCount;
+        }
+    } else if (type === 'children') {
+        if (childrenCount < booking_currentRoom.childrenMax) {
+            childrenCount++;
+            document.getElementById('childrenCount').textContent = childrenCount;
+        }
+    }
+}
+
+function decrementGuest(type) {
+    if (type === 'adults' && adultCount > 1) {
+        adultCount--;
+        document.getElementById('adultCount').textContent = adultCount;
+    } else if (type === 'children' && childrenCount > 0) {
+        childrenCount--;
+        document.getElementById('childrenCount').textContent = childrenCount;
+    }
+}
+
+async function handleBookingSubmission(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const checkinDate = formData.get('checkin');
+    const checkoutDate = formData.get('checkout');
+    
+    if (!checkinDate || !checkoutDate) {
+        alert('Please select check-in and check-out dates.');
+        return;
+    }
+    
+    const nights = Math.ceil((new Date(checkoutDate) - new Date(checkinDate)) / (1000 * 60 * 60 * 24));
+    const pricePerNight = parseInt(booking_currentRoom.price.replace(/[₹,]/g, ''));
+    const totalAmount = pricePerNight * nights;
+
+    // ✅ Generate bookingId randomly (e.g., BK + 6-digit number)
+    const bookingId = "BK" + Math.floor(100000 + Math.random() * 900000);
+
+    const bookingData = {
+        bookingId: bookingId,   // <-- added bookingId here
+        userId: booking_user_id,
+        roomId: booking_currentRoom.id,
+        roomno: booking_roomno,
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName'),
+        email: formData.get('email'),
+        mobile: formData.get('mobile'),
+        address: formData.get('address'),
+        adults: adultCount,
+        children: childrenCount,
+        checkin: checkinDate,
+        checkout: checkoutDate,
+        nights: nights,
+        pricePerNight: pricePerNight,
+        totalAmount: totalAmount,
+        status: 'confirmed',
+        bookingDate: new Date().toISOString(),
+        roomType: booking_currentRoom.categoryType
+    };
+    
+    try {
+        showPaymentProcessing();
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        const response = await fetch('https://68c8b85aceef5a150f622643.mockapi.io/admin/3', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                bookings: [...booking_existing_data, bookingData]
+            })
+        });
+        
+        if (response.ok) {
+            showPaymentSuccess(bookingData);
+        } else {
+            throw new Error('Booking failed');
+        }
+        
+    } catch (error) {
+        console.error('Booking error:', error);
+        alert('Booking failed. Please try again.');
+        hidePaymentProcessing();
+    }
+}
+
+
+function showPaymentProcessing() {
+    const modal = document.createElement('div');
+    modal.id = 'paymentModal';
+    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+    modal.innerHTML = `
+        <div class="bg-white rounded-lg p-8 text-center max-w-md mx-4">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-[#EFB85A] mx-auto mb-4"></div>
+            <h3 class="text-lg font-semibold mb-2">Processing Payment...</h3>
+            <p class="text-gray-600">Please wait while we process your booking.</p>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function showPaymentSuccess(bookingData) {
+    const modal = document.getElementById('paymentModal');
+    modal.innerHTML = `
+        <div class="bg-white rounded-lg p-8 text-center max-w-md mx-4 transform scale-0 opacity-0 transition-all duration-500 ease-out" id="successModal">
+            <!-- Success Icon with Animation -->
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 transform scale-0" id="successIcon">
+                <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="checkmarkSvg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" 
+                          stroke-dasharray="24" stroke-dashoffset="24" id="checkmarkPath"></path>
+                </svg>
+            </div>
+            
+            <!-- Animated Title -->
+            <h3 class="text-xl font-semibold text-green-600 mb-2 transform translate-y-4 opacity-0 transition-all duration-500 delay-300" id="successTitle">
+                Payment Successful! 🎉
+            </h3>
+            
+            <!-- Animated Subtitle -->
+            <p class="text-gray-600 mb-4 transform translate-y-4 opacity-0 transition-all duration-500 delay-500" id="successSubtitle">
+                Your booking has been confirmed.
+            </p>
+            
+            <!-- Animated Booking Details -->
+            <div class="bg-gray-50 rounded-lg p-4 text-left space-y-2 text-sm transform translate-y-4 opacity-0 transition-all duration-500 delay-700" id="bookingDetails">
+                <div class="flex justify-between transform translate-x-4 opacity-0 transition-all duration-400 delay-1000">
+                    <span class="font-medium">Room:</span>
+                    <span class="font-semibold text-gray-800">${bookingData.roomType} - ${bookingData.roomno}</span>
+                </div>
+                <div class="flex justify-between transform translate-x-4 opacity-0 transition-all duration-400 delay-1100">
+                    <span class="font-medium">Guest:</span>
+                    <span class="font-semibold text-gray-800">${bookingData.firstName} ${bookingData.lastName}</span>
+                </div>
+                <div class="flex justify-between transform translate-x-4 opacity-0 transition-all duration-400 delay-1200">
+                    <span class="font-medium">Check-in:</span>
+                    <span class="font-semibold text-gray-800">${new Date(bookingData.checkin).toLocaleDateString()}</span>
+                </div>
+                <div class="flex justify-between transform translate-x-4 opacity-0 transition-all duration-400 delay-1300">
+                    <span class="font-medium">Check-out:</span>
+                    <span class="font-semibold text-gray-800">${new Date(bookingData.checkout).toLocaleDateString()}</span>
+                </div>
+                <hr class="border-gray-300 my-2 opacity-0 transition-opacity duration-300 delay-1400" id="dividerLine">
+                <div class="flex justify-between font-semibold transform translate-x-4 opacity-0 transition-all duration-400 delay-1500 text-lg">
+                    <span class="text-gray-700">Total Amount:</span>
+                    <span class="text-[#E11162] text-xl font-bold">₹${bookingData.totalAmount.toLocaleString()}</span>
+                </div>
+            </div>
+            
+            <!-- Animated Continue Button -->
+            <button onclick="closePaymentModal()" 
+                    class="w-full bg-gradient-to-br from-[#EFB85A] via-[#F26538] to-[#E11162] text-white py-3 px-6 rounded-lg font-semibold mt-6 
+                           transform translate-y-4 opacity-0 transition-all duration-500 delay-1700 
+                           hover:scale-105 hover:shadow-xl hover:from-[#F26538] hover:to-[#E11162] 
+                           active:scale-95 relative overflow-hidden" 
+                    id="continueButton">
+                <span class="relative z-10">Continue ✨</span>
+                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 transform -skew-x-12 -translate-x-full transition-all duration-700 hover:translate-x-full hover:opacity-20"></div>
+            </button>
+        </div>
+        
+        <!-- Floating Celebration Elements -->
+        <div class="fixed inset-0 pointer-events-none" id="celebrationContainer"></div>
+    `;
+    
+    // Trigger animations in sequence
+    setTimeout(() => {
+        // Modal entrance
+        document.getElementById('successModal').classList.remove('scale-0', 'opacity-0');
+        document.getElementById('successModal').classList.add('scale-100', 'opacity-100');
+        
+        // Success icon bounce
+        setTimeout(() => {
+            const icon = document.getElementById('successIcon');
+            icon.classList.remove('scale-0');
+            icon.classList.add('scale-100', 'animate-bounce');
+            
+            // Checkmark drawing animation
+            setTimeout(() => {
+                const checkmarkPath = document.getElementById('checkmarkPath');
+                checkmarkPath.style.transition = 'stroke-dashoffset 0.8s ease-in-out';
+                checkmarkPath.style.strokeDashoffset = '0';
+                
+                // Remove bounce after checkmark completes
+                setTimeout(() => {
+                    icon.classList.remove('animate-bounce');
+                }, 800);
+            }, 200);
+        }, 100);
+        
+        // Title animation
+        setTimeout(() => {
+            const title = document.getElementById('successTitle');
+            title.classList.remove('translate-y-4', 'opacity-0');
+            title.classList.add('translate-y-0', 'opacity-100');
+        }, 300);
+        
+        // Subtitle animation
+        setTimeout(() => {
+            const subtitle = document.getElementById('successSubtitle');
+            subtitle.classList.remove('translate-y-4', 'opacity-0');
+            subtitle.classList.add('translate-y-0', 'opacity-100');
+        }, 500);
+        
+        // Booking details animation
+        setTimeout(() => {
+            const details = document.getElementById('bookingDetails');
+            details.classList.remove('translate-y-4', 'opacity-0');
+            details.classList.add('translate-y-0', 'opacity-100');
+            
+            // Animate each detail row
+            const detailRows = details.querySelectorAll('.flex');
+            detailRows.forEach((row, index) => {
+                setTimeout(() => {
+                    row.classList.remove('translate-x-4', 'opacity-0');
+                    row.classList.add('translate-x-0', 'opacity-100');
+                }, index * 100);
+            });
+            
+            // Animate divider
+            setTimeout(() => {
+                document.getElementById('dividerLine').classList.remove('opacity-0');
+                document.getElementById('dividerLine').classList.add('opacity-100');
+            }, 400);
+        }, 700);
+        
+        // Button animation
+        setTimeout(() => {
+            const button = document.getElementById('continueButton');
+            button.classList.remove('translate-y-4', 'opacity-0');
+            button.classList.add('translate-y-0', 'opacity-100');
+        }, 1700);
+        
+        // Add celebration confetti effect
+        createCelebrationEffect();
+        
+    }, 50);
+}
+
+// Celebration confetti effect
+function createCelebrationEffect() {
+    const container = document.getElementById('celebrationContainer');
+    if (!container) return;
+    
+    const colors = ['#EFB85A', '#F26538', '#E11162', '#10B981', '#3B82F6', '#8B5CF6'];
+    const shapes = ['🎉', '🎊', '✨', '⭐', '💫', '🌟'];
+    
+    // Create floating elements
+    for (let i = 0; i < 20; i++) {
+        const element = document.createElement('div');
+        
+        if (Math.random() > 0.5) {
+            // Colored circles
+            element.className = 'absolute w-2 h-2 rounded-full opacity-80 animate-bounce';
+            element.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        } else {
+            // Emoji shapes
+            element.className = 'absolute text-lg opacity-80 animate-bounce';
+            element.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+        }
+        
+        // Random positioning
+        element.style.left = Math.random() * 100 + '%';
+        element.style.top = Math.random() * 100 + '%';
+        element.style.animationDelay = Math.random() * 2 + 's';
+        element.style.animationDuration = (Math.random() * 2 + 1) + 's';
+        
+        // Floating animation
+        element.style.transform = `translateY(${Math.random() * 20 - 10}px) rotate(${Math.random() * 360}deg)`;
+        element.style.transition = 'all 3s ease-out';
+        
+        container.appendChild(element);
+        
+        // Animate upward movement
+        setTimeout(() => {
+            element.style.transform = `translateY(-50px) rotate(${Math.random() * 360}deg)`;
+            element.style.opacity = '0';
+        }, 100);
+        
+        // Remove element after animation
+        setTimeout(() => {
+            if (element.parentNode) {
+                element.parentNode.removeChild(element);
+            }
+        }, 3000);
+    }
+}
+
+
+function hidePaymentProcessing() {
+    const modal = document.getElementById('paymentModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+function closePaymentModal() {
+    hidePaymentProcessing();
+    
+    // Reset the form to initial state
+    resetFormToInitialState();
+}
+
+function resetFormToInitialState() {
+    // Clear all validation error messages
+    const errorMessages = document.querySelectorAll('.error-message');
+    errorMessages.forEach(error => error.remove());
+    
+    // Reset all form fields to original styling (remove any error styling)
+    const formInputs = document.querySelectorAll('#bookingForm input, #bookingForm textarea');
+    formInputs.forEach(input => {
+        input.classList.remove('border-red-500', 'bg-red-50', 'border-green-500', 'bg-green-50');
+        input.classList.add('border-[#EFB85A]/30');
+    });
+    
+    // Clear date fields
+    document.getElementById('checkin').value = '';
+    document.getElementById('checkout').value = '';
+    
+    // Reset date minimums
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('checkin').min = today;
+    document.getElementById('checkout').min = today;
+    
+    // Uncheck terms checkbox
+    document.getElementById('terms').checked = false;
+    
+    // Hide price display
+    document.getElementById('priceDisplay').classList.add('hidden');
+    
+    // Reset guest counters to default
+    adultCount = 1;
+    childrenCount = 0;
+    
+    // Update guest count displays if they exist
+    const adultCountElement = document.getElementById('adultCount');
+    const childrenCountElement = document.getElementById('childrenCount');
+    if (adultCountElement) adultCountElement.textContent = adultCount;
+    if (childrenCountElement) childrenCountElement.textContent = childrenCount;
+    
+    // Re-populate user information (keep user details filled)
+    if (booking_currentUser) {
+        document.getElementById('firstName').value = booking_currentUser.name ? booking_currentUser.name.split(' ')[0] : '';
+        document.getElementById('lastName').value = booking_currentUser.name ? booking_currentUser.name.split(' ').slice(1).join(' ') : '';
+        document.getElementById('email').value = booking_currentUser.email || '';
+        document.getElementById('mobile').value = booking_currentUser.mobile || '';
+        document.getElementById('address').value = booking_currentUser.address || '';
+    }
+    
+    // Keep room image and information displayed (no changes needed as they should remain)
+    // Room image and room info will stay as they are
+    
+    // Scroll to top of form
+    document.getElementById('bookingForm').scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+    });
+    }
+
+
+
+window.incrementGuest = incrementGuest;
+window.decrementGuest = decrementGuest;
+window.closePaymentModal = closePaymentModal;
+</script>
+
+<script src = "/src/auth.js"></script>
+</body>
 </html>

@@ -21,6 +21,14 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
+    .links:hover {
+    color: #EFB85A;
+   
+  }
+  .links{
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
   </style>
 </head>
 <body class="m-0 p-0">
@@ -35,36 +43,38 @@
       <div class="flex items-center space-x-4">
         <!-- Menu + Book Now -->
         <div class="flex items-center space-x-4">
-          <ul class="hidden md:flex space-x-6 font-semibold text-[#413030]">
+                    <ul class="hidden md:flex space-x-6 font-semibold text-[#413030]">
             <li>
-              <span class="cursor-pointer relative inline-block group">
-                <a href="#home" class="hover:text-yellow-400 transition">Home</a>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="/src/index.html" class="hover:text-yellow-400 transition">Home</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
               </span>
             </li>
             <li>
               <span class="cursor-pointer relative inline-block group">
-                <a href="#rooms" class="hover:text-yellow-400 transition">Rooms</a>
+                <a href="/src/user/features/rooms/allRooms.html" class="hover:text-yellow-400 transition">Rooms</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
               </span>
             </li>
             <li>
-              <span class="cursor-pointer relative inline-block group">
-                <a href="#amenities" class="hover:text-yellow-400 transition">Facilities</a>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="/src/user/features/facilities/facilities.html" class="hover:text-yellow-400 transition">Facilities</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
               </span>
             </li>
             <li>
-              <span class="cursor-pointer relative inline-block group">
-                <a href="#contact" class="hover:text-yellow-400 transition">Contact Us</a>
+              <span class="text-cursor-pointer relative inline-block group">
+                <a href="/src/user/features/contact/contactUs.html" class="hover:text-yellow-400 transition">Contact Us</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
               </span>
             </li>
           </ul>
-          <button class="rounded-full px-4 py-3 text-white text-sm font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
+
+          <button id = "homeBookNow-btn" onclick = "redirectRoom()" class="rounded-full px-4 py-3 text-white text-sm font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
             Book Now
           </button>
         </div>
+
         <!-- Mobile Icons -->
         <div id="mobileIcons" class="flex relative h-full items-center cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
@@ -74,457 +84,293 @@
           </svg>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
               fill="#C2C6CC" class="w-8 h-8">
-            <path fill-rule="evenodd" 
+            <path fill-rule="evenodd"
                   d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" 
                   clip-rule="evenodd"/>
           </svg>
         </div>
+
       </div>
     </nav>
   </header>
-  
+
   <!-- Main Content with Gradient Background -->
   <div id="mainContent" class="min-h-screen pt-16">
     <main id="mainContentArea" class="w-full p-4 sm:p-6 lg:p-8 mt-4 sm:mt-6 lg:mt-0">
-      <!-- Profile View -->
-      <div id="profileView" class="max-w-7xl mx-auto">
-        <div class="flex flex-col lg:flex-row gap-8 lg:items-stretch">
-          <!-- Left Sidebar -->
-          <div class="lg:w-1/3 flex">
-            <div class="glass-effect rounded-2xl p-6 text-center flex-1 flex flex-col shadow-xl">
-              <!-- Profile Image and Name - Takes up most space -->
-              <div class="flex-1 flex flex-col justify-center">
-                <!-- Profile Image -->
-                <div class="mb-6">
-                  <div class="w-32 h-32 mx-auto bg-gray-600 rounded-full flex items-center justify-center shadow-lg">
-                    <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-                    </svg>
-                  </div>
-                  <p class="mt-3 text-sm font-medium">Upload a Photo</p>
+
+        <!-- Profile View -->
+        <div id="profileView" class="max-w-7xl mx-auto">
+            <div class="flex flex-col lg:flex-row gap-8 lg:items-stretch">
+                <!-- Left Sidebar -->
+                <div class="lg:w-1/3 flex">
+                    <div class="glass-effect rounded-2xl p-6 text-center flex-1 flex flex-col shadow-xl">
+                        <div class="flex-1 flex flex-col justify-center">
+                            <div class="mb-6">
+                                <div class="w-32 h-32 mx-auto rounded-full overflow-hidden shadow-lg">
+                                  <img id="profileImagePreview" src="" alt="Profile Image" class="w-full h-full object-cover" />
+                                </div>
+                            </div>
+                            
+                             <div>
+                                <h1 class="text-2xl font-bold bg-gradient-to-r from-[#E11162] to-[#F26538] bg-clip-text text-transparent" id="profileGreeting">Loading...</h1>
+                                <p class="text-gray-600 text-sm font-medium join-year">Loading...</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 pt-6 border-t border-[#EFB85A]/30 space-y-3">
+                            <div class="email-status flex items-center justify-center text-sm text-gray-700 bg-gray-50 rounded-full px-4 py-2">
+                                Loading...
+                            </div>
+                            <div class="mobile-status flex items-center justify-center text-sm text-gray-700 bg-gray-50 rounded-full px-4 py-2">
+                                Loading...
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
-                <!-- User Name -->
-                <div class="text-center">
-                  <h3 class="text-xl font-bold text-gray-800" id="profileName">John Doe</h3>
+                <!-- Right Content -->
+                <div class="lg:w-2/3">
+                    <div class="glass-effect rounded-2xl p-6 shadow-xl">
+                        <div class="flex flex-col sm:flex-row  justify-end items-start sm:items-center mb-6">
+                           
+                            <button id="editProfileBtn" class=" mt-4 sm:mt-0 px-6 py-2 bg-gradient-to-br from-[#EFB85A] via-[#F26538] to-[#E11162] text-white rounded-lg font-semibold transition-all duration-300 shadow-lg transform hover:scale-105">
+                                Edit Profile
+                            </button>
+                        </div>
+                        
+                        <!-- Profile Information -->
+                        <div class="space-y-6">
+                            <div class="bg-white/50 rounded-xl p-4 border border-[#EFB85A]/20">
+                                <label class="block text-sm font-semibold text-[#E11162] mb-2">Email</label>
+                                <p class="text-gray-800 font-medium" id="profileEmail">Loading...</p>
+                            </div>
+                            
+                            <div class="bg-white/50 rounded-xl p-4 border border-[#EFB85A]/20">
+                                <label class="block text-sm font-semibold text-[#E11162] mb-2">Phone no</label>
+                                <p class="text-gray-800 font-medium" id="profilePhone">Loading...</p>
+                            </div>
+                            
+                            <div class="bg-white/50 rounded-xl p-4 border border-[#EFB85A]/20">
+                                <label class="block text-sm font-semibold text-[#E11162] mb-2">DOB</label>
+                                <p class="text-gray-800 font-medium" id="profileDOB">Loading...</p>
+                            </div>
+                            
+                            <div class="bg-white/50 rounded-xl p-4 border border-[#EFB85A]/20">
+                                <label class="block text-sm font-semibold text-[#E11162] mb-2">Address</label>
+                                <p class="text-gray-800 font-medium" id="profileAddress">Loading...</p>
+                            </div>
+                            
+                            <div class="bg-white/50 rounded-xl p-4 border border-[#EFB85A]/20">
+                                <label class="block text-sm font-semibold text-[#E11162] mb-2">Pin code</label>
+                                <p class="text-gray-800 font-medium" id="profilePincode">Loading...</p>
+                            </div>
+                            
+                            <div class="pt-4 border-t border-[#EFB85A]/30">
+                                <h3 class="text-lg font-bold bg-gray-800 bg-clip-text text-transparent mb-2">Reviewed By You</h3>
+                                <p class="text-gray-600 text-sm">No reviews yet</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              
-              <!-- Status Section - Fixed at bottom -->
-              <div class="mt-6 pt-6 border-t border-[#EFB85A]/30 space-y-3">
-                <div class="flex items-center justify-center text-sm text-gray-700 bg-green-50 rounded-full px-4 py-2">
-                  <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                  </svg>
-                  Email Confirmed
-                </div>
-                <div class="flex items-center justify-center text-sm text-gray-700 bg-green-50 rounded-full px-4 py-2">
-                  <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                  </svg>
-                  Mobile Confirmed
-                </div>
-              </div>
             </div>
-          </div>
-          
-          <!-- Right Content -->
-          <div class="lg:w-2/3">
-            <div class="glass-effect rounded-2xl p-6 shadow-xl">
-              <!-- Header -->
-              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-                <div>
-                  <h1 class="text-2xl font-bold bg-gradient-to-r from-[#E11162] to-[#F26538] bg-clip-text text-transparent" id="profileGreeting">Hello, John Doe</h1>
-                  <p class="text-gray-600 text-sm font-medium">Joined in 2021</p>
-                </div>
-                <button id="editProfileBtn" class="mt-4 sm:mt-0 px-6 py-2 bg-gradient-to-br from-[#EFB85A] via-[#F26538] to-[#E11162] text-white rounded-lg font-semibold transition-all duration-300 shadow-lg transform hover:scale-105">
-                  Edit Profile
-                </button>
-              </div>
-              
-              <!-- Profile Information -->
-              <div class="space-y-6">
-                <div class="bg-white/50 rounded-xl p-4 border border-[#EFB85A]/20">
-                  <label class="block text-sm font-semibold text-[#E11162] mb-2">Email</label>
-                  <p class="text-gray-800 font-medium" id="profileEmail">john.doe@example.com</p>
-                </div>
-                
-                <div class="bg-white/50 rounded-xl p-4 border border-[#EFB85A]/20">
-                  <label class="block text-sm font-semibold text-[#E11162] mb-2">Phone no</label>
-                  <p class="text-gray-800 font-medium" id="profilePhone">+1 234 567 8900</p>
-                </div>
-                
-                <div class="bg-white/50 rounded-xl p-4 border border-[#EFB85A]/20">
-                  <label class="block text-sm font-semibold text-[#E11162] mb-2">DOB</label>
-                  <p class="text-gray-800 font-medium" id="profileDOB">January 15, 1990</p>
-                </div>
-                
-                <div class="bg-white/50 rounded-xl p-4 border border-[#EFB85A]/20">
-                  <label class="block text-sm font-semibold text-[#E11162] mb-2">Address</label>
-                  <p class="text-gray-800 font-medium" id="profileAddress">123 Main Street, City, State 12345</p>
-                </div>
-                
-                <div class="bg-white/50 rounded-xl p-4 border border-[#EFB85A]/20">
-                  <label class="block text-sm font-semibold text-[#E11162] mb-2">Pin code</label>
-                  <p class="text-gray-800 font-medium" id="profilePincode">12345</p>
-                </div>
-                
-                <div class="pt-4 border-t border-[#EFB85A]/30">
-                  <h3 class="text-lg font-bold bg-gray-800 bg-clip-text text-transparent mb-2">Reviewed By You</h3>
-                  <p class="text-gray-600 text-sm">No reviews yet</p>
-                </div>
-              </div>
-            </div>
+        </div>
+
+        <!-- Edit Profile Form -->
+        <div id="editProfileView" class="max-w-7xl mx-auto hidden">
+  <div class="flex flex-col lg:flex-row gap-8 lg:items-stretch">
+    <!-- Left Sidebar: Profile Image + Verifications -->
+    <div class="flex flex-col items-center">
+  <!-- Profile photo -->
+ <div class="relative w-40 h-40 rounded-full overflow-hidden shadow-lg bg-black flex items-center justify-center">
+  <img id="editProfileImage" src="" alt="Edit Profile Image" class="w-full h-full object-cover" />
+  <!-- Remove or hide SVG placeholder -->
+</div>
+
+  <!-- Change Photo link -->
+  <p class="mt-3 mb-4 text-base font-medium text-[#F26538] text-center cursor-pointer hover:text-[#E11162]" onclick="triggerImageUpload()">
+    Change Photo
+  </p>
+
+  <!-- Status badges -->
+  <div class="flex flex-col w-full items-center gap-2">
+    <div class="flex items-center gap-2 bg-[#FFFBEA] rounded-full px-4 py-2 shadow text-[#686144] text-base font-medium">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#F4B740]" fill="none" viewBox="0 0 20 20" stroke="currentColor">
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+      </svg>
+      Email Pending
+    </div>
+    <div class="flex items-center gap-2 bg-[#FFFBEA] rounded-full px-4 py-2 shadow text-[#686144] text-base font-medium">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#F4B740]" fill="none" viewBox="0 0 20 20" stroke="currentColor">
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+      </svg>
+      Mobile Pending
+    </div>
+  </div>
+</div>
+
+    <!-- Right Content: Edit form fields -->
+    <div class="lg:w-2/3">
+      <div class="glass-effect rounded-2xl p-6 shadow-xl">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+          <div>
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-[#E11162] to-[#F26538] bg-clip-text text-transparent" id="editProfileGreeting">Loading...</h1>
+            <p class="text-gray-600 text-sm font-medium join-year">Loading...</p>
           </div>
         </div>
-      </div>
-      
-      <!-- Edit Profile Form -->
-      <div id="editProfileView" class="max-w-7xl mx-auto hidden">
-        <div class="flex flex-col lg:flex-row gap-8 lg:items-stretch">
-          <!-- Left Sidebar -->
-          <div class="lg:w-1/3 flex">
-            <div class="glass-effect rounded-2xl p-6 text-center flex-1 flex flex-col shadow-xl">
-              <!-- Profile Image and Name - Takes up most space -->
-              <div class="flex-1 flex flex-col justify-center">
-                <!-- Profile Image -->
-                <div class="mb-6">
-                  <div class="w-32 h-32 mx-auto bg-gray-600 rounded-full flex items-center justify-center shadow-lg">
-                    <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-                    </svg>
-                  </div>
-                  <p class="mt-3 text-sm font-medium">Upload a Photo</p>
-                </div>
-                
-                <!-- User Name -->
-                <div class="text-center">
-                  <h3 class="text-xl font-bold text-gray-800">John Doe</h3>
-                </div>
-              </div>
-              
-              <!-- Status Section - Fixed at bottom -->
-              <div class="mt-6 pt-6 border-t border-[#EFB85A]/30 space-y-3">
-                <div class="flex items-center justify-center text-sm text-gray-700 bg-green-50 rounded-full px-4 py-2">
-                  <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                  </svg>
-                  Email Confirmed
-                </div>
-                <div class="flex items-center justify-center text-sm text-gray-700 bg-green-50 rounded-full px-4 py-2">
-                  <svg class="w-4 h-4 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                  </svg>
-                  Mobile Confirmed
-                </div>
-              </div>
-            </div>
+
+        <form id="editProfileForm" class="space-y-6">
+          <div class="bg-white/50 rounded-xl p-4 border border-[#EFB85A]/20">
+            <label class="block text-sm font-semibold text-[#E11162] mb-2">Email</label>
+            <input type="email" id="editEmail"
+              class="w-full px-4 py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent bg-white/80 font-medium cursor-not-allowed"
+              readonly>
+            <p class="text-xs text-gray-500 mt-1">Email cannot be changed</p>
           </div>
-          
-          <!-- Right Content - Edit Form -->
-          <div class="lg:w-2/3">
-            <div class="rounded-2xl p-6 shadow-xl">
-              <!-- Header -->
-              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+
+          <div class="bg-white/50 rounded-xl p-4 border border-[#EFB85A]/20">
+            <label class="block text-sm font-semibold text-[#E11162] mb-2">Phone no</label>
+            <input type="tel" id="editPhone"
+              class="w-full px-4 py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent bg-white/80 font-medium transition-all duration-200"
+              placeholder="Enter your phone number">
+          </div>
+
+          <div class="bg-white/50 rounded-xl p-4 border border-[#EFB85A]/20">
+            <label class="block text-sm font-semibold text-[#E11162] mb-2">Date of Birth</label>
+            <input type="date" id="editDOB"
+              class="w-full px-4 py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent bg-white/80 font-medium transition-all duration-200"
+              >
+          </div>
+
+          <div class="bg-white/50 rounded-xl p-4 border border-[#EFB85A]/20">
+            <label class="block text-sm font-semibold text-[#E11162] mb-2">Address</label>
+            <textarea id="editAddress" rows="3"
+              class="w-full px-4 py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent bg-white/80 font-medium resize-none transition-all duration-200"
+              placeholder="Enter your complete address"></textarea>
+          </div>
+
+          <div class="bg-white/50 rounded-xl p-4 border border-[#EFB85A]/20">
+            <label class="block text-sm font-semibold text-[#E11162] mb-2">Pin code</label>
+            <input type="text" id="editPincode"
+              class="w-full px-4 py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent bg-white/80 font-medium transition-all duration-200"
+              pattern="[0-9]{6}" maxlength="6" placeholder="Enter your pin code">
+            <p class="text-xs text-gray-500 mt-1">Enter 6-digit pin code</p>
+          </div>
+
+          <div class="pt-6 border-t border-[#EFB85A]/30">
+            <div class="bg-blue-50 rounded-xl p-4 mb-6 border border-blue-200">
+              <div class="flex items-start">
+                <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
                 <div>
-                  <h1 class="text-2xl font-bold bg-gradient-to-r from-[#E11162] to-[#F26538] bg-clip-text text-transparent">Hello, John Doe</h1>
-                  <p class="text-gray-600 text-sm font-medium">Joined in 2021</p>
+                  <h4 class="text-sm font-semibold text-blue-800 mb-1">Profile Information</h4>
+                  <p class="text-sm text-blue-700">
+                    This information helps us provide better service for Hotel bookings and event management.
+                  </p>
                 </div>
               </div>
-              
-              <!-- Edit Form -->
-              <form id="editProfileForm" class="space-y-6">
-                <div class="bg-white/50 rounded-xl p-2">
-                  <label class="block text-sm font-semibold text-[#E11162] mb-2">Email</label>
-                  <input type="email" id="editEmail" class="w-full px-4 py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent bg-white/80 font-medium" value="john.doe@example.com" readonly>
-                </div>
-                
-                <div class="bg-white/50 rounded-xl p-2">
-                  <label class="block text-sm font-semibold text-[#E11162] mb-2">Phone no</label>
-                  <input type="tel" id="editPhone" class="w-full px-4 py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent bg-white/80 font-medium" value="+1 234 567 8900">
-                </div>
-                
-                <div class="bg-white/50 rounded-xl p-2">
-                  <label class="block text-sm font-semibold text-[#E11162] mb-2">DOB</label>
-                  <input type="date" id="editDOB" class="w-full px-4 py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent bg-white/80 font-medium" value="1990-01-15">
-                </div>
-                
-                <div class="bg-white/50 rounded-xl p-2">
-                  <label class="block text-sm font-semibold text-[#E11162] mb-2">Address</label>
-                  <textarea id="editAddress" rows="3" class="w-full px-4 py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent bg-white/80 font-medium resize-none">123 Main Street, City, State 12345</textarea>
-                </div>
-                
-                <div class="bg-white/50 rounded-xl p-2">
-                  <label class="block text-sm font-semibold text-[#E11162] mb-2">Pin code</label>
-                  <input type="text" id="editPincode" class="w-full px-4 py-3 border-2 border-[#EFB85A]/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#EFB85A] focus:border-transparent bg-white/80 font-medium" value="12345">
-                </div>
-                
-                <div class="pt-6 border-t border-[#EFB85A]/30">
-                  <p class="text-sm text-gray-600 mb-6 font-medium">All the required user information can be added here...</p>
-                  
-                  <!-- Action Buttons -->
-                  <div class="flex flex-col sm:flex-row gap-4 sm:justify-end">
-                    <button type="button" id="cancelBtn" class="px-8 py-3 border-2 border-[#F26538] rounded-lg text-[#F26538] font-semibold transition-all duration-300 transform hover:scale-105">
-                      Cancel
-                    </button>
-                    <button type="submit" class="px-8 py-3 bg-gradient-to-br from-[#EFB85A] via-[#F26538] to-[#E11162] text-white rounded-lg font-semibold  transition-all duration-300 shadow-lg transform hover:scale-105">
-                      Save Changes
-                    </button>
-                  </div>
-                </div>
-              </form>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 sm:justify-end">
+              <button type="button" id="cancelBtn" class="px-8 py-3 border-2 border-[#F26538] rounded-lg text-[#F26538] font-semibold transition-all duration-300 transform hover:scale-105 hover:bg-[#F26538]/5 focus:outline-none focus:ring-2 focus:ring-[#F26538]/50">
+                <i class="fas fa-times mr-2"></i>Cancel
+              </button>
+              <button type="submit" class="px-8 py-3 bg-gradient-to-br from-[#EFB85A] via-[#F26538] to-[#E11162] text-white rounded-lg font-semibold transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#EFB85A]/50">
+                <i class="fas fa-save mr-2"></i>Save Changes
+              </button>
             </div>
           </div>
-        </div>
+        </form>
       </div>
+    </div>
+  </div>
+</div>
+
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-8 max-w-sm mx-4 shadow-2xl text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F26538] mx-auto mb-4"></div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Updating Profile</h3>
+            <p class="text-gray-600 text-sm">Please wait while we save your changes...</p>
+        </div>
+    </div>
+
     </main>
   </div>
   
-  <!-- Footer -->
-  <footer class="bg-gray-100 text-gray-700 pt-2">
-    <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-      
-      <!-- Logo & About -->
-      <div class="text-left">
-        <h2 class="text-4xl font-extrabold mb-4 bg-gradient-to-br from-[#EFB85A] via-[#F26538] to-[#E11162] bg-clip-text text-transparent">
-          Zyra
-        </h2>
-        <p class="text-gray-600 mb-6">
-          Experience luxury and comfort at Zyra Hotel. We provide exceptional hospitality with world-class amenities for an unforgettable stay.
-        </p>
-        <h3 class="font-semibold mb-2">Customer Support</h3>
-        <p class="text-gray-600">feedback@gmail.com</p>
-      </div>
-      
-      <!-- Quick Links -->
+      <!-- Footer -->
+<footer class="bg-gray-100 text-gray-700 pt-2">
+  <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+    
+    <!-- Logo & About -->
+    <div class="text-left">
+      <h2 class="text-4xl font-extrabold mb-4 bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent">
+        Zyra
+      </h2>
+      <p class="text-gray-600 mb-6">
+        Experience luxury and comfort at Zyra Hotel. We provide exceptional hospitality with world-class amenities for an unforgettable stay.
+      </p>
+      <h3 class="font-semibold mb-2">Customer Support</h3>
+      <p class="text-gray-600">feedback@gmail.com</p>
+    </div>
+
+        <!-- Quick Links -->
       <div class="grid grid-cols-2 gap-6">
         <div>
           <h3 class="font-semibold mb-4">Quick Links</h3>
           <ul class="space-y-2">
-            <li><a href="#home" class="hover:text-[#413030] transition">Home</a></li>
-            <li><a href="#rooms" class="hover:text-[#413030] transition">Rooms</a></li>
-            <li><a href="#amenities" class="hover:text-[#413030] transition">Facilities</a></li>
-            <li><a href="#testimonials" class="hover:text-[#413030] transition">Reviews</a></li>
-            <li><a href="#contact" class="hover:text-[#413030] transition">About us</a></li>
+           <li><a href="/src/index.html" class="links">Home</a></li>
+          <li><a href="/src/user/features/rooms/allRooms.html" class="links">Rooms</a></li>
+          <li><a href="/src/user/features/facilities/facilities.html" class="links">Facilities</a></li>
+          <li><a href="#testimonials" class="links">Reviews</a></li>
+          <li><a href="/src/user/features/contact/contactUs.html" class="links">About us</a></li>
           </ul>
         </div>
         <div class="pt-8 md:pt-0">
           <ul class="space-y-2">
-            <li><a href="#" class="hover:text-[#413030] transition">FAQs</a></li>
-            <li><a href="#" class="hover:text-[#413030] transition">Privacy Policy</a></li>
-            <li><a href="#" class="hover:text-[#413030] transition">Terms and Condition</a></li>
+            <li><a href="#" class="links">FAQs</a></li>
+            <li><a href="#" class="links">Privacy Policy</a></li>
+            <li><a href="#" class="links">Terms and Condition</a></li>
           </ul>
         </div>
       </div>
-      
-      <!-- Social Media -->
-      <div class="flex flex-col items-center md:items-start">
-        <h3 class="font-semibold mb-4">Follow us</h3>
-        <div class="flex space-x-6 text-2xl">
-          <a href="#" class="text-[#1877F2] hover:opacity-80 transition" aria-label="Facebook">
-            <i class="fab fa-facebook"></i>
-          </a>
-          <a href="#" class="text-[#1DA1F2] hover:opacity-80 transition" aria-label="Twitter">
-            <i class="fab fa-twitter"></i>
-          </a>
-          <a href="#" class="text-[#0A66C2] hover:opacity-80 transition" aria-label="LinkedIn">
-            <i class="fab fa-linkedin"></i>
-          </a>
-          <a href="#" class="text-[#E4405F] hover:opacity-80 transition" aria-label="Instagram">
-            <i class="fab fa-instagram"></i>
-          </a>
-        </div>
+
+
+    <!-- Social Media -->
+    <div class="flex flex-col items-center md:items-start">
+      <h3 class="font-semibold mb-4">Follow us</h3>
+      <div class="flex space-x-6 text-2xl">
+        <a href="#" class="text-[#1877F2] hover:opacity-80 transition" aria-label="Facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+        <a href="#" class="text-[#1DA1F2] hover:opacity-80 transition" aria-label="Twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#" class="text-[#0A66C2] hover:opacity-80 transition" aria-label="LinkedIn">
+          <i class="fab fa-linkedin"></i>
+        </a>
+        <a href="#" class="text-[#E4405F] hover:opacity-80 transition" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
       </div>
     </div>
-    <div class="bg-gray-200 text-center py-4">
-      <p class="text-sm text-gray-600">&copy; 2024 Zyra Hotel. All rights reserved.</p>
-    </div>
-  </footer>
+  </div>
+
+  <!-- Copyright -->
+  <div class="border-t border-gray-300 py-4 text-center text-sm text-gray-500">
+    © 2025 Zyra Hotel | All rights reserved
+  </div>
+</footer>
   
+
   <script>
-    // Profile Management System
-    class ProfileManager {
-      constructor() {
-        // Initialize profile data
-        this.profileData = {
-          name: 'John Doe',
-          email: 'john.doe@example.com',
-          phone: '+1 234 567 8900',
-          dob: '1990-01-15',
-          address: '123 Main Street, City, State 12345',
-          pincode: '12345'
-        };
-        
-        // Get DOM elements
-        this.profileView = document.getElementById('profileView');
-        this.editProfileView = document.getElementById('editProfileView');
-        this.editProfileBtn = document.getElementById('editProfileBtn');
-        this.cancelBtn = document.getElementById('cancelBtn');
-        this.editProfileForm = document.getElementById('editProfileForm');
-        
-        // Initialize event listeners
-        this.initEventListeners();
-        
-        // Load initial profile data
-        this.loadProfileData();
-      }
-      
-      initEventListeners() {
-        // Edit profile button
-        this.editProfileBtn.addEventListener('click', () => {
-          this.showEditView();
-        });
-        
-        // Cancel button
-        this.cancelBtn.addEventListener('click', () => {
-          this.showProfileView();
-          this.loadEditForm(); // Reset form data
-        });
-        
-        // Form submission
-        this.editProfileForm.addEventListener('submit', (e) => {
-          e.preventDefault();
-          this.saveProfile();
-        });
-      }
-      
-      showEditView() {
-        this.profileView.classList.add('hidden');
-        this.editProfileView.classList.remove('hidden');
-        this.loadEditForm();
-      }
-      
-      showProfileView() {
-        this.editProfileView.classList.add('hidden');
-        this.profileView.classList.remove('hidden');
-      }
-      
-      loadProfileData() {
-        // Update profile display elements
-        document.getElementById('profileName').textContent = this.profileData.name;
-        document.getElementById('profileGreeting').textContent = `Hello, ${this.profileData.name}`;
-        document.getElementById('profileEmail').textContent = this.profileData.email;
-        document.getElementById('profilePhone').textContent = this.profileData.phone;
-        document.getElementById('profileDOB').textContent = this.formatDate(this.profileData.dob);
-        document.getElementById('profileAddress').textContent = this.profileData.address;
-        document.getElementById('profilePincode').textContent = this.profileData.pincode;
-      }
-      
-      loadEditForm() {
-        // Populate edit form with current data
-        document.getElementById('editEmail').value = this.profileData.email;
-        document.getElementById('editPhone').value = this.profileData.phone;
-        document.getElementById('editDOB').value = this.profileData.dob;
-        document.getElementById('editAddress').value = this.profileData.address;
-        document.getElementById('editPincode').value = this.profileData.pincode;
-      }
-      
-      saveProfile() {
-        // Get form data
-        const formData = {
-          name: this.profileData.name, // Name is not editable in this form
-          email: document.getElementById('editEmail').value,
-          phone: document.getElementById('editPhone').value,
-          dob: document.getElementById('editDOB').value,
-          address: document.getElementById('editAddress').value,
-          pincode: document.getElementById('editPincode').value
-        };
-        
-        // Validate required fields
-        if (!formData.phone || !formData.dob || !formData.address || !formData.pincode) {
-          // Create custom alert with branded styling
-          this.showErrorMessage('Please fill in all required fields.');
-          return;
-        }
-        
-        // Update profile data
-        this.profileData = { ...formData };
-        
-        // Update profile display
-        this.loadProfileData();
-        
-        // Show profile view
-        this.showProfileView();
-        
-        // Show success message
-        this.showSuccessMessage('Profile updated successfully!');
-        
-        // Here you would typically send the data to your backend
-        console.log('Profile updated:', this.profileData);
-      }
-      
-      formatDate(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', { 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
-        });
-      }
-      
-      showSuccessMessage(message) {
-        // Create and show success notification with branded styling
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-20 right-4 bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-4 rounded-xl shadow-2xl z-50 transition-all transform translate-x-full border border-green-400';
-        notification.innerHTML = `
-          <div class="flex items-center">
-            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-            </svg>
-            ${message}
-          </div>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        // Animate in
-        setTimeout(() => {
-          notification.classList.remove('translate-x-full');
-        }, 100);
-        
-        // Remove notification after 4 seconds
-        setTimeout(() => {
-          notification.classList.add('translate-x-full');
-          setTimeout(() => {
-            document.body.removeChild(notification);
-          }, 300);
-        }, 4000);
-      }
-      
-      showErrorMessage(message) {
-        // Create and show error notification with branded styling
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-20 right-4 bg-gradient-to-r from-[#E11162] to-[#F26538] text-white px-6 py-4 rounded-xl shadow-2xl z-50 transition-all transform translate-x-full border border-red-400';
-        notification.innerHTML = `
-          <div class="flex items-center">
-            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-            </svg>
-            ${message}
-          </div>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        // Animate in
-        setTimeout(() => {
-          notification.classList.remove('translate-x-full');
-        }, 100);
-        
-        // Remove notification after 4 seconds
-        setTimeout(() => {
-          notification.classList.add('translate-x-full');
-          setTimeout(() => {
-            document.body.removeChild(notification);
-          }, 300);
-        }, 4000);
-      }
-    }
-    
-    // Initialize Profile Manager when DOM is loaded
-    document.addEventListener('DOMContentLoaded', () => {
-      new ProfileManager();
-    });
+    function redirectRoom(){
+    window.location.href = '/src/user/features/rooms/room.html';
+  }
   </script>
+  <script src="profile.js"></script>
+  <script src = "/src/auth.js"></script>
 </body>
 </html>

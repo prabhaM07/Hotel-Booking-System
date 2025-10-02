@@ -15,131 +15,146 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/lineSpinner.js"></script>
 
-
   <style>
-    * {
-      font-family: 'Montserrat', sans-serif;
-    }
-
-    .indicator {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: rgba(63, 60, 60, 0.54);
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .indicator.active {
-      background-color: BLACK;
-      transform: scale(1.3);
-    }
-
-    ::-webkit-scrollbar {
-      width: 1px;
-    }
-
-    /* Loading animations */
-    .fade-in {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: all 0.8s ease-out;
-    }
-
-    .fade-in.loaded {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .slide-in-left {
-      opacity: 0;
-      transform: translateX(-50px);
-      transition: all 0.8s ease-out;
-    }
-
-    .slide-in-left.loaded {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    .slide-in-right {
-      opacity: 0;
-      transform: translateX(50px);
-      transition: all 0.8s ease-out;
-    }
-
-    .slide-in-right.loaded {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    /* Skeleton loading */
-    .skeleton {
-      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-      background-size: 200% 100%;
-      animation: loading 1.5s infinite;
-    }
-
-    @keyframes loading {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    .lazy-load-container {
-      min-height: 200px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Image lazy loading */
-    img[data-src] {
-      filter: blur(5px);
-      transition: filter 0.3s;
-    }
-
-    img[data-src].loaded {
-      filter: blur(0);
-    }
-
-    /* Faster, smoother animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.15s ease-out;
-}
-
-.animate-slideUp {
-  animation: slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Ensure modals appear above everything */
-.auth-modal-overlay {
-  z-index: 9999;
-}
-  * {
+ * {
+    font-family: 'Montserrat', sans-serif;
     user-select: none;
   }
+html{
+  scroll-behavior: smooth;
+}
 
-  </style>
+  .indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(63, 60, 60, 0.54);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .links:hover {
+    color: #EFB85A;
+   
+  }
+  .links{
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .indicator.active {
+    background-color: black;
+    transform: scale(1.3);
+  }
+
+  ::-webkit-scrollbar {
+    width: 1px;
+  }
+
+  /* Loading animations */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+  }
+  .fade-in.loaded {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .slide-in-left {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: all 0.8s ease-out;
+  }
+  .slide-in-left.loaded {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .slide-in-right {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: all 0.8s ease-out;
+  }
+  .slide-in-right.loaded {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* Skeleton loading */
+  .skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+  }
+
+  @keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Spinning loader */
+  @keyframes spin {
+    0% { transform: rotate(0deg);}
+    100% { transform: rotate(360deg);}
+  }
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+
+  .lazy-load-container {
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Image lazy loading */
+  img[data-src] {
+    filter: blur(5px);
+    transition: filter 0.3s;
+  }
+  img[data-src].loaded {
+    filter: blur(0);
+  }
+
+  /* Smooth animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  .animate-fadeIn {
+    animation: fadeIn 0.15s ease-out;
+  }
+  .animate-slideUp {
+    animation: slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Ensure modals appear above everything */
+  .auth-modal-overlay {
+    z-index: 9999;
+  }
+
+  /* 🔹 Fixed loader styling */
+  .loader {
+    border: 4px solid #f3f3f3;      /* light background border */
+    border-top: 4px solid #EFB85A;  /* theme color for spin */
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+  }
+</style>
+
+
 </head>
 
 <body class="m-0 p-0">
@@ -157,19 +172,19 @@
           <ul class="hidden md:flex space-x-6 font-semibold text-[#413030]">
             <li>
               <span class="text-cursor-pointer relative inline-block group">
-                <a href="#home" class="hover:text-yellow-400 transition">Home</a>
+                <a href="/src/index.html" class="hover:text-yellow-400 transition">Home</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
               </span>
             </li>
             <li>
               <span class="cursor-pointer relative inline-block group">
-                <a href="/src/user/features/bookings/booking.html" class="hover:text-yellow-400 transition">Rooms</a>
+                <a href="/src/user/features/rooms/allRooms.html" class="hover:text-yellow-400 transition">Rooms</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
               </span>
             </li>
             <li>
               <span class="text-cursor-pointer relative inline-block group">
-                <a href="#" class="hover:text-yellow-400 transition">Facilities</a>
+                <a href="/src/user/features/facilities/facilities.html" class="hover:text-yellow-400 transition">Facilities</a>
                 <span class="absolute left-0 bottom-0 h-[1px] w-0 bg-[#F26538] transition-all duration-300 group-hover:w-full"></span>
               </span>
             </li>
@@ -181,7 +196,7 @@
             </li>
           </ul>
 
-          <button id = "homeBookNow-btn"class="rounded-full px-4 py-3 text-white text-sm font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
+          <button id = "homeBookNow-btn" onclick = "redirectRoom()" class="rounded-full px-4 py-3 text-white text-sm font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
             Book Now
           </button>
         </div>
@@ -204,6 +219,22 @@
       </div>
     </nav>
   </header>
+
+  <div id="redirectLoader"
+     class="fixed inset-0 bg-white/95 flex flex-col items-center justify-center z-50 hidden">
+  <!-- Logo wrapper -->
+  <div class="flex items-center space-x-3 mb-6 animate-slideUp">
+    <span class="text-5xl animate-pulseLogo">🏨</span>
+    <h1 class="text-4xl font-extrabold animate-pulseLogo">
+      <h2 class="text-4xl font-extrabold bg-gradient-to-r from-orange-400 via-red-500 to-pink-600 bg-clip-text text-transparent">
+        Zyra
+      </h2>
+    </h1>
+  </div>
+</div>
+
+
+ 
 
   <!-- Main Content -->
   <main class="grid grid-rows-[auto_auto_auto_auto_auto_auto_auto_auto] min-h-screen">
@@ -232,7 +263,7 @@
     <h1 class="text-6xl sm:text-4xl md:text-7xl lg:text-8xl font-extrabold bg-gradient-to-r from-[#EFB85A] via-[#F26538] to-[#E11162] bg-clip-text text-transparent drop-shadow-lg animate-[pulse_3s_ease-in-out_infinite]">
       Your Perfect Stay Awaits
     </h1>
-    <p class="mt-4 text-xl sm:text-2xl font-semibold text-gray-600">
+    <p class="mt-4 text-2xl sm:text-3xl font-semibold text-gray-600">
       Book Your Room Today!
     </p>
   </div>
@@ -242,24 +273,24 @@
 
     <!-- Check In -->
     <div class="flex-1 ml-5 text-center sm:text-left border-b sm:border-b-0 sm:border-r border-gray-200 px-2 py-2 relative">
-      <label class="text-sm mb-2 sm:text-base font-semibold text-[#413030] block">Check In</label>
+      <label class="text-sm mb-2 sm:text-base font-bold text-[#413030] block">Check In</label>
       <input id="checkinDate" type="date" class="p-2 border border-gray-300 rounded-md w-full max-w-[150px] focus:outline-none focus:ring-2 focus:ring-[#EFB85A]" />
     </div>
 
     <!-- Check Out -->
     <div class="flex-1 ml-5 text-center sm:text-left border-b sm:border-b-0 sm:border-r border-gray-200 px-2 py-2 relative">
-      <label class="text-sm mb-2 sm:text-base font-semibold text-[#413030] block">Check Out</label>
+      <label class="text-sm mb-2 sm:text-base font-bold text-[#413030] block">Check Out</label>
       <input id="checkoutDate" type="date" class="p-2 border border-gray-300 rounded-md w-full max-w-[150px] focus:outline-none focus:ring-2 focus:ring-[#EFB85A]" />
     </div>
 
     <!-- Adults -->
-    <div class="flex-1 ml-5 text-center sm:text-left border-b sm:border-b-0 sm:border-r border-gray-200 px-2 py-2 relative">
-      <p class="text-sm mb-2 sm:text-base font-semibold text-[#413030]">Adults</p>
+    <div class="flex-1 ml-5 text-center sm:text-left border-b sm:border-b-0 sm:border-r border-gray-200 px-2 py-1 relative">
+      <p class="text-sm mb-3 sm:text-base font-bold text-[#413030]">Adults</p>
       <div class="flex items-center justify-center sm:justify-start space-x-3 mx-auto">
         <button id="adultMinus" class="w-8 h-8 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition" aria-label="Decrease adults">
           <i class="fas fa-minus text-gray-600"></i>
         </button>
-        <span id="adultCount" class="text-lg font-semibold text-[#413030] min-w-[2rem] text-center">0</span>
+        <span id="adultCount" class="text-lg font-bold text-[#413030] min-w-[2rem] text-center">0</span>
         <button id="adultPlus" class="w-8 h-8 bg-[#EFB85A] hover:bg-[#E11162] text-white rounded-full flex items-center justify-center transition" aria-label="Increase adults">
           <i class="fas fa-plus"></i>
         </button>
@@ -267,8 +298,8 @@
     </div>
 
     <!-- Children -->
-    <div class="flex-1 ml-5 text-center sm:text-left px-2 py-2 relative">
-      <p class="text-sm mb-2 sm:text-base font-semibold text-[#413030]">Children</p>
+    <div class="flex-1 ml-5 text-center sm:text-left px-2 py-1 relative">
+      <p class="text-sm mb-3 sm:text-base font-bold text-[#413030]">Children</p>
       <div class="flex items-center justify-center sm:justify-start space-x-3 mx-auto">
         <button id="childrenMinus" class="w-8 h-8 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition" aria-label="Decrease children">
           <i class="fas fa-minus text-gray-600"></i>
@@ -318,14 +349,14 @@
         <div class="flex-1 align-center font-bold text-[#413030] text-3xl p-8">Our Rooms</div>
 
         <div class="px-6 md:px-12 lg:px-20">
-          <div id = "roomsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- dynamically added -->
+          <div id="roomsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- First 4 rooms dynamically added -->
           </div>
         </div>
 
         <div class="px-6 md:px-12 lg:px-20">
           <div class="flex justify-end py-5">
-            <span class="inline-block text-base font-bold text-[#413030] pb-1 cursor-pointer hover:text-[#EFB85A]">
+            <span id="moreRoomsBtn" class="inline-block text-base font-bold text-[#413030] pb-1 cursor-pointer hover:text-[#EFB85A] transition-colors" onclick="navigateToAllRooms()">
               More Rooms >>>
             </span>
           </div>
@@ -544,12 +575,6 @@
         <!-- Indicators -->
         <div class="flex justify-center space-x-3 mt-8" id="indicators"></div>
 
-        <!-- More Reviews Link -->
-        <div class="text-center mt-10">
-          <a href="#" class="text-[#EFB85A] hover:text-[#F26538] transition-colors duration-300 font-medium text-lg">
-            View All Reviews →
-          </a>
-        </div>
       </div>
     </section>
 
@@ -654,26 +679,27 @@
       <p class="text-gray-600">feedback@gmail.com</p>
     </div>
 
-    <!-- Quick Links -->
-    <div class="grid grid-cols-2 gap-6">
-      <div>
-        <h3 class="font-semibold mb-4">Quick Links</h3>
-        <ul class="space-y-2">
-          <li><a href="#home" class="hover:text-[#413030] transition">Home</a></li>
-          <li><a href="#rooms" class="hover:text-[#413030] transition">Rooms</a></li>
-          <li><a href="#amenities" class="hover:text-[#413030] transition">Facilities</a></li>
-          <li><a href="#testimonials" class="hover:text-[#413030] transition">Reviews</a></li>
-          <li><a href="#contact" class="hover:text-[#413030] transition">About us</a></li>
-        </ul>
+        <!-- Quick Links -->
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <h3 class="font-semibold mb-4">Quick Links</h3>
+          <ul class="space-y-2">
+           <li><a href="/src/index.html" class="links">Home</a></li>
+          <li><a href="/src/user/features/rooms/allRooms.html" class="links">Rooms</a></li>
+          <li><a href="/src/user/features/facilities/facilities.html" class="links">Facilities</a></li>
+          <li><a href="#testimonials" class="links">Reviews</a></li>
+          <li><a href="/src/user/features/contact/contactUs.html" class="links">About us</a></li>
+          </ul>
+        </div>
+        <div class="pt-8 md:pt-0">
+          <ul class="space-y-2">
+            <li><a href="#" class="links">FAQs</a></li>
+            <li><a href="#" class="links">Privacy Policy</a></li>
+            <li><a href="#" class="links">Terms and Condition</a></li>
+          </ul>
+        </div>
       </div>
-      <div class="pt-8 md:pt-0">
-        <ul class="space-y-2">
-          <li><a href="#" class="hover:text-[#413030] transition">FAQs</a></li>
-          <li><a href="#" class="hover:text-[#413030] transition">Privacy Policy</a></li>
-          <li><a href="#" class="hover:text-[#413030] transition">Terms and Condition</a></li>
-        </ul>
-      </div>
-    </div>
+
 
     <!-- Social Media -->
     <div class="flex flex-col items-center md:items-start">
@@ -713,61 +739,133 @@
 
 <script>
 
-  // Declare roomsData in global scope first
-var roomsData = [];
 
-// Function to render room cards dynamically
+  tailwind.config = {
+  theme: {
+    extend: {
+      keyframes: {
+        slideUp: {
+          '0%':   { transform: 'translateY(40px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)',     opacity: '1' }
+        },
+        pulseLogo: {
+          '0%,100%': { transform: 'scale(1)',    opacity: '1'   },
+          '50%':     { transform: 'scale(1.08)', opacity: '.9'  }
+        }
+      },
+      animation: {
+        slideUp:  'slideUp 0.6s cubic-bezier(0.4,0,0.2,1) forwards',
+        pulseLogo:'pulseLogo 1.5s ease-in-out infinite'
+      }
+    }
+  }
+}
+
+// Declare roomsData in global scope
+var roomsData = [];
+var maxInitialRooms = 4;
+
+// Function to render room cards (show only first 4)
 function renderRoomCards() {
   const roomsContainer = document.getElementById('roomsContainer');
+  const moreRoomsBtn = document.getElementById('moreRoomsBtn');
   
   // Clear existing content
   roomsContainer.innerHTML = '';
   
-  // Generate cards for each room
-  roomsData.forEach(room => {
+  if (roomsData.length === 0) {
+    roomsContainer.innerHTML = '<p class="text-gray-500 col-span-full">No rooms available at the moment.</p>';
+    moreRoomsBtn.style.display = 'none';
+    return;
+  }
+  
+  // Show only first 4 rooms
+  const displayRooms = roomsData.slice(0, maxInitialRooms);
+  const remainingCount = roomsData.length - maxInitialRooms;
+  
+  // Generate cards for first 4 rooms
+  displayRooms.forEach(room => {
     const roomCard = createRoomCard(room);
     roomsContainer.appendChild(roomCard);
   });
+  
+  // Show/hide and update "More Rooms" button
+  if (remainingCount > 0) {
+    moreRoomsBtn.style.display = 'block';
+    moreRoomsBtn.textContent = `More Rooms (${remainingCount}) >>>`;
+  } else {
+    moreRoomsBtn.style.display = 'none';
+  }
+  
+  // Save roomsData properly
+  localStorage.setItem('roomsData', JSON.stringify(roomsData));
+  
+  // Reinitialize lazy loading for images
+  setTimeout(() => {
+    reinitializeLazyImages();
+  }, 100);
 }
 
-// Function to create individual room card
+// Function to navigate to all rooms page
+function navigateToAllRooms() {
+  // Show loader
+  const loader = document.getElementById('redirectLoader');
+  if (loader) loader.classList.remove('hidden');
+
+  // Save current rooms data for the booking page
+  localStorage.setItem('roomsData', JSON.stringify(roomsData));
+  localStorage.setItem('navigatedFromHome', 'true');
+
+}
+
+// Function to create individual room card (same as before)
 function createRoomCard(room) {
-  // Create article element
   const article = document.createElement('article');
   article.className = 'slide-in-left bg-white border rounded-2xl border-[#CAC1C1] p-6 overflow-hidden shadow-md w-full max-w-sm mx-auto flex flex-col transform transition-transform duration-300 hover:scale-105 hover:shadow-xl';
   
-  // Get first image or fallback
-  const mainImage = room.images && room.images.length > 0 
-    ? room.images[0].thumbnailUrl || room.images[0].url 
-    : '/src/assets/carousel2.jpg';
+  // Get thumbnail image with multiple fallbacks
+  let mainImage = '/src/assets/carousel2.jpg'; // Default fallback
+  
+  if (room.thumbnailUrl) {
+    mainImage = room.thumbnailUrl;
+  } else if (room.images && room.images.length > 0) {
+    const firstImage = room.images[0];
+    if (typeof firstImage === 'object' && firstImage.thumbnailUrl) {
+      mainImage = firstImage.thumbnailUrl;
+    } else if (typeof firstImage === 'object' && firstImage.url) {
+      mainImage = firstImage.url;
+    } else if (typeof firstImage === 'string') {
+      mainImage = firstImage;
+    }
+  }
   
   // Generate features list
-  const featuresHTML = room.selectedFeatures
+  const featuresHTML = room.selectedFeatures && room.selectedFeatures.length > 0
     ? room.selectedFeatures.map(feature => `<li>${feature.name}</li>`).join('')
     : '';
   
   // Generate facilities icons
-  const facilitiesHTML = room.selectedFacilities
+  const facilitiesHTML = room.selectedFacilities && room.selectedFacilities.length > 0
     ? room.selectedFacilities.map(facility => 
-        `<li><img data-src="${facility.icon}" alt="${facility.name}" class="lazy-image w-6 h-6 object-contain"></li>`
+        `<li><img data-src="${facility.icon}" alt="${facility.name}" class="lazy-image w-6 h-6 object-contain" loading="lazy"></li>`
       ).join('')
     : '';
   
   // Set innerHTML
   article.innerHTML = `
     <div class="mb-4">
-      <img data-src="${mainImage}" alt="${room.categoryType}" class="lazy-image rounded-xl w-full h-auto">
+      <img data-src="${mainImage}" alt="${room.categoryType}" class="lazy-image rounded-xl w-full h-48 object-cover" loading="lazy">
     </div>
     <div class="flex flex-col flex-grow">
       <div class="flex flex-col items-start">
         <h3 class="text-lg font-bold text-[#413030] mb-4">${room.categoryType}</h3>
-        <p class="text-base text-gray-900">${room.price} per night</p>
+        <p class="text-base font-bold text-gray-900">${room.price} <span class="text-base font-medium text-gray-900">per night</span></p>
       </div>
-      <div class="space-y-2 py-3">
+      <div class="space-y-2 py-3 flex-grow">
         ${featuresHTML ? `
         <div class="flex flex-col items-start">
           <h4 class="text-sm font-bold text-[#413030] mb-2">Features</h4>
-          <ul class="flex list-none space-x-2 text-xs text-gray-600">
+          <ul class="flex list-none space-x-2 text-xs font-semibold text-gray-500 flex-wrap">
             ${featuresHTML}
           </ul>
         </div>
@@ -775,56 +873,108 @@ function createRoomCard(room) {
         ${facilitiesHTML ? `
         <div class="flex flex-col items-start">
           <h4 class="text-sm font-bold text-[#413030] mb-2">Facilities</h4>
-          <ul class="flex list-none space-x-4 text-xs text-gray-400 items-center">
+          <ul class="flex list-none space-x-4 text-xs text-gray-400 items-center flex-wrap">
             ${facilitiesHTML}
           </ul>
         </div>
         ` : ''}
         <div class="flex flex-col items-start">
           <h4 class="text-sm font-bold text-[#413030] mb-2">Guests</h4>
-          <ul class="flex list-none space-x-2 text-xs text-gray-600">
+          <ul class="flex list-none space-x-2 text-xs font-semibold text-gray-500">
             <li>${room.adultMax} Adults</li>
             <li>${room.childrenMax} Children</li>
           </ul>
         </div>
       </div>
-      <div class="flex justify-between items-center px-6">
-        <span class="inline-block text-xs font-bold text-[#413030] border-b-2 border-[#413030] pb-1">
+      <div class="flex justify-between items-center px-6 mt-auto">
+        <span class="inline-block text-xs font-bold text-[#413030] border-b-2 border-[#413030] pb-1 cursor-pointer hover:text-[#EFB85A] transition-colors">
           more details
         </span>
-        <button  onclick = "redirect(${room.id})" class="rounded-full px-4 py-3 text-xs text-white font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition">
+        <button onclick="redirect('${room.roomno}')" class="rounded-full px-4 py-3 text-xs text-white font-semibold bg-[#EFB85A] hover:bg-[#F26538] transition-colors">
           Book Now
         </button>
       </div>
     </div>
   `;
-  
+
   return article;
 }
 
+// Keep the existing redirect function for individual room booking
+function redirect(roomno) {
+    let data = localStorage.getItem('roomsData');
+    console.log('Raw roomsData:', data);
 
-  function redirect(room_id) {
-    localStorage.setItem('booking_room_id', room_id);
-    window.location.href = '/src/user/features/bookings/booking.html';
-  }
+    if (data) {
+        data = JSON.parse(data);
+        
+        const room = data.find(r => r.roomno.toString() === roomno.toString());
+        
+        if (!room) {
+            console.error(`Room with roomno ${roomno} not found.`);
+            console.error('Available rooms:', data.map(r => r.roomno));
+            return;
+        }
 
+        console.log('Selected room:', room);
+        localStorage.setItem('roomno', roomno);
+        localStorage.setItem('currentRoom', JSON.stringify(room));
 
-// Your fetch function with proper error handling
+        const loader = document.getElementById('redirectLoader');
+        if (loader) loader.classList.remove('hidden');
+
+        setTimeout(() => {
+            window.location.href = '/src/user/features/bookings/room.html';
+        }, 1000);
+    }
+}
+
+// Enhanced fetch function
 async function fun() { 
   try {
+    console.log('🔄 Fetching rooms data...');
     const ROOMS = await fetch('https://68c8b85aceef5a150f622643.mockapi.io/admin/5'); 
+    
+    if (!ROOMS.ok) {
+      throw new Error(`HTTP ${ROOMS.status}: ${ROOMS.statusText}`);
+    }
+    
     const data = (await ROOMS.json()).rooms; 
     
-    // Clear existing data and populate
+    if (!Array.isArray(data)) {
+      throw new Error('Invalid data format received');
+    }
+    
+    // Clear existing data and populate with active rooms only
     roomsData.length = 0;
-    data.forEach(i => roomsData.push(i)); 
+    data.forEach(room => {
+      if (room.status === 'active') {
+        roomsData.push(room);
+      }
+    }); 
+    
+    console.log(`✅ Loaded ${roomsData.length} active rooms`);
     
     // Render cards after data is loaded
     renderRoomCards();
     
     return roomsData; 
   } catch (error) {
-    console.error('Error fetching rooms data:', error);
+    console.error('❌ Error fetching rooms data:', error);
+    
+    // Show error message to user
+    const roomsContainer = document.getElementById('roomsContainer');
+    if (roomsContainer) {
+      roomsContainer.innerHTML = `
+        <div class="col-span-full text-center py-8">
+          <p class="text-red-500 mb-4">Failed to load rooms. Please try again later.</p>
+          <button onclick="fun()" class="bg-[#EFB85A] hover:bg-[#F26538] text-white px-4 py-2 rounded transition-colors">
+            Retry
+          </button>
+        </div>
+      `;
+    }
+    
     return [];
   }
 }
@@ -833,6 +983,7 @@ async function fun() {
 fun().then(data => { 
   console.log('Rooms loaded and rendered:', data.length);
 });
+
 
 // Lazy loading reinitialization function
 function reinitializeLazyImages() {
@@ -854,13 +1005,704 @@ function reinitializeLazyImages() {
   }
 }
 
+// ===========================================
+// HERO SEARCH FORM VALIDATION & STORAGE
+// ===========================================
 
+// Initialize search form data with clean defaults (never loaded from storage)
+let searchFormData = {
+    checkin: '',     // Always empty on load
+    checkout: '',    // Always empty on load  
+    adults: 1,       // Always 1 on load
+    children: 0      // Always 0 on load
+};
+
+// Adult and children counters with clean defaults
+let heroAdultCount = 1;      // Always 1 on load
+let heroChildrenCount = 0;   // Always 0 on load
+
+// Debug flag
+const DEBUG = true;
+
+// ===========================================
+// UTILITY FUNCTIONS FOR ELEMENT CHECKING
+// ===========================================
+
+function getElement(id) {
+    const element = document.getElementById(id);
+    if (!element && DEBUG) {
+        console.error(`Element with ID '${id}' not found`);
+    }
+    return element;
+}
+
+function safeUpdateElement(id, value) {
+    const element = getElement(id);
+    if (element) {
+        if (element.tagName === 'INPUT') {
+            element.value = value;
+        } else {
+            element.textContent = value;
+        }
+        return true;
+    }
+    return false;
+}
+
+// ===========================================
+// SEARCH FORM VALIDATION FUNCTIONS
+// ===========================================
+
+function showSearchError(fieldId, message) {
+    const field = getElement(fieldId);
+    if (!field) return;
+    
+    const parent = field.closest('.relative') || field.parentNode;
+    const existingError = parent.querySelector('.search-error-message');
+    
+    // Remove existing error message
+    if (existingError) {
+        existingError.remove();
+    }
+    
+    // Add error styling to field
+    field.classList.add('border-red-500', 'bg-red-50');
+    field.classList.remove('border-gray-300');
+    
+    // Create and insert error message
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'search-error-message text-red-500 text-xs mt-1 font-medium absolute top-full left-0 z-30 bg-white px-2 py-1 rounded shadow-lg';
+    errorDiv.textContent = message;
+    parent.appendChild(errorDiv);
+    
+    if (DEBUG) console.log(`Error shown for ${fieldId}: ${message}`);
+    
+    // Auto-hide error after 4 seconds
+    setTimeout(() => {
+        if (errorDiv.parentNode) {
+            errorDiv.remove();
+        }
+    }, 4000);
+}
+
+function clearSearchError(fieldId) {
+    const field = getElement(fieldId);
+    if (!field) return;
+    
+    const parent = field.closest('.relative') || field.parentNode;
+    const existingError = parent.querySelector('.search-error-message');
+    
+    // Remove error message
+    if (existingError) {
+        existingError.remove();
+    }
+    
+    // Remove error styling and restore original
+    field.classList.remove('border-red-500', 'bg-red-50');
+    field.classList.add('border-gray-300');
+}
+
+function validateSearchCheckin(value) {
+    if (!value) {
+        return null; // Empty is allowed
+    }
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const checkinDate = new Date(value);
+    
+    if (checkinDate < today) {
+        return 'Check-in date cannot be in the past';
+    }
+    
+    const checkoutElement = getElement('checkoutDate');
+    const checkoutValue = checkoutElement ? checkoutElement.value : '';
+    if (checkoutValue) {
+        const checkoutDate = new Date(checkoutValue);
+        if (checkinDate >= checkoutDate) {
+            return 'Check-in date must be before check-out date';
+        }
+    }
+    
+    return null;
+}
+
+function validateSearchCheckout(value) {
+    if (!value) {
+        return null; // Empty is allowed
+    }
+    
+    const checkinElement = getElement('checkinDate');
+    const checkinValue = checkinElement ? checkinElement.value : '';
+    if (checkinValue) {
+        const checkinDate = new Date(checkinValue);
+        const checkoutDate = new Date(value);
+        
+        if (checkoutDate <= checkinDate) {
+            return 'Check-out date must be after check-out date';
+        }
+    }
+    
+    return null;
+}
+
+function validateGuestCounts() {
+    if (heroAdultCount === 0 && heroChildrenCount === 0) {
+        return 'At least one guest (adult or child) is required';
+    }
+    return null;
+}
+
+// ===========================================
+// GUEST COUNTER FUNCTIONS
+// ===========================================
+
+function updateHeroAdultCount(increment = true) {
+    if (DEBUG) console.log(`Adult count update: ${increment ? 'increment' : 'decrement'}, current: ${heroAdultCount}`);
+    
+    if (increment && heroAdultCount < 10) {
+        heroAdultCount++;
+    } else if (!increment && heroAdultCount > 0) {
+        heroAdultCount--;
+    }
+    
+    safeUpdateElement('adultCount', heroAdultCount);
+    clearGuestCountError();
+    
+    // DON'T save to localStorage here - only on search
+    if (DEBUG) console.log(`Adult count updated to: ${heroAdultCount}`);
+}
+
+function updateHeroChildrenCount(increment = true) {
+    if (DEBUG) console.log(`Children count update: ${increment ? 'increment' : 'decrement'}, current: ${heroChildrenCount}`);
+    
+    if (increment && heroChildrenCount < 10) {
+        heroChildrenCount++;
+    } else if (!increment && heroChildrenCount > 0) {
+        heroChildrenCount--;
+    }
+    
+    safeUpdateElement('childrenCount', heroChildrenCount);
+    clearGuestCountError();
+    
+    // DON'T save to localStorage here - only on search
+    if (DEBUG) console.log(`Children count updated to: ${heroChildrenCount}`);
+}
+
+function clearGuestCountError() {
+    const adultCountSpan = getElement('adultCount');
+    const childrenCountSpan = getElement('childrenCount');
+    
+    // Remove error styling from both counters
+    [adultCountSpan, childrenCountSpan].forEach(span => {
+        if (span) {
+            span.classList.remove('text-red-500', 'bg-red-50');
+            span.classList.add('text-[#413030]');
+        }
+    });
+    
+    // Remove any existing error messages
+    const guestErrors = document.querySelectorAll('.guest-error-message');
+    guestErrors.forEach(error => error.remove());
+}
+
+function showGuestCountError(message) {
+    const adultCountSpan = getElement('adultCount');
+    if (!adultCountSpan) return;
+    
+    const adultSection = adultCountSpan.closest('.relative') || adultCountSpan.parentNode;
+    
+    // Add error styling to guest counters
+    const adultSpan = getElement('adultCount');
+    const childrenSpan = getElement('childrenCount');
+    
+    if (adultSpan) {
+        adultSpan.classList.add('text-red-500', 'bg-red-50');
+    }
+    if (childrenSpan) {
+        childrenSpan.classList.add('text-red-500', 'bg-red-50');
+    }
+    
+    // Create and insert error message
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'guest-error-message text-red-500 text-xs mt-1 font-medium absolute top-full left-0 z-30 bg-white px-2 py-1 rounded shadow-lg';
+    errorDiv.textContent = message;
+    adultSection.appendChild(errorDiv);
+    
+    if (DEBUG) console.log(`Guest count error: ${message}`);
+    
+    // Auto-hide error after 4 seconds
+    setTimeout(() => {
+        if (errorDiv.parentNode) {
+            errorDiv.remove();
+        }
+    }, 4000);
+}
+
+// ===========================================
+// FORM RESET FUNCTIONALITY
+// ===========================================
+
+function resetSearchFormToDefaults() {
+    if (DEBUG) console.log('Resetting form to clean defaults...');
+    
+    // Reset form fields to empty
+    safeUpdateElement('checkinDate', '');
+    safeUpdateElement('checkoutDate', '');
+    
+    // Reset counters to defaults
+    heroAdultCount = 1;
+    heroChildrenCount = 0;
+    
+    // Update display
+    safeUpdateElement('adultCount', heroAdultCount);
+    safeUpdateElement('childrenCount', heroChildrenCount);
+    
+    // Reset form data object
+    searchFormData = {
+        checkin: '',
+        checkout: '',
+        adults: 1,
+        children: 0
+    };
+    
+    // Clear any error states
+    clearSearchError('checkinDate');
+    clearSearchError('checkoutDate');
+    clearGuestCountError();
+    
+    // Reset date minimums to today
+    const today = new Date().toISOString().split('T')[0];
+    const checkinElement = getElement('checkinDate');
+    const checkoutElement = getElement('checkoutDate');
+    
+    if (checkinElement) checkinElement.min = today;
+    if (checkoutElement) checkoutElement.min = today;
+    
+    if (DEBUG) console.log('Form reset to clean defaults completed');
+}
+
+// ===========================================
+// SIMPLIFIED STORAGE (SINGLE RECORD ONLY)
+// ===========================================
+
+function updateSearchFormData() {
+    const checkinElement = getElement('checkinDate');
+    const checkoutElement = getElement('checkoutDate');
+    
+    searchFormData = {
+        checkin: checkinElement ? checkinElement.value : '',
+        checkout: checkoutElement ? checkoutElement.value : '',
+        adults: heroAdultCount,
+        children: heroChildrenCount
+    };
+    
+    if (DEBUG) console.log('Search form data updated:', searchFormData);
+}
+
+// ONLY save to localStorage when search is performed
+function saveSearchToStorage() {
+    const searchData = {
+        checkin: searchFormData.checkin,
+        checkout: searchFormData.checkout,
+        adults: searchFormData.adults,
+        children: searchFormData.children,
+        timestamp: new Date().toISOString(),
+        searchId: Date.now()
+    };
+    
+    try {
+        // Store only ONE search result (not an array)
+        localStorage.setItem('lastSearch', JSON.stringify(searchData));
+        if (DEBUG) console.log('Single search data saved to localStorage:', searchData);
+    } catch (error) {
+        console.error('Error saving to localStorage:', error);
+    }
+}
+
+// Function to get the last search (for reference only, not used on load)
+function getLastSearch() {
+    try {
+        const lastSearch = localStorage.getItem('lastSearch');
+        return lastSearch ? JSON.parse(lastSearch) : null;
+    } catch (error) {
+        console.error('Error reading from localStorage:', error);
+        return null;
+    }
+}
+
+// ===========================================
+// SEARCH FUNCTIONALITY
+// ===========================================
+
+function performSearch() {
+    if (DEBUG) console.log('=== SEARCH STARTED ===');
+    
+    try {
+        let hasErrors = false;
+        
+        // Clear all previous errors
+        clearSearchError('checkinDate');
+        clearSearchError('checkoutDate');
+        clearGuestCountError();
+        
+        // Get current form values
+        const checkinElement = getElement('checkinDate');
+        const checkoutElement = getElement('checkoutDate');
+        
+        const checkinValue = checkinElement ? checkinElement.value : '';
+        const checkoutValue = checkoutElement ? checkoutElement.value : '';
+        
+        if (DEBUG) {
+            console.log('Form values:', {
+                checkin: checkinValue,
+                checkout: checkoutValue,
+                adults: heroAdultCount,
+                children: heroChildrenCount
+            });
+        }
+        
+        // Validate dates
+        const checkinError = validateSearchCheckin(checkinValue);
+        const checkoutError = validateSearchCheckout(checkoutValue);
+        const guestError = validateGuestCounts();
+        
+        // Show errors if any
+        if (checkinError) {
+            showSearchError('checkinDate', checkinError);
+            hasErrors = true;
+        }
+        
+        if (checkoutError) {
+            showSearchError('checkoutDate', checkoutError);
+            hasErrors = true;
+        }
+        
+        if (guestError) {
+            showGuestCountError(guestError);
+            hasErrors = true;
+        }
+        
+        // If no errors, proceed with search
+        if (!hasErrors) {
+            updateSearchFormData();
+            
+            // ONLY NOW save to localStorage (single record)
+            saveSearchToStorage();
+            
+              
+            window.location.href = '/src/user/features/bookings/booking.html';
+
+            
+            // Reset form to clean defaults after delay
+            setTimeout(() => {
+                resetSearchFormToDefaults();
+                
+            }, 1500);
+            
+            if (DEBUG) {
+                console.log('Search completed successfully:', searchFormData);
+                console.log('Last search in storage:', getLastSearch());
+            }
+        } else {
+            if (DEBUG) console.log('Search failed due to validation errors');
+        }
+        
+    } catch (error) {
+        console.error('Error in performSearch:', error);
+        showSearchError('searchButton', 'Search failed. Please try again.');
+    }
+    
+    if (DEBUG) console.log('=== SEARCH ENDED ===');
+}
+
+
+// ===========================================
+// EVENT LISTENERS SETUP
+// ===========================================
+
+function setupEventListeners() {
+    if (DEBUG) console.log('Setting up event listeners...');
+    
+    try {
+        // Set minimum dates to today
+        const today = new Date().toISOString().split('T')[0];
+        const checkinElement = getElement('checkinDate');
+        const checkoutElement = getElement('checkoutDate');
+        
+        if (checkinElement) checkinElement.min = today;
+        if (checkoutElement) checkoutElement.min = today;
+        
+        // Check-in date validation (NO localStorage saving)
+        if (checkinElement) {
+            checkinElement.addEventListener('change', function() {
+                const error = validateSearchCheckin(this.value);
+                if (error) {
+                    showSearchError('checkinDate', error);
+                } else {
+                    clearSearchError('checkinDate');
+                    // Update checkout minimum date
+                    if (this.value && checkoutElement) {
+                        const nextDay = new Date(this.value);
+                        nextDay.setDate(nextDay.getDate() + 1);
+                        checkoutElement.min = nextDay.toISOString().split('T')[0];
+                    }
+                }
+                // DON'T save to localStorage here
+            });
+            if (DEBUG) console.log('Check-in event listener added');
+        }
+        
+        // Check-out date validation (NO localStorage saving)
+        if (checkoutElement) {
+            checkoutElement.addEventListener('change', function() {
+                const error = validateSearchCheckout(this.value);
+                if (error) {
+                    showSearchError('checkoutDate', error);
+                } else {
+                    clearSearchError('checkoutDate');
+                }
+                // DON'T save to localStorage here
+            });
+            if (DEBUG) console.log('Check-out event listener added');
+        }
+        
+        // Adult counter events
+        const adultPlusBtn = getElement('adultPlus');
+        const adultMinusBtn = getElement('adultMinus');
+        
+        if (adultPlusBtn) {
+            adultPlusBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                updateHeroAdultCount(true);
+            });
+            if (DEBUG) console.log('Adult plus button listener added');
+        }
+        
+        if (adultMinusBtn) {
+            adultMinusBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                updateHeroAdultCount(false);
+            });
+            if (DEBUG) console.log('Adult minus button listener added');
+        }
+        
+        // Children counter events
+        const childrenPlusBtn = getElement('childrenPlus');
+        const childrenMinusBtn = getElement('childrenMinus');
+        
+        if (childrenPlusBtn) {
+            childrenPlusBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                updateHeroChildrenCount(true);
+            });
+            if (DEBUG) console.log('Children plus button listener added');
+        }
+        
+        if (childrenMinusBtn) {
+            childrenMinusBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                updateHeroChildrenCount(false);
+            });
+            if (DEBUG) console.log('Children minus button listener added');
+        }
+        
+        // Search button events
+        const searchBtn = getElement('searchButton');
+        const mobileSearchBtn = getElement('mobileSearchButton');
+        
+        if (searchBtn) {
+            searchBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                performSearch();
+            });
+            if (DEBUG) console.log('Search button listener added');
+        }
+        
+        if (mobileSearchBtn) {
+            mobileSearchBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                performSearch();
+            });
+            if (DEBUG) console.log('Mobile search button listener added');
+        }
+        
+        // Keyboard support for search
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                const homeSection = document.querySelector('#home');
+                if (homeSection && homeSection.contains(event.target)) {
+                    event.preventDefault();
+                    performSearch();
+                }
+            }
+        });
+        
+        if (DEBUG) console.log('All event listeners set up successfully');
+        
+    } catch (error) {
+        console.error('Error setting up event listeners:', error);
+    }
+}
+
+// ===========================================
+// INITIALIZATION (ALWAYS CLEAN DEFAULTS)
+// ===========================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (DEBUG) console.log('DOM Content Loaded - Initializing with CLEAN defaults...');
+    
+    try {
+        // ALWAYS start with clean defaults (never load from storage)
+        resetSearchFormToDefaults();
+        
+        // Set up all event listeners
+        setupEventListeners();
+        
+        // Verify initialization
+        if (DEBUG) {
+            console.log('Initialization completed with clean defaults');
+            console.log('Current state:', {
+                adults: heroAdultCount,
+                children: heroChildrenCount,
+                searchFormData: searchFormData
+            });
+            console.log('Last stored search (reference only):', getLastSearch());
+        }
+        
+    } catch (error) {
+        console.error('Error during initialization:', error);
+    }
+
+     const navigatedFromHome = localStorage.getItem('navigatedFromHome');
+  
+    if (navigatedFromHome === 'true') {
+      console.log('User navigated from home page to see all rooms');
+      
+      // Clear the flag
+      localStorage.removeItem('navigatedFromHome');
+      
+      // You can add any special behavior here for users coming from home page
+      // For example, scroll to rooms section, show a message, etc.
+    }
+});
+
+// ===========================================
+// UTILITY FUNCTIONS
+// ===========================================
+
+// Function to clear stored search data
+function clearStoredSearch() {
+    try {
+        localStorage.removeItem('lastSearch');
+        if (DEBUG) console.log('Stored search data cleared');
+    } catch (error) {
+        console.error('Error clearing stored search data:', error);
+    }
+}
+
+// Debug function to check element status
+function debugElements() {
+    const requiredIds = [
+        'checkinDate', 'checkoutDate', 'adultCount', 'childrenCount',
+        'adultPlus', 'adultMinus', 'childrenPlus', 'childrenMinus',
+        'searchButton', 'mobileSearchButton'
+    ];
+    
+    console.log('=== ELEMENT STATUS ===');
+    requiredIds.forEach(id => {
+        const element = document.getElementById(id);
+        console.log(`${id}: ${element ? 'FOUND' : 'MISSING'}`);
+    });
+    console.log('=== END ELEMENT STATUS ===');
+}
+
+// Make functions globally available
+window.clearStoredSearch = clearStoredSearch;
+window.getLastSearch = getLastSearch;
+window.updateHeroAdultCount = updateHeroAdultCount;
+window.updateHeroChildrenCount = updateHeroChildrenCount;
+window.resetSearchFormToDefaults = resetSearchFormToDefaults;
+window.performSearch = performSearch;
+window.debugElements = debugElements;
+
+// Auto-debug on load if DEBUG is true
+if (DEBUG) {
+    window.addEventListener('load', () => {
+        setTimeout(debugElements, 1000);
+    });
+}
 
 </script>
-    
+    <script>
+/* ─── Pull contact data from localStorage ─────────────────────────── */
+const STORAGE_KEY = 'zyra:settings';
+const defaults   = {
+  contact: {
+    address : 'xyz nagar 3rd street Chennai Tamil Nadu',
+    phones  : ['+91 9524650818', '+91 3534562266'],
+    email   : 'feedback@gmail.com',
+    socials : {
+      facebook : '#',
+      twitter  : '#',
+      instagram: '#',
+      linkedin : '#'
+    },
+    mapLink : 'https://goo.gl/maps/…'
+  }
+};
 
-<script src="./app.js"></script>
+function loadSettings () {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? {...defaults, ...JSON.parse(raw)} : defaults;
+  } catch { return defaults; }
+}
+
+/* ─── Replace only the Reach-Us values ────────────────────────────── */
+function updateReachUs () {
+  const {contact} = loadSettings();
+
+  /* Address */
+  const addrEl = document.querySelector('#contactAddress');
+  if (addrEl) addrEl.textContent = contact.address;
+
+  /* Phones */
+  const phoneBox = document.querySelector('#contactPhoneNumbers');
+  if (phoneBox) {
+    phoneBox.innerHTML = contact.phones
+      .filter(p=>p.trim()).map(p =>
+        `<p class="text-gray-600 hover:text-[#413030] transition-colors">${p}</p>`
+      ).join('');
+  }
+
+  /* Email */
+  const emailEl = document.querySelector('#contactEmail');
+  if (emailEl) emailEl.textContent = contact.email;
+
+  /* Social links */
+  const socials = ['facebook','twitter','instagram','linkedin'];
+  socials.forEach(p=>{
+    const link = document.querySelector(`#contact${p[0].toUpperCase()+p.slice(1)}`);
+    if (link && contact.socials[p]) link.href = contact.socials[p];
+  });
+
+  /* Map */
+  const mapFrame = document.querySelector('#contactMapFrame');
+  if (mapFrame && (contact.frameSrc || contact.mapLink)) {
+    mapFrame.dataset.src = contact.frameSrc || contact.mapLink;      // lazy loader
+    if (mapFrame.src) mapFrame.src = contact.frameSrc || contact.mapLink;
+  }
+}
+
+/* Run once DOM is ready and whenever settings change */
+document.addEventListener('DOMContentLoaded', updateReachUs);
+window.addEventListener('storage', e=>{
+  if (e.key === STORAGE_KEY) updateReachUs();
+});
+</script>
 
 
+<script src="app.js"></script>
 </body>
 </html>

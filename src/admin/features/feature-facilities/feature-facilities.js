@@ -1,85 +1,153 @@
+// =========================
+// API & Cloudinary Config
+// =========================
+
 // API Configuration - Updated endpoints
 const API_BASE = 'https://68c8b85aceef5a150f622643.mockapi.io';
 const FEATURE_ENDPOINT = `${API_BASE}/admin/6`;  // Features endpoint
 const FACILITY_ENDPOINT = `${API_BASE}/admin/7`; // Facilities endpoint
 
-// Global variables
+// CLOUDINARY CONFIGURATION - Replace with your credentials
+const CLOUDINARY_CONFIG = {
+  cloudName: 'dbbzquvdk',     // Replace with actual cloud name
+  uploadPreset: 'Zyra-rooms'  // Replace with actual preset name
+};
+const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`;
+
+
+// =========================
+// Global State
+// =========================
 let featuresData = [];
 let featuresFilteredData = [];
 let facilitiesData = [];
 let facilitiesFilteredData = [];
-let isEditMode = false;
-let editingId = null;
 
-// CLOUDINARY CONFIGURATION - Replace with your credentials
-const CLOUDINARY_CONFIG = {
-    cloudName: 'dbbzquvdk',  // Replace with your actual cloud name
-    uploadPreset: 'Zyra-rooms'  // Replace with your preset name
-};
+let isEditingFeature = false;
+let editingFeatureId = null;
+let isEditingFacility = false;
+let editingFacilityId = null;
 
-const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`;
 
-// DOM Elements
-let loadingIndicator, featuresTableContainer, noFeaturesDataMessage, facilitiesTableContainer, noFacilitiesDataMessage, facilitiesTableBody, featuresTableBody, mainContainer;
-
-// Cloudinary Upload Function
-async function uploadImageToCloudinary(file) {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
-    
-    try {
-        const response = await fetch(CLOUDINARY_URL, {
-            method: 'POST',
-            body: formData
-        });
-        
-        if (!response.ok) {
-            throw new Error(`Upload failed: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        return data.secure_url;
-    } catch (error) {
-        console.error('Cloudinary upload error:', error);
-        throw new Error('Failed to upload image to Cloudinary');
-    }
+// =========================
+// Utilities
+// =========================
+function showLoading() {
+  const el = document.getElementById('loadingIndicator');
+  if (el) el.classList.remove('hidden');
+}
+function hideLoading() {
+  const el = document.getElementById('loadingIndicator');
+  if (el) el.classList.add('hidden');
+}
+function safeJSON(response) {
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status} ${response.statusText}`);
+  }
+  return response.json();
+}
+function toastSuccess(message) {
+  console.log('[SUCCESS]', message);
+}
+function toastError(message) {
+  console.error('[ERROR]', message);
 }
 
-// Initialize DOM elements after DOM is loaded
-document.addEventListener("DOMContentLoaded", () => {
-  // Initialize DOM elements
-  facilitiesTableBody = document.getElementById("facilitiesTableBody");
-  featuresTableBody = document.getElementById("featuresTableBody");
-  loadingIndicator = document.getElementById("loadingIndicator");
-  featuresTableContainer = document.getElementById("featuresTableContainer");
-  noFeaturesDataMessage = document.getElementById("noFeaturesDataMessage");
-  facilitiesTableContainer = document.getElementById("facilitiesTableContainer");
-  noFacilitiesDataMessage = document.getElementById("noFacilitiesDataMessage");
-  mainContainer = document.getElementById("mainContentArea")
-  
 
-  // Initialize modal event listeners
-  initializeModalListeners();
-  
-  // Fetch data
-  fetchFeaturesFacilitiesData();
-});
+// =========================
+/* Cloudinary Upload */
+// =========================
+async function uploadImageToCloudinary(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
 
-// Function to get action buttons with icons
+  const resp = await fetch(CLOUDINARY_URL, {
+    method: 'POST',
+    body: formData
+  });
+  const data = await safeJSON(resp);
+  if (!data.secure_url) throw new Error('No secure_url from Cloudinary');
+  return data.secure_url;
+}
+
+
+// =========================
+/* API Calls */
+// =========================
+async function fetchFeaturesFacilitiesData() {
+  showLoading();
+  try {
+    const [featResp, facResp] = await Promise.all([
+      fetch(FEATURE_ENDPOINT),
+      fetch(FACILITY_ENDPOINT)
+    ]);
+    const [featJson, facJson] = await Promise.all([
+      safeJSON(featResp),
+      safeJSON(facResp)
+    ]);
+
+    // Expect shape: { id: "6", features: [...] } and { id: "7", facilities: [...] }
+    featuresData = Array.isArray(featJson.features) ? featJson.features : [];
+    featuresFilteredData = [...featuresData];
+
+    facilitiesData = Array.isArray(facJson.facilities) ? facJson.facilities : [];
+    facilitiesFilteredData = [...facilitiesData];
+
+    return { features: featuresFilteredData, facilities: facilitiesFilteredData };
+  } catch (err) {
+    toastError(`Failed to fetch data: ${err.message}`);
+    featuresData = [];
+    featuresFilteredData = [];
+    facilitiesData = [];
+    facilitiesFilteredData = [];
+    return { features: [], facilities: [] };
+  } finally {
+    hideLoading();
+  }
+}
+
+async function updateFeaturesOnAPI(updatedFeaturesArray) {
+  const payload = { id: 6, features: updatedFeaturesArray };
+  const resp = await fetch(FEATURE_ENDPOINT, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await safeJSON(resp);
+  return data;
+}
+
+async function updateFacilitiesOnAPI(updatedFacilitiesArray) {
+  const payload = { id: 7, facilities: updatedFacilitiesArray };
+  const resp = await fetch(FACILITY_ENDPOINT, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await safeJSON(resp);
+  return data;
+}
+
+
+// =========================
+// Action Buttons (HTML) — aligned with delegated handlers
+// =========================
 function getFeatureActionButtons(feature) {
   return `
     <div class="flex items-center gap-2">
-      <button class="edit-btn text-blue-600 hover:text-blue-900 p-1 rounded transition-colors" 
-              title="Edit Feature" data-feature-id="${feature.id}">
+      <button class="edit-feature text-blue-600 hover:text-blue-900 p-1 rounded transition-colors"
+              title="Edit Feature" data-id="${feature.id}">
         <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
         </svg>
       </button>
-      <button class="delete-btn text-red-600 hover:text-red-900 p-1 rounded transition-colors" 
-              title="Delete Feature" data-feature-id="${feature.id}">
+      <button class="delete-feature text-red-600 hover:text-red-900 p-1 rounded transition-colors"
+              title="Delete Feature" data-id="${feature.id}">
         <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
         </svg>
       </button>
     </div>
@@ -89,593 +157,471 @@ function getFeatureActionButtons(feature) {
 function getFacilityActionButtons(facility) {
   return `
     <div class="flex items-center gap-2">
-      <button class="edit-btn text-blue-600 hover:text-blue-900 p-1 rounded transition-colors" 
-              title="Edit Facility" data-facility-id="${facility.id}">
+      <button class="edit-facility text-blue-600 hover:text-blue-900 p-1 rounded transition-colors"
+              title="Edit Facility" data-id="${facility.id}">
         <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
         </svg>
       </button>
-      <button class="delete-btn text-red-600 hover:text-red-900 p-1 rounded transition-colors" 
-              title="Delete Facility" data-facility-id="${facility.id}">
+      <button class="delete-facility text-red-600 hover:text-red-900 p-1 rounded transition-colors"
+              title="Delete Facility" data-id="${facility.id}">
         <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
         </svg>
       </button>
     </div>
   `;
 }
 
-// API Helper Functions
-async function updateFeatureOnAPI(updatedData) {
-  try {
-    const response = await fetch(FEATURE_ENDPOINT, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedData)
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+
+// =========================
+// Generic Pagination Factory
+// =========================
+function createPager(config) {
+  const state = {
+    currentPage: 1,
+    itemsPerPage: 10,
+    totalItems: 0,
+    allData: [],
+    filteredData: []
+  };
+
+  const els = {
+    startRecord: document.getElementById(config.startRecordId),
+    endRecord: document.getElementById(config.endRecordId),
+    totalRecords: document.getElementById(config.totalRecordsId),
+    currentPageNumber: document.getElementById(config.currentPageNumberId),
+    totalPages: document.getElementById(config.totalPagesId),
+    prevBtn: document.getElementById(config.prevBtnId),
+    nextBtn: document.getElementById(config.nextBtnId),
+    itemsPerPage: document.getElementById(config.itemsPerPageId),
+    searchInput: document.getElementById(config.searchInputId),
+    container: document.getElementById(config.containerId),
+    noData: document.getElementById(config.noDataId)
+  };
+
+  function updateButtonStyles(button, disabled) {
+    if (!button) return;
+    button.disabled = disabled;
+    if (disabled) {
+      button.classList.add('opacity-40','cursor-not-allowed');
+      button.classList.remove('hover:border-primary','hover:text-primary');
+    } else {
+      button.classList.remove('opacity-40','cursor-not-allowed');
+      button.classList.add('hover:border-primary','hover:text-primary');
     }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error updating features on API:', error);
-    throw error;
   }
+
+  function updateUI() {
+    const totalPages = Math.max(1, Math.ceil(state.totalItems / state.itemsPerPage) || 1);
+    state.currentPage = Math.min(Math.max(1, state.currentPage), totalPages);
+    const start = state.totalItems > 0 ? (state.currentPage - 1) * state.itemsPerPage + 1 : 0;
+    const end = Math.min(state.currentPage * state.itemsPerPage, state.totalItems);
+
+    if (els.startRecord) els.startRecord.textContent = start;
+    if (els.endRecord) els.endRecord.textContent = end;
+    if (els.totalRecords) els.totalRecords.textContent = state.totalItems;
+    if (els.currentPageNumber) els.currentPageNumber.textContent = state.totalItems > 0 ? state.currentPage : 0;
+    if (els.totalPages) els.totalPages.textContent = Math.ceil(state.totalItems / state.itemsPerPage) || 0;
+
+    const disablePrev = state.currentPage <= 1 || state.totalItems === 0;
+    const disableNext = state.currentPage >= Math.ceil(state.totalItems / state.itemsPerPage) || state.totalItems === 0;
+    updateButtonStyles(els.prevBtn, disablePrev);
+    updateButtonStyles(els.nextBtn, disableNext);
+
+    if (els.container && els.noData) {
+      if (state.totalItems === 0) {
+        els.noData.classList.remove('hidden');
+        els.container.classList.add('hidden');
+      } else {
+        els.noData.classList.add('hidden');
+        els.container.classList.remove('hidden');
+      }
+    }
+  }
+
+  function render() {
+    const startIndex = (state.currentPage - 1) * state.itemsPerPage;
+    const endIndex = startIndex + state.itemsPerPage;
+    const pageData = state.filteredData.slice(startIndex, endIndex);
+    config.renderPage(pageData);
+  }
+
+  function initialize() {
+    state.totalItems = state.filteredData.length;
+    state.currentPage = 1;
+    updateUI();
+    render();
+  }
+
+  // Event listeners
+  els.prevBtn?.addEventListener('click', (e) => {
+    if (e.currentTarget.disabled) return;
+    state.currentPage -= 1;
+    updateUI();
+    render();
+  });
+  els.nextBtn?.addEventListener('click', (e) => {
+    if (e.currentTarget.disabled) return;
+    state.currentPage += 1;
+    updateUI();
+    render();
+  });
+  els.itemsPerPage?.addEventListener('change', (e) => {
+    state.itemsPerPage = parseInt(e.target.value) || 10;
+    state.currentPage = 1;
+    updateUI();
+    render();
+  });
+  if (els.searchInput) {
+    const debounce = (fn, wait) => {
+      let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
+    };
+    els.searchInput.addEventListener('input', debounce((e) => {
+      const term = e.target.value.toLowerCase().trim();
+      state.filteredData = term
+        ? state.allData.filter(config.matches(term))
+        : [...state.allData];
+      initialize();
+    }, 300));
+  }
+
+  // Public API
+  return {
+    setData(data) {
+      state.allData = data || [];
+      state.filteredData = [...state.allData];
+      initialize();
+    },
+    refresh() { updateUI(); render(); },
+    get state() { return { ...state }; }
+  };
 }
 
-async function updateFacilityOnAPI(updatedData) {
-  try {
-    const response = await fetch(FACILITY_ENDPOINT, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedData)
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error updating facilities on API:', error);
-    throw error;
-  }
+
+// =========================
+// Renderers
+// =========================
+function renderFeaturesPage(pageData) {
+  const tbody = document.getElementById('featuresTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  pageData.forEach((feature, index) => {
+    const tr = document.createElement('tr');
+    tr.classList.add('hover:bg-gray-50');
+    tr.innerHTML = `
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${feature?.id ?? String(index + 1)}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${feature?.name || 'N/A'}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${getFeatureActionButtons(feature)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
 }
 
-// Initialize modal event listeners
-function initializeModalListeners() {
-  // Feature modal listeners
-  document.getElementById('addFeatureBtn').addEventListener('click', () => {
-    resetFeatureModal();
-    document.getElementById('addFeatureModal').classList.remove('hidden');
+function renderFacilitiesPage(pageData) {
+  const tbody = document.getElementById('facilitiesTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  pageData.forEach((facility, index) => {
+    const tr = document.createElement('tr');
+    tr.classList.add('hover:bg-gray-50');
+    const iconDisplay = facility.icon
+      ? `<img src="${facility.icon}" alt="Icon" class="w-8 h-8 object-cover rounded">`
+      : '<span class="text-gray-400">N/A</span>';
+    tr.innerHTML = `
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${facility?.id ?? String(index + 1)}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${iconDisplay}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${facility?.name || 'N/A'}</td>
+      <td class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate" title="${facility?.description || 'N/A'}">${facility?.description || 'N/A'}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${getFacilityActionButtons(facility)}</td>
+    `;
+    tbody.appendChild(tr);
   });
-
-  document.getElementById('cancelAddFeature').addEventListener('click', () => {
-    document.getElementById('addFeatureModal').classList.add('hidden');
-    resetFeatureModal();
-  });
-
-  // Facility modal listeners
-  document.getElementById('addFacilityBtn').addEventListener('click', () => {
-    resetFacilityModal();
-    document.getElementById('addFacilityModal').classList.remove('hidden');
-  });
-
-  document.getElementById('cancelAddFacility').addEventListener('click', () => {
-    document.getElementById('addFacilityModal').classList.add('hidden');
-    resetFacilityModal();
-  });
-
-  // File input listener
-  document.getElementById('facilityIconInput').addEventListener('change', function() {
-    const fileName = this.files[0] ? this.files[0].name : 'No file chosen';
-    document.getElementById('facilityFileName').textContent = fileName;
-  });
-
-  // Form submit listeners
-  document.getElementById('addFeatureForm').addEventListener('submit', handleFeatureSubmit);
-  document.getElementById('addFacilityForm').addEventListener('submit', handleFacilitySubmit);
-  let deleteType = null; // 'feature' or 'facility'
-let deleteId = null;
+}
 
 
-document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
-    document.getElementById('confirmDeleteModal').classList.add('hidden');
-    deleteType = null;
-    deleteId = null;
-  });
+// =========================
+/* Pagers — map to actual HTML IDs */
+// =========================
 
-  document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
-    document.getElementById('confirmDeleteModal').classList.add('hidden');
-    
-    if (deleteType === 'feature' && deleteId !== null) {
-      await executeFeatureDelete(deleteId);
-    } else if (deleteType === 'facility' && deleteId !== null) {
-      await executeFacilityDelete(deleteId);
-    }
-    
-    deleteType = null;
-    deleteId = null;
-  });
-
-  // Event delegation for delete buttons
-document.addEventListener('click', function(e) {
-    if (e.target.closest('.delete-btn[data-feature-id]')) {
-        const featureId = parseInt(e.target.closest('.delete-btn').dataset.featureId);
-        deleteType = 'feature';
-        deleteId = featureId;
-        document.getElementById('confirmDeleteModal').classList.remove('hidden');
-        document.querySelector('#confirmDeleteModal h2').textContent = 'Confirm Deletion of Feature';
-    }
-
-    if (e.target.closest('.delete-btn[data-facility-id]')) {
-        const facilityId = parseInt(e.target.closest('.delete-btn').dataset.facilityId);
-        deleteType = 'facility';
-        deleteId = facilityId;
-        document.getElementById('confirmDeleteModal').classList.remove('hidden');
-        document.querySelector('#confirmDeleteModal h2').textContent = 'Confirm Deletion of Facility';
-    }
+// FEATURES: uses ids in featurePaginationContainer (itemsPerPage, prevPage, nextPage, currentPageNumber, totalPages)
+const featuresPager = createPager({
+  startRecordId: undefined,
+  endRecordId: undefined,
+  totalRecordsId: undefined,
+  currentPageNumberId: 'currentPageNumber',
+  totalPagesId: 'totalPages',
+  prevBtnId: 'prevPage',
+  nextBtnId: 'nextPage',
+  itemsPerPageId: 'itemsPerPage',
+  searchInputId: undefined,
+  containerId: 'featuresTableContainer',
+  noDataId: 'noFeaturesDataMessage',
+  renderPage: renderFeaturesPage,
+  matches: (term) => (item) =>
+    (item.name || '').toLowerCase().includes(term) ||
+    String(item.id || '').includes(term)
 });
 
-  // Event delegation for edit and delete buttons
-  document.addEventListener('click', function(e) {
-    if (e.target.closest('.edit-btn[data-feature-id]')) {
-      const featureId = parseInt(e.target.closest('.edit-btn').dataset.featureId);
-      editFeature(featureId);
-    }
-    
-    
-    
-    if (e.target.closest('.edit-btn[data-facility-id]')) {
-      const facilityId = parseInt(e.target.closest('.edit-btn').dataset.facilityId);
-      editFacility(facilityId);
-    }
-     const profileDropdown = document.getElementById('profileDropdown');
-  const profileSection = e.target.closest('.p-4.border-t');
-  
-  if (!profileSection && !profileDropdown.classList.contains('hidden')) {
-    profileDropdown.classList.add('hidden');
-    document.getElementById('dropdownArrow').style.transform = 'rotate(0deg)';
-  }
-    
-  });
-}
+// FACILITIES: uses facilities* ids present in HTML
+const facilitiesPager = createPager({
+  startRecordId: undefined,
+  endRecordId: undefined,
+  totalRecordsId: undefined,
+  currentPageNumberId: 'facilitiesCurrentPageNumber',
+  totalPagesId: 'facilitiesTotalPages',
+  prevBtnId: 'facilitiesPrevPage',
+  nextBtnId: 'facilitiesNextPage',
+  itemsPerPageId: 'facilitiesItemsPerPage',
+  searchInputId: undefined,
+  containerId: 'facilitiesTableContainer',
+  noDataId: 'noFacilitiesDataMessage',
+  renderPage: renderFacilitiesPage,
+  matches: (term) => (item) =>
+    (item.name || '').toLowerCase().includes(term) ||
+    (item.description || '').toLowerCase().includes(term) ||
+    String(item.id || '').includes(term)
+});
 
-// Reset modals
+
+// =========================
+// Modal Helpers
+// =========================
+function openModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('hidden');
+}
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('hidden');
+}
 function resetFeatureModal() {
-  isEditMode = false;
-  editingId = null;
-  document.getElementById('featureModalTitle').textContent = 'Add Feature';
-  document.getElementById('submitFeatureBtn').textContent = 'Submit';
-  document.getElementById('addFeatureForm').reset();
-  document.getElementById('featureId').value = '';
+  const form = document.getElementById('addFeatureForm');
+  if (form) form.reset();
+  isEditingFeature = false;
+  editingFeatureId = null;
 }
-
 function resetFacilityModal() {
-  isEditMode = false;
-  editingId = null;
-  document.getElementById('facilityModalTitle').textContent = 'Add Facility';
-  document.getElementById('submitFacilityBtn').textContent = 'Submit';
-  document.getElementById('addFacilityForm').reset();
-  document.getElementById('facilityId').value = '';
-  document.getElementById('facilityFileName').textContent = 'No file chosen';
-  document.getElementById('currentIcon').classList.add('hidden');
+  const form = document.getElementById('addFacilityForm');
+  if (form) form.reset();
+  isEditingFacility = false;
+  editingFacilityId = null;
 }
 
-// Handle feature form submission with API calls
+
+// =========================
+// Feature Handlers
+// =========================
+function populateFeatureFormForEdit(feature) {
+  const nameInput = document.getElementById('featureName');
+  if (nameInput) nameInput.value = feature?.name || '';
+}
+
 async function handleFeatureSubmit(e) {
   e.preventDefault();
-  const name = document.getElementById('featureName').value.trim();
-  const featureId = document.getElementById('featureId').value;
-  
+  const nameInput = document.getElementById('featureName');
+  const name = (nameInput?.value || '').trim();
   if (!name) {
-    alert('Please enter a feature name');
+    toastError('Feature name is required');
     return;
   }
 
   try {
-    document.getElementById('submitFeatureBtn').disabled = true;
-    document.getElementById('submitFeatureBtn').textContent = 'Processing...';
-
-    if (isEditMode && featureId) {
-      // Update existing feature
-      const featureIndex = featuresFilteredData.findIndex(f => f.id == featureId);
-      if (featureIndex !== -1) {
-        featuresFilteredData[featureIndex].name = name;
-        
-        // Update the complete features data structure
-        const updatedFeaturesData = {
-          id: "6",
-          features: featuresFilteredData
-        };
-        
-        // Send PUT request to API
-        await updateFeatureOnAPI(updatedFeaturesData);
-        console.log('Feature updated on API:', featuresFilteredData[featureIndex]);
+    if (isEditingFeature && editingFeatureId != null) {
+      const idx = featuresFilteredData.findIndex(f => String(f.id) === String(editingFeatureId));
+      if (idx !== -1) {
+        featuresFilteredData[idx] = { ...featuresFilteredData[idx], name };
       }
+      await updateFeaturesOnAPI(featuresFilteredData);
+      toastSuccess('Feature updated');
     } else {
-      // Add new feature
-      const newFeature = {
-        id: featuresFilteredData.length > 0 ? Math.max(...featuresFilteredData.map(f => f.id)) + 1 : 1,
-        name: name
-      };
-      
-      featuresFilteredData.push(newFeature);
-      
-      // Update the complete features data structure
-      const updatedFeaturesData = {
-        id: "6",
-        features: featuresFilteredData
-      };
-      
-      // Send PUT request to API
-      await updateFeatureOnAPI(updatedFeaturesData);
-      console.log('Feature added to API:', newFeature);
+      const newId = generateNextId(featuresFilteredData);
+      const newItem = { id: String(newId), name };
+      featuresFilteredData.unshift(newItem);
+      await updateFeaturesOnAPI(featuresFilteredData);
+      toastSuccess('Feature added');
     }
-
-    renderFeaturesTable();
-    document.getElementById('addFeatureModal').classList.add('hidden');
+    featuresPager.setData([...featuresFilteredData]);
+    closeModal('addFeatureModal');
     resetFeatureModal();
-    
-  } catch (error) {
-    console.error('Error saving feature:', error);
-    alert('Error saving feature. Please try again.');
-  } finally {
-    document.getElementById('submitFeatureBtn').disabled = false;
-    document.getElementById('submitFeatureBtn').textContent = isEditMode ? 'Update' : 'Submit';
+  } catch (err) {
+    toastError(`Failed to save feature: ${err.message}`);
   }
 }
 
-// Updated Handle Facility Form Submission with Cloudinary
-async function handleFacilitySubmit(e) {
-    e.preventDefault();
-    const name = document.getElementById('facilityName').value.trim();
-    const description = document.getElementById('facilityDescription').value.trim();
-    const iconFile = document.getElementById('facilityIconInput').files[0];
-    const facilityId = document.getElementById('facilityId').value;
-    
-    if (!name) {
-        alert('Please enter a facility name');
-        return;
-    }
+function onFeaturesTableClick(e) {
+  const editBtn = e.target.closest('button.edit-feature');
+  const deleteBtn = e.target.closest('button.delete-feature');
 
-    try {
-        document.getElementById('submitFacilityBtn').disabled = true;
-        document.getElementById('submitFacilityBtn').textContent = 'Processing...';
+  if (editBtn) {
+    const id = editBtn.getAttribute('data-id');
+    const feature = featuresFilteredData.find(f => String(f.id) === String(id));
+    if (!feature) return;
+    isEditingFeature = true;
+    editingFeatureId = id;
+    populateFeatureFormForEdit(feature);
+    openModal('addFeatureModal');
+    return;
+  }
 
-        let iconUrl = null;
-        
-        // Upload image to Cloudinary if file is selected
-        if (iconFile) {
-            iconUrl = await uploadImageToCloudinary(iconFile);
-        }
-
-        if (isEditMode && facilityId) {
-            // Update existing facility
-            const facilityIndex = facilitiesFilteredData.findIndex(f => f.id == facilityId);
-            if (facilityIndex !== -1) {
-                facilitiesFilteredData[facilityIndex].name = name;
-                facilitiesFilteredData[facilityIndex].description = description || 'No description provided';
-                
-                // Update icon URL if new file uploaded
-                if (iconUrl) {
-                    facilitiesFilteredData[facilityIndex].icon = iconUrl;
-                }
-                
-                const updatedFacilitiesData = {
-                    id: "7",
-                    facilities: facilitiesFilteredData
-                };
-                
-                await updateFacilityOnAPI(updatedFacilitiesData);
-                console.log('Facility updated on API:', facilitiesFilteredData[facilityIndex]);
-            }
-        } else {
-            // Add new facility
-            const newFacilityId = facilitiesFilteredData.length > 0 ? Math.max(...facilitiesFilteredData.map(f => f.id)) + 1 : 1;
-            const newFacility = {
-                id: newFacilityId,
-                name: name,
-                description: description || 'No description provided'
-            };
-            
-            // Add icon URL if uploaded
-            if (iconUrl) {
-                newFacility.icon = iconUrl;
-            }
-            
-            facilitiesFilteredData.push(newFacility);
-            
-            const updatedFacilitiesData = {
-                id: "7",
-                facilities: facilitiesFilteredData
-            };
-            
-            await updateFacilityOnAPI(updatedFacilitiesData);
-            console.log('Facility added to API:', newFacility);
-        }
-
-        renderFacilitiesTable();
-        document.getElementById('addFacilityModal').classList.add('hidden');
-        resetFacilityModal();
-        
-    } catch (error) {
-        console.error('Error saving facility:', error);
-        alert('Error saving facility. Please try again.');
-    } finally {
-        document.getElementById('submitFacilityBtn').disabled = false;
-        document.getElementById('submitFacilityBtn').textContent = isEditMode ? 'Update' : 'Submit';
-    }
+  if (deleteBtn) {
+    const id = deleteBtn.getAttribute('data-id');
+    confirmFeatureDelete(id);
+  }
 }
 
-// Fetch features and facilities data from separate API endpoints
-async function fetchFeaturesFacilitiesData() {
+async function confirmFeatureDelete(id) {
+  const ok = window.confirm('Delete this feature?');
+  if (!ok) return;
   try {
-    loadingIndicator.style.display = "flex";
-    
-    // Fetch both features and facilities
-    const [featuresResponse, facilitiesResponse] = await Promise.all([
-      fetch(FEATURE_ENDPOINT),
-      fetch(FACILITY_ENDPOINT)
-    ]);
-    
-    const featuresData = await featuresResponse.json();
-    const facilitiesData = await facilitiesResponse.json();
-    
-    // Extract the arrays from the response
-    featuresFilteredData = featuresData.features || [];
-    facilitiesFilteredData = facilitiesData.facilities || [];
-    
-    console.log("Fetched features data:", featuresData);
-    console.log("Fetched facilities data:", facilitiesData);
-
-    // Handle features display
-    if (featuresFilteredData.length === 0) {
-      noFeaturesDataMessage.style.display = "block";
-      featuresTableContainer.style.display = "none";
-    } else {
-      noFeaturesDataMessage.style.display = "none";
-      renderFeaturesTable();
-    }
-
-    // Handle facilities display
-    if (facilitiesFilteredData.length === 0) {
-      noFacilitiesDataMessage.style.display = "block";
-      facilitiesTableContainer.style.display = "none";
-    } else {
-      noFacilitiesDataMessage.style.display = "none";
-      renderFacilitiesTable();
-    }
-  } catch (error) {
-    console.error("Error fetching features or facilities data:", error);
-    noFeaturesDataMessage.style.display = "block";
-    noFacilitiesDataMessage.style.display = "block";
-  } finally {
-    loadingIndicator.style.display = "none";
+    featuresFilteredData = featuresFilteredData.filter(f => String(f.id) !== String(id));
+    await updateFeaturesOnAPI(featuresFilteredData);
+    toastSuccess('Feature deleted');
+    featuresPager.setData([...featuresFilteredData]);
+  } catch (err) {
+    toastError(`Failed to delete feature: ${err.message}`);
   }
 }
 
-// Render features table with icon buttons
-function renderFeaturesTable() {
-  mainContainer.classList.remove('hidden');
-  featuresTableContainer.style.display = "block";
-  featuresTableBody.innerHTML = "";
 
-  featuresFilteredData.forEach((feature, index) => {
-    const tr = document.createElement("tr");
-    tr.classList.add("hover:bg-gray-50");
-    tr.innerHTML = `
-      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${feature.id || index + 1}</td>
-      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${feature.name || 'N/A'}</td>
-      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-        ${getFeatureActionButtons(feature)}
-      </td>
-    `;
-    featuresTableBody.appendChild(tr);
+// =========================
+// Facility Handlers
+// =========================
+function populateFacilityFormForEdit(facility) {
+  const nameInput = document.getElementById('facilityName');
+  const descInput = document.getElementById('facilityDescription');
+  if (nameInput) nameInput.value = facility?.name || '';
+  if (descInput) descInput.value = facility?.description || '';
+  // icon preview handled elsewhere if needed
+}
+
+async function handleFacilitySubmit(e) {
+  e.preventDefault();
+  const nameInput = document.getElementById('facilityName');
+  const descInput = document.getElementById('facilityDescription');
+  const iconInput = document.getElementById('facilityIconInput'); // match HTML id
+
+  const name = (nameInput?.value || '').trim();
+  const description = (descInput?.value || '').trim();
+  if (!name) {
+    toastError('Facility name is required');
+    return;
+  }
+
+  try {
+    let iconUrl = null;
+    const file = iconInput?.files?.[0];
+    if (file) {
+      iconUrl = await uploadImageToCloudinary(file);
+    }
+
+    if (isEditingFacility && editingFacilityId != null) {
+      const idx = facilitiesFilteredData.findIndex(f => String(f.id) === String(editingFacilityId));
+      if (idx !== -1) {
+        facilitiesFilteredData[idx] = {
+          ...facilitiesFilteredData[idx],
+          name,
+          description,
+          icon: iconUrl || facilitiesFilteredData[idx].icon || null
+        };
+      }
+      await updateFacilitiesOnAPI(facilitiesFilteredData);
+      toastSuccess('Facility updated');
+    } else {
+      const newId = generateNextId(facilitiesFilteredData);
+      const newItem = { id: String(newId), name, description, icon: iconUrl || null };
+      facilitiesFilteredData.unshift(newItem);
+      await updateFacilitiesOnAPI(facilitiesFilteredData);
+      toastSuccess('Facility added');
+    }
+    facilitiesPager.setData([...facilitiesFilteredData]);
+    closeModal('addFacilityModal');
+    resetFacilityModal();
+  } catch (err) {
+    toastError(`Failed to save facility: ${err.message}`);
+  }
+}
+
+function onFacilitiesTableClick(e) {
+  const editBtn = e.target.closest('button.edit-facility');
+  const deleteBtn = e.target.closest('button.delete-facility');
+
+  if (editBtn) {
+    const id = editBtn.getAttribute('data-id');
+    const facility = facilitiesFilteredData.find(f => String(f.id) === String(id));
+    if (!facility) return;
+    isEditingFacility = true;
+    editingFacilityId = id;
+    populateFacilityFormForEdit(facility);
+    openModal('addFacilityModal');
+    return;
+  }
+
+  if (deleteBtn) {
+    const id = deleteBtn.getAttribute('data-id');
+    confirmFacilityDelete(id);
+  }
+}
+
+async function confirmFacilityDelete(id) {
+  const ok = window.confirm('Delete this facility?');
+  if (!ok) return;
+  try {
+    facilitiesFilteredData = facilitiesFilteredData.filter(f => String(f.id) !== String(id));
+    await updateFacilitiesOnAPI(facilitiesFilteredData);
+    toastSuccess('Facility deleted');
+    facilitiesPager.setData([...facilitiesFilteredData]);
+  } catch (err) {
+    toastError(`Failed to delete facility: ${err.message}`);
+  }
+}
+
+
+// =========================
+// Helpers
+// =========================
+function generateNextId(arr) {
+  const maxId = arr.reduce((max, item) => {
+    const n = parseInt(item.id, 10);
+    return Number.isFinite(n) ? Math.max(max, n) : max;
+  }, 0);
+  return maxId + 1;
+}
+
+
+// =========================
+/* Init — single source of truth for pagination */
+// =========================
+document.addEventListener('DOMContentLoaded', async () => {
+  // Wire forms & buttons
+  document.getElementById('addFeatureBtn')?.addEventListener('click', () => {
+    resetFeatureModal();
+    openModal('addFeatureModal');
   });
-}
+  document.getElementById('cancelAddFeature')?.addEventListener('click', () => {
+    closeModal('addFeatureModal');
+    resetFeatureModal();
+  });
+  document.getElementById('addFeatureForm')?.addEventListener('submit', handleFeatureSubmit);
 
-// Updated Render Facilities Table with Cloudinary URLs
-function renderFacilitiesTable() {
-    facilitiesTableContainer.style.display = "block";
-    facilitiesTableBody.innerHTML = "";
+  document.getElementById('addFacilityBtn')?.addEventListener('click', () => {
+    resetFacilityModal();
+    openModal('addFacilityModal');
+  });
+  document.getElementById('cancelAddFacility')?.addEventListener('click', () => {
+    closeModal('addFacilityModal');
+    resetFacilityModal();
+  });
+  document.getElementById('addFacilityForm')?.addEventListener('submit', handleFacilitySubmit);
 
-    facilitiesFilteredData.forEach((facility, index) => {
-        const tr = document.createElement("tr");
-        tr.classList.add("hover:bg-gray-50");
-        
-        let iconDisplay;
-        
-        if (facility.icon) {
-            iconDisplay = `<img src="${facility.icon}" alt="Icon" class="w-8 h-8 object-cover rounded">`;
-        } else {
-            iconDisplay = '<span class="text-gray-400">N/A</span>';
-        }
-        
-        tr.innerHTML = `
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${facility.id || index + 1}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                ${iconDisplay}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${facility.name || 'N/A'}</td>
-            <td class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate" title="${facility.description || 'N/A'}">${facility.description || 'N/A'}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                ${getFacilityActionButtons(facility)}
-            </td>
-        `;
-        facilitiesTableBody.appendChild(tr);
-    });
-}
+  // Delegate table actions (Element.closest ensures clicks on inner SVGs are handled)
+  document.getElementById('featuresTableBody')?.addEventListener('click', onFeaturesTableClick);
+  document.getElementById('facilitiesTableBody')?.addEventListener('click', onFacilitiesTableClick);
 
-// Edit and delete functions with API calls
-function editFeature(id) {
-  const feature = featuresFilteredData.find(f => f.id === id);
-  if (feature) {
-    isEditMode = true;
-    editingId = id;
-    document.getElementById('featureModalTitle').textContent = 'Edit Feature';
-    document.getElementById('submitFeatureBtn').textContent = 'Update';
-    document.getElementById('featureName').value = feature.name;
-    document.getElementById('featureId').value = feature.id;
-    document.getElementById('addFeatureModal').classList.remove('hidden');
-  }
-}
-
-// Updated Delete Feature Function
-async function deleteFeature(id) {
-    deleteType = 'feature';
-    deleteId = id;
-    
-    // Update modal text for feature
-    document.querySelector('#confirmDeleteModal h2').textContent = 'Confirm Deletion';
-    document.querySelector('#confirmDeleteModal p').textContent = 'Are you sure you want to delete this feature? This action cannot be undone.';
-    
-    // Show modal
-    document.getElementById('confirmDeleteModal').classList.remove('hidden');
-}
-
-// Execute feature deletion
-async function executeFeatureDelete(id) {
-    try {
-        // Show loading state
-        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-        confirmDeleteBtn.disabled = true;
-        confirmDeleteBtn.textContent = 'Deleting...';
-
-        // Remove from local array
-        featuresFilteredData = featuresFilteredData.filter(f => f.id !== id);
-
-        // Update the complete features data structure
-        const updatedFeaturesData = {
-            id: "6",
-            features: featuresFilteredData
-        };
-
-        // Send PUT request to API
-        await updateFeatureOnAPI(updatedFeaturesData);
-
-        // Re-render the table
-        renderFeaturesTable();
-
-        // Show/hide no data message
-        if (featuresFilteredData.length === 0) {
-            noFeaturesDataMessage.style.display = "block";
-            featuresTableContainer.style.display = "none";
-        }
-
-        console.log('Feature deleted from API, id:', id);
-    } catch (error) {
-        console.error('Error deleting feature:', error);
-        alert('Error deleting feature. Please try again.');
-        fetchFeaturesFacilitiesData();
-    } finally {
-        // Reset button state
-        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-        confirmDeleteBtn.disabled = false;
-        confirmDeleteBtn.textContent = 'Delete';
-    }
-}
-
-// Updated Edit Facility Function
-function editFacility(id) {
-    const facility = facilitiesFilteredData.find(f => f.id === id);
-    if (facility) {
-        isEditMode = true;
-        editingId = id;
-        document.getElementById('facilityModalTitle').textContent = 'Edit Facility';
-        document.getElementById('submitFacilityBtn').textContent = 'Update';
-        document.getElementById('facilityName').value = facility.name;
-        document.getElementById('facilityDescription').value = facility.description || '';
-        document.getElementById('facilityId').value = facility.id;
-        
-        // Show current icon from Cloudinary URL if exists
-        if (facility.icon) {
-            document.getElementById('currentIconImage').src = facility.icon;
-            document.getElementById('currentIcon').classList.remove('hidden');
-        }
-        
-        document.getElementById('addFacilityModal').classList.remove('hidden');
-    }
-}
-
-// Updated Delete Facility Function
-async function deleteFacility(id) {
-    deleteType = 'facility';
-    deleteId = id;
-    
-    // Update modal text for facility
-    document.querySelector('#confirmDeleteModal h2').textContent = 'Confirm Deletion';
-    document.querySelector('#confirmDeleteModal p').textContent = 'Are you sure you want to delete this facility? This action cannot be undone.';
-    
-    // Show modal
-    document.getElementById('confirmDeleteModal').classList.remove('hidden');
-}
-
-async function executeFacilityDelete(id) {
-    try {
-        // Show loading state
-        document.getElementById('confirmDeleteBtn').disabled = true;
-        document.getElementById('confirmDeleteBtn').textContent = 'Deleting...';
-        
-        // Remove from local array
-        facilitiesFilteredData = facilitiesFilteredData.filter(f => f.id !== id);
-        
-        const updatedFacilitiesData = {
-            id: "7",
-            facilities: facilitiesFilteredData
-        };
-        
-        await updateFacilityOnAPI(updatedFacilitiesData);
-        
-        renderFacilitiesTable();
-        
-        if (facilitiesFilteredData.length === 0) {
-            noFacilitiesDataMessage.style.display = "block";
-            facilitiesTableContainer.style.display = "none";
-        }
-        
-        console.log('Facility deleted from API, id:', id);
-    } catch (error) {
-        console.error('Error deleting facility:', error);
-        alert('Error deleting facility. Please try again.');
-        fetchFeaturesFacilitiesData();
-    } finally {
-        // Reset button state
-        document.getElementById('confirmDeleteBtn').disabled = false;
-        document.getElementById('confirmDeleteBtn').textContent = 'Delete';
-    }
-}
-
-
-// Profile dropdown functionality
-function toggleProfileDropdown() {
-  const dropdown = document.getElementById('profileDropdown');
-  const arrow = document.getElementById('dropdownArrow');
-  
-  if (dropdown.classList.contains('hidden')) {
-    dropdown.classList.remove('hidden');
-    arrow.style.transform = 'rotate(180deg)';
-  } else {
-    dropdown.classList.add('hidden');
-    arrow.style.transform = 'rotate(0deg)';
-  }
-}
-
-// Close dropdown when clicking outside
-document.addEventListener('click', function(e) {
-    const confirmModal = document.getElementById('confirmDeleteModal');
-    const modalContent = e.target.closest('.bg-white.rounded-lg');
-    
-    if (e.target === confirmModal && !modalContent) {
-        confirmModal.classList.add('hidden');
-        deleteType = null;
-        deleteId = null;
-    }
- 
+  // Initial load and pager setup
+  const { features, facilities } = await fetchFeaturesFacilitiesData();
+  featuresPager.setData(features || []);
+  facilitiesPager.setData(facilities || []);
 });
